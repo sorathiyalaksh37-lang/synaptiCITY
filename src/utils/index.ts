@@ -12,7 +12,9 @@
  *   hebbianUpdate,
  *   forwardPass,
  *   teach,
- *   createInitialState
+ *   createInitialState,
+ *   recallFromState,
+ *   applyMemoryDecay
  * } from './utils';
  * 
  * // Create network
@@ -23,8 +25,11 @@
  * state = teach(state, 0, 1, 3); // Teach 0 → 1 three times
  * 
  * // Recall
- * const result = recall(state.weights, 0);
- * console.log(`Predicted: ${result.predictedIndex}, Confidence: ${result.confidence}`);
+ * const result = recallFromState(state, 0);
+ * console.log(`Predicted: ${result.outputIndex}, Confidence: ${result.confidence}`);
+ * 
+ * // Apply decay
+ * state = applyMemoryDecay(state, 0.05);
  * ```
  * 
  * @module utils
@@ -48,7 +53,7 @@ export {
   getConnectionStrength
 } from './hebbian';
 
-// Forward Pass (Recall)
+// Forward Pass
 export {
   forwardPass,
   recall,
@@ -78,6 +83,58 @@ export {
   exportState,
   importState
 } from './teach';
+
+// Recall Functions (Phase 3)
+export {
+  recallFromState,
+  recallMultiple,
+  testAssociation,
+  getRecallAccuracy,
+  analyzeConfusion,
+  getAssociationStrength,
+  compareRecall,
+  calculateConfidence
+} from './recall';
+export type { RecallResult } from './recall';
+
+// Interference Functions (Phase 3)
+export {
+  detectInterferenceDetailed,
+  teachWithInterference,
+  measureInterferenceEffect,
+  simulateCatastrophicInterference,
+  applyInterferenceDecay,
+  getInterferenceStatistics,
+  resolveInterference
+} from './interference';
+export type { InterferenceResult } from './interference';
+
+// Network State Management (Phase 4)
+export {
+  createInitialState as createNetworkState,
+  cloneState,
+  validateState,
+  getStateSnapshot,
+  serializeState,
+  deserializeState,
+  compareStates,
+  mergeStates,
+  resetToInitial,
+  getStateDifference
+} from './networkState';
+
+// Memory Decay Functions (Phase 4)
+export {
+  applyMemoryDecay,
+  applyMemoryDecayWithMetrics,
+  applySelectiveDecay,
+  applyExponentialDecay,
+  applyActivityDependentDecay,
+  simulateTimePassing,
+  getDecayStatistics,
+  preventDecayFor
+} from './decay';
+export type { DecayResult } from './decay';
 
 // Types
 export type {
