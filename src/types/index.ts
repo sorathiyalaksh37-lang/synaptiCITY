@@ -12,15 +12,6 @@ export interface Connection {
   weight: number;
 }
 
-export interface NetworkState {
-  nodes: Node[];
-  weights: number[][];
-  activations: number[];
-  learningRate: number;
-  repetitions: number;
-  interferenceCount: number;
-}
-
 export interface Association {
   input: string;
   output: string;
@@ -33,3 +24,6 @@ export interface TestQuestion {
   correctAnswer: number;
   explanation: string;
 }
+
+// Re-export NetworkState from utils
+export type { NetworkState, TeachingEvent } from '../utils/teach';

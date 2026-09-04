@@ -239,6 +239,25 @@ private hebbianUpdate(inputWord: string, outputWord: string): void {
 }
 ```
 
+### Modular Utilities
+
+For advanced use cases, we also provide modular utilities in `src/utils/`:
+
+```typescript
+import { createInitialState, teach, recall } from './utils';
+
+// Create network state
+let state = createInitialState(6, 0.1);
+
+// Teach association
+state = teach(state, 0, 1, 3); // Node 0 → Node 1, 3 times
+
+// Test recall
+const result = recall(state.weights, 0);
+```
+
+**See [UTILITIES_GUIDE.md](UTILITIES_GUIDE.md) for complete API reference.**
+
 ### NeuralGrid Component
 
 Visualizes the network state with SVG:
