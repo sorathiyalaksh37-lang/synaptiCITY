@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { NeuralNetwork } from './lib/NeuralNetwork';
 import { NeuralGrid } from './components/NeuralGrid';
 import { TeachInterface } from './components/TeachInterface';
@@ -15,8 +16,13 @@ const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
 function App() {
   const [network] = useState(() => new NeuralNetwork(VOCABULARY, 0.1));
   const [, setUpdateTrigger] = useState(0);
-  const [activeTab, setActiveTab] = useState<'simulation' | 'bdh' | 'test'>('simulation');
-  const [highlightedConnection, setHighlightedConnection] = useState<{ from: string; to: string } | null>(null);
+  const [activeTab, setActiveTab] = useState<'simulation' | 'bdh' | 'test'>(
+    'simulation'
+  );
+  const [highlightedConnection, setHighlightedConnection] = useState<{
+    from: string;
+    to: string;
+  } | null>(null);
   const [lastTaught, setLastTaught] = useState<Association | null>(null);
 
   // Force re-render when network state changes
@@ -27,20 +33,22 @@ function App() {
     const centerX = 300;
     const centerY = 200;
     const radius = 120;
-    
+
     return VOCABULARY.map((word, index) => {
-      const angle = (index / VOCABULARY.length) * 2 * Math.PI - Math.PI / 2;
+      const angle =
+        (index / VOCABULARY.length) * 2 * Math.PI - Math.PI / 2;
+
       return {
         id: word,
         label: word,
         x: centerX + radius * Math.cos(angle),
         y: centerY + radius * Math.sin(angle),
-        activation: network.getActivations()[index]
+        activation: network.getActivations()[index],
       };
     });
   };
 
-  // Generate connections from weight matrix
+  // Generate connections from the latest weight matrix
   const generateConnections = (): Connection[] => {
     const weights = network.getWeights();
     const connections: Connection[] = [];
@@ -51,7 +59,7 @@ function App() {
           connections.push({
             from: VOCABULARY[i],
             to: VOCABULARY[j],
-            weight: weights[i][j]
+            weight: weights[i][j],
           });
         }
       }
@@ -60,40 +68,55 @@ function App() {
     return connections;
   };
 
-  const [nodes, setNodes] = useState<Node[]>(generateNodes());
-  const [connections, setConnections] = useState<Connection[]>(generateConnections());
+  // Always derive visualization data from the current network state.
+  const nodes = generateNodes();
+  const connections = generateConnections();
 
-  useEffect(() => {
-    setNodes(generateNodes());
-    setConnections(generateConnections());
-  }, [network, activeTab]);
+  const handleTeach = (
+    association: Association,
+    repetitions: number
+  ) => {
+    network.teach(
+      association.input,
+      association.output,
+      repetitions
+    );
 
-  const handleTeach = (association: Association, repetitions: number) => {
-    network.teach(association.input, association.output, repetitions);
     setLastTaught(association);
-    setHighlightedConnection({ from: association.input, to: association.output });
-    
+
+    setHighlightedConnection({
+      from: association.input,
+      to: association.output,
+    });
+
     setTimeout(() => {
       setHighlightedConnection(null);
     }, 2000);
-    
+
     forceUpdate();
   };
 
   const handleRecall = (inputWord: string) => {
     const result = network.recall(inputWord);
-    
+
     if (result.word) {
-      setHighlightedConnection({ from: inputWord, to: result.word });
+      setHighlightedConnection({
+        from: inputWord,
+        to: result.word,
+      });
+
       setTimeout(() => {
         setHighlightedConnection(null);
       }, 2000);
     }
-    
+
     return {
       predicted: result.word,
-      expected: lastTaught?.input === inputWord ? lastTaught.output : undefined,
-      confidence: result.confidence
+      expected:
+        lastTaught?.input === inputWord
+          ? lastTaught.output
+          : undefined,
+      confidence: result.confidence,
     };
   };
 
@@ -119,39 +142,42 @@ function App() {
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 synaptiCITY
               </h1>
+
               <p className="text-sm text-gray-400 mt-1">
                 When Connections Become Memory
               </p>
             </div>
-            
+
             <div className="flex gap-2">
+              {/* Simulation Tab */}
               <button
                 onClick={() => setActiveTab('simulation')}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                  activeTab === 'simulation'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
+                className={`px - 4 py - 2 rounded - lg font - semibold transition - colors ${activeTab === 'simulation'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  } `}
               >
                 Simulation
               </button>
+
+              {/* BDH Tab */}
               <button
                 onClick={() => setActiveTab('bdh')}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                  activeTab === 'bdh'
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
+                className={`px - 4 py - 2 rounded - lg font - semibold transition - colors ${activeTab === 'bdh'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  } `}
               >
                 BDH/BDH-CQ
               </button>
+
+              {/* Test Tab */}
               <button
                 onClick={() => setActiveTab('test')}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                  activeTab === 'test'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
+                className={`px - 4 py - 2 rounded - lg font - semibold transition - colors ${activeTab === 'test'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  } `}
               >
                 Test
               </button>
@@ -169,10 +195,12 @@ function App() {
               <h2 className="text-2xl font-bold mb-3">
                 🧠 What if memory isn't a place, but a change?
               </h2>
+
               <p className="text-gray-300">
-                In this simulation, you'll discover how <strong>synaptic plasticity</strong>—the
-                strengthening of connections between neurons—creates memory. No storage cells, no
-                databases. Just connections that learn.
+                In this simulation, you'll discover how{' '}
+                <strong>synaptic plasticity</strong>—the strengthening
+                of connections between neurons—creates memory. No
+                storage cells, no databases. Just connections that learn.
               </p>
             </div>
 
@@ -181,7 +209,10 @@ function App() {
               {/* Visualization */}
               <div className="lg:col-span-2">
                 <div className="bg-gray-800 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold mb-4">Neural Network</h3>
+                  <h3 className="text-lg font-semibold mb-4">
+                    Neural Network
+                  </h3>
+
                   <div className="h-96">
                     <NeuralGrid
                       nodes={nodes}
@@ -198,6 +229,7 @@ function App() {
                   vocabulary={VOCABULARY}
                   onTeach={handleTeach}
                 />
+
                 <ControlPanel
                   learningRate={network.getLearningRate()}
                   onLearningRateChange={handleLearningRateChange}
@@ -228,21 +260,36 @@ function App() {
               <h3 className="text-xl font-bold mb-3 text-yellow-300">
                 🔬 Try This: Interference Experiment
               </h3>
+
               <ol className="space-y-2 text-gray-300">
-                <li>1. Teach DOG → ANIMAL (repeat 5 times)</li>
-                <li>2. Test recall: DOG → ? (should predict ANIMAL)</li>
-                <li>3. Now teach DOG → PET (repeat 5 times)</li>
-                <li>4. Test recall again: DOG → ? (watch what happens!)</li>
+                <li>
+                  1. Teach DOG → ANIMAL (repeat 5 times)
+                </li>
+
+                <li>
+                  2. Test recall: DOG → ? (should predict ANIMAL)
+                </li>
+
+                <li>
+                  3. Now teach DOG → PET (repeat 5 times)
+                </li>
+
+                <li>
+                  4. Test recall again: DOG → ? (watch what happens!)
+                </li>
               </ol>
+
               <p className="mt-3 text-sm text-gray-400">
-                This demonstrates <strong>interference</strong>—a fundamental limitation of synaptic
-                memory. Competing associations weaken each other.
+                This demonstrates <strong>interference</strong>—a
+                fundamental limitation of synaptic memory. Competing
+                associations weaken each other.
               </p>
             </div>
           </div>
         )}
 
         {activeTab === 'bdh' && <BDHModule />}
+
         {activeTab === 'test' && <SixtySecondTest />}
       </main>
 
@@ -250,10 +297,13 @@ function App() {
       <footer className="bg-gray-800/50 border-t border-gray-700 mt-12 py-6">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-400">
           <p>
-            Built for educational purposes. Not a reimplementation of BDH/BDH-CQ.
+            Built for educational purposes. Not a reimplementation of
+            BDH/BDH-CQ.
           </p>
+
           <p className="mt-2">
-            ⭐⭐⭐⭐⭐ A uniquely interactive approach to understanding synaptic plasticity
+            ⭐⭐⭐⭐⭐ A uniquely interactive approach to understanding
+            synaptic plasticity
           </p>
         </div>
       </footer>
