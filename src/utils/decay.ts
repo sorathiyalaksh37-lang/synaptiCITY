@@ -399,7 +399,7 @@ export function preventDecayFor(
   protectedConnections: Array<{ input: number; output: number }>,
   decayRate: number
 ): NetworkState {
-  const protected Set = new Set(
+  const protectedSet = new Set(
     protectedConnections.map(c => `${c.input}-${c.output}`)
   );
 

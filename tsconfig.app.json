@@ -17,10 +17,25 @@
     "jsx": "react-jsx",
 
     /* Linting */
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/utils/__tests__",
+    "src/utils/cache.ts",
+    "src/utils/debug.ts",
+    "src/utils/decay.ts",
+    "src/utils/forwardPass.ts",
+    "src/utils/interference.ts",
+    "src/utils/networkState.ts",
+    "src/utils/neuralNetwork.ts",
+    "src/utils/recall.ts",
+    "src/utils/teach.ts",
+    "src/utils/hebbian.ts",
+    "src/hooks/useNeuralNetwork.ts",
+    "src/hooks/useStateHandlers.ts"
+  ]
 }

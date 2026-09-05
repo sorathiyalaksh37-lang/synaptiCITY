@@ -98,19 +98,33 @@ export class NeuralNetwork {
   }
 
   /**
-   * Teach the network an association through repetition
+   * Teach the network an association through repetition.
+   * Returns weight-change data so the UI can display a live feedback panel.
    */
-  teach(inputWord: string, outputWord: string, repetitions: number = 1): void {
+  teach(
+    inputWord: string,
+    outputWord: string,
+    repetitions: number = 1
+  ): { previousWeight: number; newWeight: number; deltaWeight: number } {
+    const i = this.getIndex(inputWord);
+    const j = this.getIndex(outputWord);
+    const previousWeight = this.weights[i][j];
+
     for (let rep = 0; rep < repetitions; rep++) {
       this.clearActivations();
-      
-      // Activate input and output
+
+      // Activate input and output simultaneously ("fire together")
       this.activate(inputWord, 1.0);
       this.activate(outputWord, 1.0);
 
-      // Apply Hebbian learning
+      // Apply Hebbian update ("wire together")
       this.hebbianUpdate(inputWord, outputWord);
     }
+
+    const newWeight = this.weights[i][j];
+    const deltaWeight = newWeight - previousWeight;
+
+    return { previousWeight, newWeight, deltaWeight };
   }
 
   /**

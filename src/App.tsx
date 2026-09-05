@@ -22,6 +22,7 @@ function App() {
     from: string;
     to: string;
   } | null>(null);
+  const [teachingPhase, setTeachingPhase] = useState<'idle' | 'firing' | 'done'>('idle');
   const [learningFeedback, setLearningFeedback] = useState<{
     input: string;
     output: string;
@@ -81,30 +82,36 @@ function App() {
     association: Association,
     repetitions: number
   ) => {
-    const result = network.teach(
-      association.input,
-      association.output,
-      repetitions
-    );
+    // Phase 1 — "fire together": light up both nodes before weights update
+    setTeachingPhase('firing');
+    setHighlightedConnection({ from: association.input, to: association.output });
 
-    setLearningFeedback({
-      input: association.input,
-      output: association.output,
-      previousWeight: result.previousWeight,
-      newWeight: result.newWeight,
-      deltaWeight: result.deltaWeight,
-    });
-
-    setHighlightedConnection({
-      from: association.input,
-      to: association.output,
-    });
-
+    // Small delay so the animation renders before the (synchronous) weight update
     setTimeout(() => {
-      setHighlightedConnection(null);
-    }, 2000);
+      const result = network.teach(
+        association.input,
+        association.output,
+        repetitions
+      );
 
-    forceUpdate();
+      // Phase 2 — "wire together": weights updated, pulse travels the edge
+      setTeachingPhase('done');
+      forceUpdate();
+
+      setLearningFeedback({
+        input: association.input,
+        output: association.output,
+        previousWeight: result.previousWeight,
+        newWeight: result.newWeight,
+        deltaWeight: result.deltaWeight,
+      });
+
+      // Clear highlight after animation completes
+      setTimeout(() => {
+        setHighlightedConnection(null);
+        setTeachingPhase('idle');
+      }, 1800);
+    }, 80);
   };
 
   const handleRecall = (inputWord: string) => {
@@ -218,9 +225,16 @@ function App() {
               {/* Visualization */}
               <div className="lg:col-span-2">
                 <div className="bg-gray-800 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold mb-4">
-                    Neural Network
-                  </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">
+                      Neural Network
+                    </h3>
+                    {teachingPhase !== 'idle' && (
+                      <span className="text-xs px-2 py-1 rounded-full bg-sky-900/50 text-sky-300 border border-sky-600/40 animate-pulse">
+                        {teachingPhase === 'firing' ? '⚡ Neurons firing…' : '🔗 Synapse wiring…'}
+                      </span>
+                    )}
+                  </div>
 
                   <div className="h-96">
                     <NeuralGrid
@@ -248,39 +262,70 @@ function App() {
                 {learningFeedback && (
                   <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
                     <h3 className="font-semibold text-blue-300 mb-2">
-                      🧠 Connection Updated
+                      ⚡ Synapse Strengthened
                     </h3>
 
-                    <p className="text-sm text-gray-300">
-                      {learningFeedback.input} → {learningFeedback.output}
+                    {/* Visual: Hebbian rule in plain English */}
+                    <p className="text-xs text-sky-300 mb-3 italic">
+                      "Neurons that fire together, wire together" — Donald Hebb, 1949
                     </p>
 
+                    <p className="text-sm text-gray-300 font-mono">
+                      {learningFeedback.input}{' '}
+                      <span className="text-sky-400">→</span>{' '}
+                      {learningFeedback.output}
+                    </p>
+
+                    {/* Before / After weight display */}
                     <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                       <div className="bg-gray-900 rounded p-2">
-                        <span className="text-gray-400">Before</span>
-                        <p className="font-semibold text-white">
+                        <span className="text-gray-400 text-xs">Before</span>
+                        <p className="font-semibold text-white font-mono">
                           {learningFeedback.previousWeight.toFixed(3)}
                         </p>
                       </div>
 
-                      <div className="bg-gray-900 rounded p-2">
-                        <span className="text-gray-400">After</span>
-                        <p className="font-semibold text-white">
+                      <div className="bg-gray-900 rounded p-2 border border-emerald-700/50">
+                        <span className="text-emerald-400 text-xs">After</span>
+                        <p className="font-semibold text-emerald-300 font-mono">
                           {learningFeedback.newWeight.toFixed(3)}
                         </p>
                       </div>
                     </div>
 
-                    <div className="mt-2 text-sm">
-                      <span className="text-gray-400">Change: </span>
-                      <span className="font-semibold text-green-400">
-                        +{learningFeedback.deltaWeight.toFixed(3)}
+                    {/* Strength bar */}
+                    <div className="mt-3">
+                      <div className="flex justify-between text-xs text-gray-400 mb-1">
+                        <span>Synapse strength</span>
+                        <span>{Math.round(learningFeedback.newWeight * 100)}%</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div
+                          className="h-2 rounded-full transition-all duration-700"
+                          style={{
+                            width: `${Math.min(learningFeedback.newWeight * 100, 100)}%`,
+                            background:
+                              learningFeedback.newWeight < 0.3
+                                ? '#ef4444'
+                                : learningFeedback.newWeight < 0.6
+                                ? '#f59e0b'
+                                : '#10b981',
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-2 text-sm flex items-center gap-2">
+                      <span className="text-gray-400">Δw =</span>
+                      <span className="font-semibold text-emerald-400 font-mono">
+                        +{Math.abs(learningFeedback.deltaWeight).toFixed(3)}
                       </span>
+                      <span className="text-gray-500 text-xs">(η × aᵢ × aⱼ)</span>
                     </div>
 
                     {learningFeedback.newWeight >= 0.999 && (
-                      <p className="mt-2 text-xs text-yellow-300">
-                        🔒 Connection has reached maximum strength.
+                      <p className="mt-2 text-xs text-yellow-300 bg-yellow-900/20 rounded p-2">
+                        🔒 Connection saturated — this synapse has reached maximum strength.
                       </p>
                     )}
                   </div>

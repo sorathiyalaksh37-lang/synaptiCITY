@@ -7,7 +7,7 @@
  * @module cache
  */
 
-import { RecallResult, CacheEntry, NetworkState } from '../types/network.types';
+import type { RecallResult, CacheEntry, NetworkState } from '../types/network.types';
 
 /**
  * Cache statistics for monitoring

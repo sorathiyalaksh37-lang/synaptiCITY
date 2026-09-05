@@ -7,7 +7,7 @@
  * @module debug
  */
 
-import { NetworkState, DebugData, ConnectionInfo } from '../types/network.types';
+import type { NetworkState, DebugData, ConnectionInfo } from '../types/network.types';
 
 /**
  * Calculates standard deviation of an array of numbers
