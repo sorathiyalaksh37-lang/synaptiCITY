@@ -22,6 +22,13 @@ function App() {
     from: string;
     to: string;
   } | null>(null);
+  const [learningFeedback, setLearningFeedback] = useState<{
+    input: string;
+    output: string;
+    previousWeight: number;
+    newWeight: number;
+    deltaWeight: number;
+  } | null>(null);
 
   // Force re-render when network state changes
   const forceUpdate = () => setUpdateTrigger(prev => prev + 1);
@@ -74,11 +81,19 @@ function App() {
     association: Association,
     repetitions: number
   ) => {
-    network.teach(
+    const result = network.teach(
       association.input,
       association.output,
       repetitions
     );
+
+    setLearningFeedback({
+      input: association.input,
+      output: association.output,
+      previousWeight: result.previousWeight,
+      newWeight: result.newWeight,
+      deltaWeight: result.deltaWeight,
+    });
 
     setHighlightedConnection({
       from: association.input,
@@ -108,7 +123,8 @@ function App() {
 
     return {
       predicted: result.word,
-      confidence: result.confidence,
+      connectionStrength: result.confidence,
+      allScores: result.allScores,
     };
   };
 
@@ -119,6 +135,7 @@ function App() {
 
   const handleReset = () => {
     network.reset();
+    setLearningFeedback(null);
     setHighlightedConnection(null);
     forceUpdate();
   };
@@ -144,8 +161,8 @@ function App() {
               <button
                 onClick={() => setActiveTab('simulation')}
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'simulation'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
               >
                 Simulation
@@ -155,8 +172,8 @@ function App() {
               <button
                 onClick={() => setActiveTab('bdh')}
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'bdh'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
               >
                 BDH/BDH-CQ
@@ -166,8 +183,8 @@ function App() {
               <button
                 onClick={() => setActiveTab('test')}
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'test'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
               >
                 Test
@@ -227,6 +244,47 @@ function App() {
                   onLearningRateChange={handleLearningRateChange}
                   onReset={handleReset}
                 />
+
+                {learningFeedback && (
+                  <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
+                    <h3 className="font-semibold text-blue-300 mb-2">
+                      🧠 Connection Updated
+                    </h3>
+
+                    <p className="text-sm text-gray-300">
+                      {learningFeedback.input} → {learningFeedback.output}
+                    </p>
+
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                      <div className="bg-gray-900 rounded p-2">
+                        <span className="text-gray-400">Before</span>
+                        <p className="font-semibold text-white">
+                          {learningFeedback.previousWeight.toFixed(3)}
+                        </p>
+                      </div>
+
+                      <div className="bg-gray-900 rounded p-2">
+                        <span className="text-gray-400">After</span>
+                        <p className="font-semibold text-white">
+                          {learningFeedback.newWeight.toFixed(3)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-2 text-sm">
+                      <span className="text-gray-400">Change: </span>
+                      <span className="font-semibold text-green-400">
+                        +{learningFeedback.deltaWeight.toFixed(3)}
+                      </span>
+                    </div>
+
+                    {learningFeedback.newWeight >= 0.999 && (
+                      <p className="mt-2 text-xs text-yellow-300">
+                        🔒 Connection has reached maximum strength.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Recall */}

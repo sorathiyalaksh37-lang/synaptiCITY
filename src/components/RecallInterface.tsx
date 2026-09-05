@@ -4,7 +4,8 @@ interface RecallInterfaceProps {
   vocabulary: string[];
   onRecall: (inputWord: string) => {
     predicted: string;
-    confidence: number;
+    connectionStrength: number;
+    allScores: Map<string, number>;
   };
   disabled?: boolean;
 }
@@ -17,7 +18,8 @@ export const RecallInterface: React.FC<RecallInterfaceProps> = ({
   const [input, setInput] = useState('');
   const [result, setResult] = useState<{
     predicted: string;
-    confidence: number;
+    connectionStrength: number;
+    allScores: Map<string, number>;
   } | null>(null);
 
   const handleRecall = () => {
@@ -33,9 +35,9 @@ export const RecallInterface: React.FC<RecallInterfaceProps> = ({
     }
   };
 
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence < 0.2) return 'text-red-400';
-    if (confidence < 0.5) return 'text-yellow-400';
+  const getStrengthColor = (strength: number) => {
+    if (strength < 0.2) return 'text-red-400';
+    if (strength < 0.5) return 'text-yellow-400';
     return 'text-green-400';
   };
 
@@ -84,7 +86,7 @@ export const RecallInterface: React.FC<RecallInterfaceProps> = ({
         </button>
 
         {result && (
-          <div className="mt-4 p-4 bg-gray-900 rounded space-y-2">
+          <div className="mt-4 p-4 bg-gray-900 rounded space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Input:</span>
               <span className="text-white font-semibold">{input}</span>
@@ -101,18 +103,71 @@ export const RecallInterface: React.FC<RecallInterfaceProps> = ({
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-gray-400">Confidence:</span>
+              <span className="text-gray-400">Connection Strength:</span>
               <span
-                className={`font-semibold ${getConfidenceColor(
-                  result.confidence
+                className={`font-semibold ${getStrengthColor(
+                  result.connectionStrength
                 )}`}
               >
-                {(result.confidence * 100).toFixed(1)}%
+                {result.connectionStrength.toFixed(3)}
               </span>
             </div>
 
-            {result.confidence >= 0.45 &&
-              result.confidence <= 0.55 && (
+            <div className="border-t border-gray-700 pt-3">
+              <p className="text-sm font-semibold text-gray-300 mb-2">
+                Learned Associations
+              </p>
+
+              <div className="space-y-2">
+                {Array.from(result.allScores.entries())
+                  .filter(([, score]) => score > 0.01)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([word, score]) => (
+                    <div
+                      key={word}
+                      className="flex items-center justify-between text-sm"
+                    >
+                      <span className="text-gray-400">
+                        {input} → {word}
+                      </span>
+
+                      <span
+                        className={`font-semibold ${word === result.predicted
+                            ? 'text-blue-400'
+                            : 'text-gray-300'
+                          }`}
+                      >
+                        {score.toFixed(3)}
+                      </span>
+                    </div>
+                  ))}
+
+                {Array.from(result.allScores.entries()).filter(
+                  ([, score]) => score > 0.01
+                ).length === 0 && (
+                    <p className="text-sm text-gray-500">
+                      No strong learned associations yet.
+                    </p>
+                  )}
+              </div>
+            </div>
+
+            {(() => {
+              const learnedAssociations = Array.from(
+                result.allScores.entries()
+              )
+                .filter(([, score]) => score > 0.01)
+                .sort(([, a], [, b]) => b - a);
+
+              const isAmbiguous =
+                learnedAssociations.length >= 2 &&
+                Math.abs(
+                  learnedAssociations[0][1] - learnedAssociations[1][1]
+                ) < 0.1;
+
+              if (!isAmbiguous) return null;
+
+              return (
                 <div className="mt-3 pt-3 border-t border-gray-700">
                   <div className="flex items-start gap-2 text-yellow-400">
                     <span className="text-xl">⚠️</span>
@@ -121,14 +176,15 @@ export const RecallInterface: React.FC<RecallInterfaceProps> = ({
                       <p className="font-semibold">Ambiguous Memory</p>
 
                       <p className="text-sm text-gray-400 mt-1">
-                        Multiple learned associations have similar strengths,
-                        so the network's current prediction is not clearly
-                        dominant.
+                        Multiple learned associations have similar connection
+                        strengths, so the network's current prediction is not
+                        clearly dominant.
                       </p>
                     </div>
                   </div>
                 </div>
-              )}
+              );
+            })()}
           </div>
         )}
       </div>
