@@ -7,6 +7,7 @@ import { ControlPanel } from './components/ControlPanel';
 import { StateDebugPanel } from './components/StateDebugPanel';
 import { BDHModule } from './components/BDHModule';
 import { SixtySecondTest } from './components/SixtySecondTest';
+import { GuidedTour } from './components/GuidedTour';
 import type { Node, Connection, Association } from './types';
 
 // Initial vocabulary
@@ -23,6 +24,7 @@ function App() {
     to: string;
   } | null>(null);
   const [teachingPhase, setTeachingPhase] = useState<'idle' | 'firing' | 'done'>('idle');
+  const [tutorialStep, setTutorialStep] = useState(1);
   const [learningFeedback, setLearningFeedback] = useState<{
     input: string;
     output: string;
@@ -207,18 +209,33 @@ function App() {
         {activeTab === 'simulation' && (
           <div className="space-y-6">
             {/* Introduction */}
-            <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500/30 rounded-lg p-6">
-              <h2 className="text-2xl font-bold mb-3">
-                🧠 What if memory isn't a place, but a change?
-              </h2>
+            {tutorialStep === 0 && (
+              <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500/30 rounded-lg p-6">
+                <h2 className="text-2xl font-bold mb-3">
+                  🧠 What if memory isn't a place, but a change?
+                </h2>
 
-              <p className="text-gray-300">
-                In this simulation, you'll discover how{' '}
-                <strong>synaptic plasticity</strong>—the strengthening
-                of connections between neurons—creates memory. No
-                storage cells, no databases. Just connections that learn.
-              </p>
-            </div>
+                <p className="text-gray-300">
+                  In this simulation, you'll discover how{' '}
+                  <strong>synaptic plasticity</strong>—the strengthening
+                  of connections between neurons—creates memory. No
+                  storage cells, no databases. Just connections that learn.
+                </p>
+                <button
+                  onClick={() => setTutorialStep(1)}
+                  className="mt-4 text-blue-400 hover:text-blue-300 text-sm font-semibold transition-colors"
+                >
+                  Start Guided Tour →
+                </button>
+              </div>
+            )}
+
+            {/* Guided Tour */}
+            <GuidedTour 
+              step={tutorialStep} 
+              onNext={() => setTutorialStep(s => s + 1)} 
+              onSkip={() => setTutorialStep(0)} 
+            />
 
             {/* Main Grid */}
             <div className="grid lg:grid-cols-2 gap-6">
@@ -247,17 +264,22 @@ function App() {
               </div>
 
               {/* Controls */}
-              <div className="space-y-6">
+              <div className={`space-y-6 transition-opacity duration-500 ${tutorialStep > 0 && tutorialStep !== 2 && tutorialStep !== 4 ? 'opacity-40 pointer-events-none' : ''}`}>
                 <TeachInterface
                   vocabulary={VOCABULARY}
                   onTeach={handleTeach}
+                  suggestedInput={tutorialStep === 2 || tutorialStep === 4 ? 'DOG' : undefined}
+                  suggestedOutput={tutorialStep === 2 ? 'ANIMAL' : tutorialStep === 4 ? 'PET' : undefined}
+                  suggestedRepetitions={tutorialStep === 2 || tutorialStep === 4 ? 3 : undefined}
                 />
 
-                <ControlPanel
-                  learningRate={network.getLearningRate()}
-                  onLearningRateChange={handleLearningRateChange}
-                  onReset={handleReset}
-                />
+                <div className={tutorialStep > 0 ? 'opacity-40 pointer-events-none' : ''}>
+                  <ControlPanel
+                    learningRate={network.getLearningRate()}
+                    onLearningRateChange={handleLearningRateChange}
+                    onReset={handleReset}
+                  />
+                </div>
 
                 {learningFeedback && (
                   <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
@@ -333,10 +355,11 @@ function App() {
               </div>
 
               {/* Recall */}
-              <div className="space-y-6">
+              <div className={`space-y-6 transition-opacity duration-500 ${tutorialStep > 0 && tutorialStep !== 3 && tutorialStep !== 4 ? 'opacity-40 pointer-events-none' : ''}`}>
                 <RecallInterface
                   vocabulary={VOCABULARY}
                   onRecall={handleRecall}
+                  suggestedInput={tutorialStep === 3 || tutorialStep === 4 ? 'DOG' : undefined}
                 />
               </div>
 

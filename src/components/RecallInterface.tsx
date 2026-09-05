@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface RecallInterfaceProps {
   vocabulary: string[];
@@ -8,19 +8,25 @@ interface RecallInterfaceProps {
     allScores: Map<string, number>;
   };
   disabled?: boolean;
+  suggestedInput?: string;
 }
 
 export const RecallInterface: React.FC<RecallInterfaceProps> = ({
   vocabulary,
   onRecall,
-  disabled = false
+  disabled = false,
+  suggestedInput
 }) => {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(suggestedInput || '');
   const [result, setResult] = useState<{
     predicted: string;
     connectionStrength: number;
     allScores: Map<string, number>;
   } | null>(null);
+
+  useEffect(() => {
+    if (suggestedInput) setInput(suggestedInput);
+  }, [suggestedInput]);
 
   const handleRecall = () => {
     if (input) {

@@ -1,20 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Association } from '../types';
 
 interface TeachInterfaceProps {
   vocabulary: string[];
   onTeach: (association: Association, repetitions: number) => void;
   disabled?: boolean;
+  suggestedInput?: string;
+  suggestedOutput?: string;
+  suggestedRepetitions?: number;
 }
 
 export const TeachInterface: React.FC<TeachInterfaceProps> = ({
   vocabulary,
   onTeach,
-  disabled = false
+  disabled = false,
+  suggestedInput,
+  suggestedOutput,
+  suggestedRepetitions
 }) => {
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
-  const [repetitions, setRepetitions] = useState(3);
+  const [input, setInput] = useState(suggestedInput || '');
+  const [output, setOutput] = useState(suggestedOutput || '');
+  const [repetitions, setRepetitions] = useState(suggestedRepetitions || 3);
+
+  useEffect(() => {
+    if (suggestedInput) setInput(suggestedInput);
+    if (suggestedOutput) setOutput(suggestedOutput);
+    if (suggestedRepetitions) setRepetitions(suggestedRepetitions);
+  }, [suggestedInput, suggestedOutput, suggestedRepetitions]);
 
   const handleTeach = () => {
     if (input && output && input !== output) {
