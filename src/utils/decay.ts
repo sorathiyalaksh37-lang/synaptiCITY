@@ -26,16 +26,16 @@ import type { NetworkState } from './teach';
 export interface DecayResult {
   /** State after decay */
   state: NetworkState;
-  
+
   /** Average weight before decay */
   weightsBefore: number;
-  
+
   /** Average weight after decay */
   weightsAfter: number;
-  
+
   /** Total decay applied */
   totalDecay: number;
-  
+
   /** Number of weights below threshold */
   weakenedWeights: number;
 }
@@ -91,36 +91,36 @@ export function applyMemoryDecay(
 ): NetworkState {
   // Use provided decay rate or state's default
   const rate = decayRate !== undefined ? decayRate : state.memoryDecay;
-  
+
   // Validate decay rate
   if (rate < 0 || rate > 1) {
     throw new Error(`Decay rate must be between 0 and 1, got ${rate}`);
   }
-  
+
   // If no decay, return unchanged
   if (rate === 0) {
     return state;
   }
-  
+
   // Validate threshold
   if (minThreshold < 0 || minThreshold > 1) {
     throw new Error(`Minimum threshold must be between 0 and 1, got ${minThreshold}`);
   }
-  
+
   // Apply decay to all weights
   const newWeights = state.weights.map(row =>
     row.map(weight => {
       const decayed = weight * (1 - rate);
-      
+
       // Don't let weights get too small (avoid underflow)
       if (Math.abs(decayed) < minThreshold) {
         return 0;
       }
-      
+
       return decayed;
     })
   );
-  
+
   return {
     ...state,
     weights: newWeights
@@ -154,20 +154,20 @@ export function applyMemoryDecayWithMetrics(
   const weightsBefore = state.weights
     .flat()
     .reduce((sum, w) => sum + Math.abs(w), 0) / (state.weights.length ** 2);
-  
+
   // Apply decay
   const newState = applyMemoryDecay(state, decayRate, minThreshold);
-  
+
   // Calculate weights after
   const weightsAfter = newState.weights
     .flat()
     .reduce((sum, w) => sum + Math.abs(w), 0) / (newState.weights.length ** 2);
-  
+
   // Count weakened weights
   const weakenedWeights = newState.weights
     .flat()
     .filter(w => Math.abs(w) < 0.01).length;
-  
+
   return {
     state: newState,
     weightsBefore,
@@ -203,7 +203,7 @@ export function applySelectiveDecay(
   if (decayRate < 0 || decayRate > 1) {
     throw new Error('Decay rate must be between 0 and 1');
   }
-  
+
   const newWeights = state.weights.map(row =>
     row.map(weight => {
       // Only decay weak connections
@@ -213,7 +213,7 @@ export function applySelectiveDecay(
       return weight;
     })
   );
-  
+
   return {
     ...state,
     weights: newWeights
@@ -244,14 +244,14 @@ export function applyExponentialDecay(
   accelerationFactor: number = 1.1
 ): NetworkState {
   let currentState = state;
-  
+
   for (let t = 0; t < timeSteps; t++) {
     const effectiveRate = baseDecayRate * Math.pow(accelerationFactor, t);
     const clampedRate = Math.min(effectiveRate, 0.5); // Don't exceed 50% decay
-    
+
     currentState = applyMemoryDecay(currentState, clampedRate);
   }
-  
+
   return currentState;
 }
 
@@ -284,11 +284,11 @@ export function applyActivityDependentDecay(
       const strength = Math.abs(weight);
       const activityFactor = 1 - strength; // Inverse: weak = more decay
       const effectiveRate = baseDecayRate * (1 + activityFactor);
-      
+
       return weight * (1 - Math.min(effectiveRate, 0.5));
     })
   );
-  
+
   return {
     ...state,
     weights: newWeights
@@ -319,13 +319,13 @@ export function simulateTimePassing(
   decayRate?: number
 ): NetworkState {
   let currentState = state;
-  
+
   for (let t = 0; t < timeSteps; t++) {
     if (t % decayInterval === 0) {
       currentState = applyMemoryDecay(currentState, decayRate);
     }
   }
-  
+
   return currentState;
 }
 
@@ -355,19 +355,19 @@ export function getDecayStatistics(
   decayImpact: number;
 } {
   const rate = decayRate !== undefined ? decayRate : state.memoryDecay;
-  
+
   const allWeights = state.weights.flat();
   const currentAvg = allWeights.reduce((sum, w) => sum + Math.abs(w), 0) / allWeights.length;
   const projectedAvg = currentAvg * (1 - rate);
-  
+
   const weightsAtRisk = allWeights.filter(w => {
     const decayed = Math.abs(w) * (1 - rate);
     return decayed < 0.01 && Math.abs(w) >= 0.01;
   }).length;
-  
+
   const strongWeights = allWeights.filter(w => Math.abs(w) > 0.5).length;
   const decayImpact = (weightsAtRisk / allWeights.length) * 100;
-  
+
   return {
     currentAverageWeight: currentAvg,
     projectedAverageWeight: projectedAvg,
@@ -402,7 +402,7 @@ export function preventDecayFor(
   const protected Set = new Set(
     protectedConnections.map(c => `${c.input}-${c.output}`)
   );
-  
+
   const newWeights = state.weights.map((row, i) =>
     row.map((weight, j) => {
       const key = `${i}-${j}`;
@@ -412,7 +412,7 @@ export function preventDecayFor(
       return weight * (1 - decayRate);
     })
   );
-  
+
   return {
     ...state,
     weights: newWeights

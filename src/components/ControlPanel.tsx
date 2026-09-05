@@ -16,7 +16,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   return (
     <div className="bg-gray-800 rounded-lg p-6 space-y-4">
       <h2 className="text-xl font-bold text-white mb-4">Controls</h2>
-      
+
       <div>
         <label htmlFor="learning-rate" className="block text-sm font-medium text-gray-300 mb-2">
           Learning Rate (η): {learningRate.toFixed(2)}
@@ -38,7 +38,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           <span>Fast (0.5)</span>
         </div>
         <p className="text-xs text-gray-400 mt-2">
-          Controls how quickly connections strengthen. Higher = faster learning, but more interference.
+          Controls how quickly connections strengthen. Higher = faster learning, but each teaching step changes the connection more strongly.
         </p>
       </div>
 

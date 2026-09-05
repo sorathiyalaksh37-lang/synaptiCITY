@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 
 interface RecallInterfaceProps {
   vocabulary: string[];
-  onRecall: (inputWord: string) => { predicted: string; expected?: string; confidence: number };
+  onRecall: (inputWord: string) => {
+    predicted: string;
+    confidence: number;
+  };
   disabled?: boolean;
 }
 
@@ -14,7 +17,6 @@ export const RecallInterface: React.FC<RecallInterfaceProps> = ({
   const [input, setInput] = useState('');
   const [result, setResult] = useState<{
     predicted: string;
-    expected?: string;
     confidence: number;
   } | null>(null);
 
@@ -40,12 +42,16 @@ export const RecallInterface: React.FC<RecallInterfaceProps> = ({
   return (
     <div className="bg-gray-800 rounded-lg p-6 space-y-4">
       <h2 className="text-xl font-bold text-white mb-4">Test Recall</h2>
-      
+
       <div className="space-y-4">
         <div>
-          <label htmlFor="recall-input" className="block text-sm font-medium text-gray-300 mb-2">
+          <label
+            htmlFor="recall-input"
+            className="block text-sm font-medium text-gray-300 mb-2"
+          >
             Input Word
           </label>
+
           <select
             id="recall-input"
             value={input}
@@ -58,8 +64,11 @@ export const RecallInterface: React.FC<RecallInterfaceProps> = ({
             aria-label="Select word to recall"
           >
             <option value="">Select...</option>
+
             {vocabulary.map(word => (
-              <option key={word} value={word}>{word}</option>
+              <option key={word} value={word}>
+                {word}
+              </option>
             ))}
           </select>
         </div>
@@ -80,52 +89,57 @@ export const RecallInterface: React.FC<RecallInterfaceProps> = ({
               <span className="text-gray-400">Input:</span>
               <span className="text-white font-semibold">{input}</span>
             </div>
-            
+
             <div className="flex items-center justify-between">
-              <span className="text-gray-400">Predicted:</span>
-              <span className={`font-semibold ${result.predicted ? 'text-blue-400' : 'text-gray-500'}`}>
+              <span className="text-gray-400">Current Prediction:</span>
+              <span
+                className={`font-semibold ${result.predicted ? 'text-blue-400' : 'text-gray-500'
+                  }`}
+              >
                 {result.predicted || 'Nothing'}
               </span>
             </div>
 
-            {result.expected && (
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Expected:</span>
-                <span className="text-green-400 font-semibold">{result.expected}</span>
-              </div>
-            )}
-
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Confidence:</span>
-              <span className={`font-semibold ${getConfidenceColor(result.confidence)}`}>
+              <span
+                className={`font-semibold ${getConfidenceColor(
+                  result.confidence
+                )}`}
+              >
                 {(result.confidence * 100).toFixed(1)}%
               </span>
             </div>
 
-            {result.expected && (
-              <div className="mt-3 pt-3 border-t border-gray-700">
-                {result.predicted === result.expected ? (
-                  <div className="flex items-center gap-2 text-green-400">
-                    <span className="text-2xl">✓</span>
-                    <span className="font-semibold">Correct! The network remembered.</span>
+            {result.confidence >= 0.45 &&
+              result.confidence <= 0.55 && (
+                <div className="mt-3 pt-3 border-t border-gray-700">
+                  <div className="flex items-start gap-2 text-yellow-400">
+                    <span className="text-xl">⚠️</span>
+
+                    <div>
+                      <p className="font-semibold">Ambiguous Memory</p>
+
+                      <p className="text-sm text-gray-400 mt-1">
+                        Multiple learned associations have similar strengths,
+                        so the network's current prediction is not clearly
+                        dominant.
+                      </p>
+                    </div>
                   </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-red-400">
-                    <span className="text-2xl">✗</span>
-                    <span className="font-semibold">Incorrect. Try teaching more or check for interference.</span>
-                  </div>
-                )}
-              </div>
-            )}
+                </div>
+              )}
           </div>
         )}
       </div>
 
       <div className="mt-4 p-4 bg-gray-900 rounded text-sm text-gray-300">
         <p className="font-semibold mb-2">💡 Testing Memory:</p>
+
         <p>
-          The network uses the connection strengths you've created to predict what word should follow.
-          Higher confidence means stronger memory!
+          The network compares the learned connection strengths from the input
+          word and selects its strongest association. When several connections
+          have similar strengths, recall can become ambiguous.
         </p>
       </div>
     </div>

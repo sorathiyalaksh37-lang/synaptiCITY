@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NeuralNetwork } from './lib/NeuralNetwork';
 import { NeuralGrid } from './components/NeuralGrid';
@@ -23,7 +22,6 @@ function App() {
     from: string;
     to: string;
   } | null>(null);
-  const [lastTaught, setLastTaught] = useState<Association | null>(null);
 
   // Force re-render when network state changes
   const forceUpdate = () => setUpdateTrigger(prev => prev + 1);
@@ -82,8 +80,6 @@ function App() {
       repetitions
     );
 
-    setLastTaught(association);
-
     setHighlightedConnection({
       from: association.input,
       to: association.output,
@@ -112,10 +108,6 @@ function App() {
 
     return {
       predicted: result.word,
-      expected:
-        lastTaught?.input === inputWord
-          ? lastTaught.output
-          : undefined,
       confidence: result.confidence,
     };
   };
@@ -127,7 +119,6 @@ function App() {
 
   const handleReset = () => {
     network.reset();
-    setLastTaught(null);
     setHighlightedConnection(null);
     forceUpdate();
   };
@@ -152,10 +143,10 @@ function App() {
               {/* Simulation Tab */}
               <button
                 onClick={() => setActiveTab('simulation')}
-                className={`px - 4 py - 2 rounded - lg font - semibold transition - colors ${activeTab === 'simulation'
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'simulation'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  } `}
+                  }`}
               >
                 Simulation
               </button>
@@ -163,10 +154,10 @@ function App() {
               {/* BDH Tab */}
               <button
                 onClick={() => setActiveTab('bdh')}
-                className={`px - 4 py - 2 rounded - lg font - semibold transition - colors ${activeTab === 'bdh'
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'bdh'
                   ? 'bg-purple-600 text-white'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  } `}
+                  }`}
               >
                 BDH/BDH-CQ
               </button>
@@ -174,10 +165,10 @@ function App() {
               {/* Test Tab */}
               <button
                 onClick={() => setActiveTab('test')}
-                className={`px - 4 py - 2 rounded - lg font - semibold transition - colors ${activeTab === 'test'
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'test'
                   ? 'bg-green-600 text-white'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  } `}
+                  }`}
               >
                 Test
               </button>
@@ -188,6 +179,7 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Simulation Tab */}
         {activeTab === 'simulation' && (
           <div className="space-y-6">
             {/* Introduction */}
@@ -255,41 +247,41 @@ function App() {
               </div>
             </div>
 
-            {/* Interference Demo */}
+            {/* Competing Memories Demo */}
             <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-6">
               <h3 className="text-xl font-bold mb-3 text-yellow-300">
-                🔬 Try This: Interference Experiment
+                🔬 Try This: Competing Memories
               </h3>
 
               <ol className="space-y-2 text-gray-300">
                 <li>
                   1. Teach DOG → ANIMAL (repeat 5 times)
                 </li>
-
                 <li>
                   2. Test recall: DOG → ? (should predict ANIMAL)
                 </li>
-
                 <li>
                   3. Now teach DOG → PET (repeat 5 times)
                 </li>
-
                 <li>
-                  4. Test recall again: DOG → ? (watch what happens!)
+                  4. Test recall again: DOG → ? (compare the learned associations)
                 </li>
               </ol>
 
               <p className="mt-3 text-sm text-gray-400">
-                This demonstrates <strong>interference</strong>—a
-                fundamental limitation of synaptic memory. Competing
-                associations weaken each other.
+                When multiple associations become strong, they can coexist in the
+                network. If their strengths become similar, recall can become
+                <strong> ambiguous</strong> because the network must choose between
+                competing learned associations.
               </p>
             </div>
           </div>
         )}
 
+        {/* BDH/BDH-CQ Tab */}
         {activeTab === 'bdh' && <BDHModule />}
 
+        {/* Test Tab */}
         {activeTab === 'test' && <SixtySecondTest />}
       </main>
 
