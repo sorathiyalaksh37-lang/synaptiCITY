@@ -4,6 +4,19 @@ An interactive educational simulation demonstrating how **synaptic plasticity**�
 
 ![synaptiCITY](https://img.shields.io/badge/Built%20with-React%20%2B%20TypeScript-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![Deployment](https://img.shields.io/badge/deployed-Vercel-black)
+
+## 🌐 Live Demo
+
+**Experience synaptiCITY now:** [https://synapti-city.vercel.app](https://synapti-city.vercel.app)
+
+## 🎨 Design System
+
+Built with the **Synaptic Bioluminescence** design system:
+- **Color Palette**: Deep neural medium with cyan (#38bdf8) accents, dark backgrounds (#10131c)
+- **Typography**: Space Grotesk (display), Geist (body), JetBrains Mono (code)
+- **Visual Language**: Glassmorphism with bioluminescent glow effects
+- **Aesthetic**: Bio-mimetic intelligence meets deep-space lab instrumentation
 
 ## 🧠 The Core Claim
 
@@ -74,9 +87,12 @@ To provide full transparency on what you are seeing:
 
 *Note: The UI is an educational simulation of a simple Hebbian network, not a real BDH/LLM model.*
 
-## 🚀 Reproducing the Demo
+## 🚀 Quick Start
 
-This application is entirely frontend/client-side.
+### Try it Online
+Visit **[https://synapti-city.vercel.app](https://synapti-city.vercel.app)** to experience the simulation immediately.
+
+### Run Locally
 
 ```bash
 # Clone the repository
@@ -95,9 +111,32 @@ npm run dev
 ### Building for Production
 
 ```bash
+# Build the project
 npm run build
+
+# Preview production build
 npm run preview
+
+# Lint the code
+npm run lint
 ```
+
+## 🚀 Deployment
+
+This project is configured for automated deployment with GitHub Actions and Vercel.
+
+### Automatic Deployment
+Every push to the `main` branch automatically triggers:
+1. ✅ Linting and build verification
+2. ✅ Production deployment to Vercel
+3. ✅ Preview deployments for pull requests
+
+### Manual Deployment Options
+- **Vercel**: `vercel --prod`
+- **Netlify**: `netlify deploy --prod`
+- **Static hosting**: Deploy the `dist` folder after `npm run build`
+
+See [DEPLOYMENT_SETUP.md](./DEPLOYMENT_SETUP.md) for detailed deployment instructions.
 
 ## 🏗️ Artifact Architecture
 
@@ -105,14 +144,45 @@ The repository is built primarily as a client-side React/Vite application:
 
 ```
 synapticity/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml       # GitHub Actions CI/CD pipeline
+├── public/
+│   ├── logo.png            # Hexagonal neural network logo
+│   └── logo-icon.svg       # SVG logo icon
 ├── src/
-│   ├── components/      # React components (Visual network, Control panel, Debug panel, BDH module)
+│   ├── components/         # React components
+│   │   ├── Logo.tsx        # Brand logo component
+│   │   ├── NeuralGrid.tsx  # Visual network display
+│   │   ├── TeachInterface.tsx
+│   │   ├── RecallInterface.tsx
+│   │   ├── ControlPanel.tsx
+│   │   ├── StateDebugPanel.tsx
+│   │   ├── ConnectionInspector.tsx
+│   │   ├── CompetingMemoryPanel.tsx
+│   │   ├── TeachingHistory.tsx
+│   │   ├── GuidedTour.tsx
+│   │   ├── ExperimentStageRail.tsx
+│   │   ├── BDHModule.tsx
+│   │   └── SixtySecondTest.tsx
 │   ├── lib/
-│   │   └── NeuralNetwork.ts # Pure JS implementation of the toy neural network (Hebbian logic)
-│   ├── utils/           # Utilities for the application state
-│   ├── styles/          # Tailwind CSS styles
-│   └── App.tsx          # Main application orchestrator for the educational stages
-├── package.json         # Dependencies (React, Vite, Tailwind, oxlint)
+│   │   └── NeuralNetwork.ts # Hebbian learning implementation
+│   ├── utils/
+│   │   └── transitionSound.ts
+│   ├── styles/
+│   │   └── index.css       # Synaptic Bioluminescence design system
+│   ├── types.ts
+│   ├── App.tsx             # Main application orchestrator
+│   └── main.tsx
+├── index.html
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+├── tailwind.config.js
+├── postcss.config.js
+├── vercel.json             # Vercel deployment config
+├── netlify.toml            # Netlify deployment config
+└── README.md
 ```
 - **React/Vite Application**: Provides the interactive educational stage and navigation structure.
 - **Neural-Network Simulation**: A pure JavaScript implementation (`src/lib/NeuralNetwork.ts`) that manages the vocabulary, weights, and Hebbian learning updates without external ML libraries.
@@ -149,10 +219,34 @@ Our toy model demonstrates **one mechanism** used in real systems. It is NOT a r
 - **BDH-CQ**: Engdahl, B. et al. (2026). *BDH-CQ: In-Context Learning with Recurrent Latent Reasoning*. [arXiv:2608.09888](https://arxiv.org/abs/2608.09888)
 - **Supporting Context (TTT)**: Sun, Y. et al. (2024). *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*. [arXiv:2407.04620](https://arxiv.org/abs/2407.04620)
 
+### Tech Stack
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS v4, Custom CSS (Synaptic Bioluminescence Design System)
+- **Fonts**: Space Grotesk, Geist, JetBrains Mono
+- **Linting**: oxlint
+- **Deployment**: Vercel, Netlify (configured)
+- **CI/CD**: GitHub Actions
+
 ### External Assets & Licenses
-- **Code Dependencies**: The project utilizes standard open-source web technologies including `react`, `react-dom`, `vite`, and `tailwindcss`. For complete license information of dependencies, refer to `package.json` and the respective package metadata which should be treated as authoritative.
-- **Visual Assets**: Standard `react.svg` and `vite.svg` are included as default Vite assets. There are no other external images or icon libraries used.
+- **Code Dependencies**: The project utilizes standard open-source web technologies. For complete license information of dependencies, refer to `package.json` and the respective package metadata.
+- **Visual Assets**: Custom hexagonal neural network logo design
 - **Code License**: This project is licensed under the MIT License.
+
+## 🛠️ Development
+
+### Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run linter
+
+### Design System
+The **Synaptic Bioluminescence** design system tokens are defined in `src/styles/index.css`:
+- Color tokens for surfaces, primary (cyan), secondary (indigo), tertiary (violet)
+- Typography scale with semantic naming
+- Spacing scale (8px base rhythm)
+- Border radius tokens
+- Glassmorphism and bioluminescent glow utilities
 
 ## 🤖 AI Assistance & Provenance
 
