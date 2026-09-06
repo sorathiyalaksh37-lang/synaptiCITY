@@ -126,21 +126,21 @@ export const BDHModule: React.FC = () => {
         </div>
       </div>
 
-      {/* Sources */}
-      <div className="bg-gray-900 rounded-lg p-5 space-y-2">
-        <h3 className="text-lg font-semibold text-white">Primary Sources</h3>
-        <ul className="text-sm text-gray-300 space-y-2">
+      {/* References / Further Reading */}
+      <div className="bg-gray-900 rounded-lg p-5 space-y-3">
+        <h3 className="text-lg font-semibold text-white">References / Further Reading</h3>
+        <ul className="text-sm text-gray-300 space-y-3">
           <li>
-            • <strong>Dragon Hatchling (2025):</strong> BDH architecture and equations
+            • <strong>BDH Architecture:</strong> Kosowski et al. — <em>The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain</em> —{' '}
+            <a href="https://arxiv.org/abs/2509.26507" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">arXiv:2509.26507</a>
           </li>
           <li>
-            • <strong>BDH-CQ Technical Report (2026):</strong> Contextual memory and reasoning
+            • <strong>BDH-CQ:</strong> Engdahl et al. — <em>BDH-CQ: In-Context Learning with Recurrent Latent Reasoning</em> —{' '}
+            <a href="https://arxiv.org/abs/2608.09888" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">arXiv:2608.09888</a>
           </li>
           <li>
-            • <strong>The Equations of Reasoning:</strong> Microscopic graph dynamics
-          </li>
-          <li>
-            • <strong>From Attention to Synapses:</strong> Theoretical derivation of BDH
+            • <strong>Supporting Research (TTT):</strong> Sun et al. — <em>Learning to (Learn at Test Time): RNNs with Expressive Hidden States</em> —{' '}
+            <a href="https://arxiv.org/abs/2407.04620" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">arXiv:2407.04620</a>
           </li>
         </ul>
       </div>

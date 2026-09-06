@@ -1,7 +1,7 @@
 # synaptiCITY - Concept Summary
 
-**Project Name:** synaptiCITY - When Connections Become Memory  
-**Track:** Pathway Track - Educational Interactive Resource  
+**Project Name:** synaptiCITY - When Connections Become Memory
+**Track:** Pathway Track - Educational Interactive Resource
 **Topic:** Synaptic Plasticity as Short-Term Memory
 
 ---
@@ -66,13 +66,13 @@ Where:
 - `x_t` = input at time t
 - `f` = non-linear activation (typically tanh or ReLU)
 
-**Key Innovation:**  
+**Key Innovation:**
 Instead of storing all key-value pairs in attention, BDH uses recurrent hidden states that evolve through synaptic-like updates. This enables:
 - Efficient in-context learning without massive caches
 - Memory that emerges from state dynamics, not explicit storage
 - Continual learning with manageable interference
 
-**Connection to Our Model:**  
+**Connection to Our Model:**
 Our toy network's weight matrix `W[i][j]` is analogous to BDH's evolving hidden state `h_t`. Both store learned associations through connection strength changes, not dedicated memory cells.
 
 ### BDH-CQ (2026)
@@ -90,7 +90,7 @@ BDH-CQ extends BDH with **contextual reasoning** capabilities:
 - Incorporates meta-learning mechanisms for demonstration-based learning
 - Uses hierarchical memory structures to reduce interference
 
-**Our Model's Limitation:**  
+**Our Model's Limitation:**
 We demonstrate raw Hebbian learning and its interference problem. BDH-CQ solves interference through architectural innovations we don't implement—highlighting why real systems need sophisticated engineering beyond the basic mechanism.
 
 ---
@@ -197,50 +197,41 @@ Real systems use:
 - Regularization (reduces overfitting)
 - Architectural constraints (shapes learning)
 
-**Why We Chose Simplicity**:  
+**Why We Chose Simplicity**:
 Adding these would obscure the core insight: memory emerges from connection changes. Once learners grasp this, they can layer on sophistication.
 
 ---
 
-## 7. Sources
+## 7. References / Sources
 
-### Primary Research Papers
+### Primary BDH Sources
 
-1. **Dragon Hatchling (2025)**  
-   - BDH architecture and equations
-   - Recurrent state-based attention
-   - Benchmark results: ARC-AGI, Sudoku
+1. **The Dragon Hatchling (BDH)**
+   Kosowski, A., Uznański, P., Chorowski, J., Stamirowska, Z., & Bartoszkiewicz, M. (2025). *The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain*. [arXiv:2509.26507](https://arxiv.org/abs/2509.26507).
+   *Primary architectural source for Dragon Hatchling (BDH).*
 
-2. **BDH-CQ Technical Report (2026)**  
-   - Contextual memory mechanisms
-   - Latent reasoning without CoT
-   - Few-shot learning from demonstrations
+2. **BDH-CQ**
+   Engdahl, B., Kosowski, A., Chorowski, J., Stamirowska, Z., Uznański, P., Jiang, J., Phadke, R., Kinas, R., & Zhong, R. (2026). *BDH-CQ: In-Context Learning with Recurrent Latent Reasoning*. [arXiv:2608.09888](https://arxiv.org/abs/2608.09888).
+   *Primary source for BDH-CQ and recurrent latent reasoning.*
 
-3. **The Equations of Reasoning**  
-   - Mathematical foundations
-   - Microscopic graph dynamics
-   - Theoretical analysis of memory systems
+### Supporting Research
 
-4. **From Attention to Synapses**  
-   - Derivation of BDH from attention mechanisms
-   - Connection to neuroscience literature
-   - Synaptic plasticity as computational primitive
+3. **Test-Time Training (TTT)**
+   Sun, Y., Li, X., Dalal, K., Xu, J., Vikram, A., Zhang, G., Dubois, Y., Chen, X., Wang, X., Koyejo, S., Hashimoto, T., & Guestrin, C. (2024). *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*. [arXiv:2407.04620](https://arxiv.org/abs/2407.04620).
+   *Supporting research context for expressive recurrent hidden states; structurally distinct from BDH.*
 
 ### Foundational Neuroscience
 
-5. **Hebb (1949)**: "The Organization of Behavior"  
-   - Original formulation: "Neurons that fire together, wire together"
+4. **Hebb (1949)**: *The Organization of Behavior*
+   Original formulation: "Neurons that fire together, wire together"
 
-6. **Kandel et al. (2000)**: "Principles of Neural Science"  
-   - Synaptic plasticity mechanisms
-   - Long-term potentiation (LTP)
-   - Memory consolidation
+5. **Kandel et al. (2000)**: *Principles of Neural Science*
+   Synaptic plasticity mechanisms
 
 ### Educational Framework
 
-7. **Constructivist Learning Theory**  
-   - Learning through manipulation and experimentation
-   - Concrete to abstract progression
+6. **Constructivist Learning Theory**
+   Learning through manipulation and experimentation
 
 ---
 

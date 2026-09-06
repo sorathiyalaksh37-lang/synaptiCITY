@@ -1,7 +1,5 @@
 # synaptiCITY - When Connections Become Memory
 
-⭐⭐⭐⭐⭐ **A uniquely interactive approach to understanding synaptic plasticity**
-
 An interactive educational simulation demonstrating how **synaptic plasticity**—the strengthening of connections between neurons—creates short-term memory. Watch memory emerge in real-time through Hebbian learning, experiment with parameters, and discover the connection to cutting-edge AI systems like Dragon Hatchling (BDH) and BDH-CQ.
 
 ![synaptiCITY](https://img.shields.io/badge/Built%20with-React%20%2B%20TypeScript-blue)
@@ -11,18 +9,36 @@ An interactive educational simulation demonstrating how **synaptic plasticity**�
 
 **Memory can emerge from temporarily changing the strength of connections in a neural system, and this mechanism enables both rapid learning and interference between competing memories.**
 
-## 🎯 What Problem Are We Solving?
+## 🎯 Intended Learner
 
-Students can read that "synaptic plasticity allows recent activity to modify connection strengths," but they still don't understand:
+This project is intended for learners interested in:
+- Neural networks and machine learning memory
+- Hebbian learning and synaptic plasticity
+- Recurrent models and brain-inspired AI
 
-- **What exactly changes?** (Abstract concept, no visual)
-- **Where is the memory?** (Hidden in matrices)
-- **How does changing a connection allow recall?** (Counterintuitive)
-- **Why does repetition strengthen memory?** (Not obvious)
-- **What happens when memories compete?** (Not explained)
-- **How does this connect to modern AI?** (No bridge)
+It is designed to be accessible to beginners and intermediate learners looking to build intuition about how connections store memory.
 
-**synaptiCITY solves this** through live, interactive computation where learners can see memory forming, break it through interference, and connect the intuition to real AI architectures.
+## 📚 Prerequisites
+
+**To understand the concepts:**
+Basic familiarity with:
+- Neural networks
+- Neurons/activations
+- Weights
+- Basic machine-learning terminology
+
+**To run the project:**
+- Node.js 18+ and npm
+
+## 🎯 Learning Objectives
+
+By the end of this module, the learner should be able to:
+- Explain the basic intuition behind Hebbian learning.
+- Explain how changing connection strengths can encode recent activity.
+- Distinguish static parameters from dynamically changing state.
+- Understand the role of synaptic plasticity in the demonstrated model.
+- Understand at a high level how BDH/BDH-CQ relate to recurrent memory and brain-inspired computation.
+- Inspect the interactive state/weight changes demonstrated by the application.
 
 ## ✨ Features
 
@@ -41,12 +57,26 @@ Students can read that "synaptic plasticity allows recent activity to modify con
 - ♿ **Accessibility**: Full ARIA labels and keyboard navigation
 - 📱 **Responsive Design**: Works on all screen sizes
 
-## 🚀 Quick Start
+## 🚦 Live vs Precomputed vs Animated
 
-### Prerequisites
-- Node.js 18+ and npm
+To provide full transparency on what you are seeing:
+- **Live / computed**:
+  - The neural network state (activations and weight matrix)
+  - The weight updates via the Hebbian learning rule (`teach` function)
+  - The prediction/recall calculations
+  - The SVG lines displaying the weight matrix (thickness and color reflect the live computed weights)
+- **Precomputed**:
+  - The small vocabulary set (6 static words)
+  - The text of the BDH/BDH-CQ educational module
+- **Animated / decorative**:
+  - The smooth SVG path transitions when weights change (visually interpolated by React/CSS, representing live state)
+  - UI stage transitions
 
-### Installation
+*Note: The UI is an educational simulation of a simple Hebbian network, not a real BDH/LLM model.*
+
+## 🚀 Reproducing the Demo
+
+This application is entirely frontend/client-side.
 
 ```bash
 # Clone the repository
@@ -69,28 +99,24 @@ npm run build
 npm run preview
 ```
 
-## 🎓 The Learning Journey
+## 🏗️ Artifact Architecture
 
-1. **Intuition**: "What if memory isn't a place, but a change?"
-2. **Neural Connections**: Visual grid of nodes and weighted edges
-3. **Repeated Activity**: Teach DOG → ANIMAL three times
-4. **Connection Strength Changes**: Line thickens, color changes from red to green
-5. **Memory Emerges**: System now recalls ANIMAL when asked DOG → ?
-6. **Recall Test**: Verify the network learned
-7. **Interference**: Teach DOG → PET → both connections weaken
-8. **Why This Matters for AI**: Connection to BDH's synaptic memory mechanism
-9. **BDH & BDH-CQ**: Equations, architecture, published evidence
-10. **Sixty-Second Test**: Prove understanding
-11. **Limitations**: Interference, forgetting, toy vs real model
+The repository is built primarily as a client-side React/Vite application:
 
-## 🔬 Try This: Interference Experiment
-
-1. Teach DOG → ANIMAL (repeat 5 times)
-2. Test recall: DOG → ? (should predict ANIMAL)
-3. Now teach DOG → PET (repeat 5 times)
-4. Test recall again: DOG → ? (watch what happens!)
-
-This demonstrates **interference**—a fundamental limitation of synaptic memory.
+```
+synapticity/
+├── src/
+│   ├── components/      # React components (Visual network, Control panel, Debug panel, BDH module)
+│   ├── lib/
+│   │   └── NeuralNetwork.ts # Pure JS implementation of the toy neural network (Hebbian logic)
+│   ├── utils/           # Utilities for the application state
+│   ├── styles/          # Tailwind CSS styles
+│   └── App.tsx          # Main application orchestrator for the educational stages
+├── package.json         # Dependencies (React, Vite, Tailwind, oxlint)
+```
+- **React/Vite Application**: Provides the interactive educational stage and navigation structure.
+- **Neural-Network Simulation**: A pure JavaScript implementation (`src/lib/NeuralNetwork.ts`) that manages the vocabulary, weights, and Hebbian learning updates without external ML libraries.
+- **Visualization Components**: Custom React components rendering the nodes and weighted connections based on live state.
 
 ## 🧬 Connection to Real AI: BDH & BDH-CQ
 
@@ -98,31 +124,15 @@ This demonstrates **interference**—a fundamental limitation of synaptic memory
 
 BDH reformulates attention as **synaptic memory** through Hebbian-style writes, enabling models to learn from context without massive key-value caches.
 
-**Core recurrent update:**
-```
-h_t = f(W · x_t + U · h_{t-1})
-```
-
-Where:
-- `h_t` = hidden state at time t
-- `W, U` = learned weight matrices
-- `f` = non-linear activation function
-
 ### BDH-CQ (Contextual Memory + Reasoning)
 
 BDH-CQ extends the synaptic memory mechanism with **latent reasoning**—learning from demonstrations without requiring chain-of-thought explanations.
-
-**Key capabilities:**
-- Learning from demonstrations
-- Reasoning without verbal chain-of-thought
-- Proven on ARC-AGI benchmark
-- Scales from 1B to 600B parameters
 
 ### Toy Model vs. Real System
 
 | Aspect | Our Toy Model | BDH/BDH-CQ |
 |--------|---------------|------------|
-| **Scale** | 6-word vocabulary | 1B-600B parameters |
+| **Scale** | 6-word vocabulary | Variable scale |
 | **Learning Rule** | Hebbian: Δw = η × aᵢ × aⱼ | Hebbian-inspired with backprop |
 | **Memory** | Visible weight matrix | Hidden synaptic state |
 | **Interference** | Demonstrated directly | Managed through architecture |
@@ -132,237 +142,36 @@ BDH-CQ extends the synaptic memory mechanism with **latent reasoning**—learnin
 
 Our toy model demonstrates **one mechanism** used in real systems. It is NOT a reimplementation of BDH or BDH-CQ. Published benchmark results (ARC-AGI, Sudoku) come from the original research papers, not our simulation.
 
-## 📚 Primary Sources
+## 📚 Sources, Licenses & Attribution
 
-- **Dragon Hatchling (2025)**: BDH architecture and equations
-- **BDH-CQ Technical Report (2026)**: Contextual memory and reasoning
-- **The Equations of Reasoning**: Microscopic graph dynamics
-- **From Attention to Synapses**: Theoretical derivation of BDH
+### Research Sources
+- **BDH Architecture**: Kosowski, A. et al. (2025). *The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain*. [arXiv:2509.26507](https://arxiv.org/abs/2509.26507)
+- **BDH-CQ**: Engdahl, B. et al. (2026). *BDH-CQ: In-Context Learning with Recurrent Latent Reasoning*. [arXiv:2608.09888](https://arxiv.org/abs/2608.09888)
+- **Supporting Context (TTT)**: Sun, Y. et al. (2024). *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*. [arXiv:2407.04620](https://arxiv.org/abs/2407.04620)
 
-## 🏗️ Architecture
+### External Assets & Licenses
+- **Code Dependencies**: The project utilizes standard open-source web technologies including `react`, `react-dom`, `vite`, and `tailwindcss`. For complete license information of dependencies, refer to `package.json` and the respective package metadata which should be treated as authoritative.
+- **Visual Assets**: Standard `react.svg` and `vite.svg` are included as default Vite assets. There are no other external images or icon libraries used.
+- **Code License**: This project is licensed under the MIT License.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     synaptiCITY ARCHITECTURE                │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              USER INTERFACE (React)                  │   │
-│  │  ┌─────────┐  ┌─────────┐  ┌─────────────────┐    │   │
-│  │  │ Neural  │  │Controls │  │  Debug Panel    │    │   │
-│  │  │  Grid   │  │         │  │  (State Viewer) │    │   │
-│  │  └─────────┘  └─────────┘  └─────────────────┘    │   │
-│  │  ┌─────────┐  ┌─────────┐  ┌─────────────────┐    │   │
-│  │  │  BDH    │  │  60-    │  │  Expected vs    │    │   │
-│  │  │ Module  │  │ Second  │  │  Model Output   │    │   │
-│  │  │         │  │  Test   │  │                 │    │   │
-│  │  └─────────┘  └─────────┘  └─────────────────┘    │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                            ↕                                │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           NEURAL NETWORK (Plain JS)                 │   │
-│  │  ┌─────────────────────────────────────────────┐  │   │
-│  │  │           Hebbian Learning Rule              │  │   │
-│  │  │      Δw = η × aᵢ × aⱼ                      │  │   │
-│  │  └─────────────────────────────────────────────┘  │   │
-│  │  ┌─────────────────────────────────────────────┐  │   │
-│  │  │           Weight Matrix                      │  │   │
-│  │  │  [0.0, 0.8, 0.2]                           │  │   │
-│  │  │  [0.1, 0.0, 0.9]                           │  │   │
-│  │  │  [0.3, 0.4, 0.0]                           │  │   │
-│  │  └─────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+## 🤖 AI Assistance & Provenance
 
-## 🛠️ Tech Stack
+During the development of this project, AI-assisted development tools were utilized for:
+- Code implementation and refactoring assistance
+- Documentation drafting and editing
+- UI and content iteration
 
-| Layer | Technology |
-|-------|------------|
-| **UI Framework** | React + TypeScript + Vite |
-| **Styling** | Tailwind CSS |
-| **Visualization** | Custom SVG Components |
-| **Neural Network** | Plain JavaScript (no external libs) |
-| **Hebbian Learning** | Custom implementation |
-| **Math Rendering** | HTML/CSS (no external math lib needed) |
-| **Build Tool** | Vite |
-| **Linting** | ESLint + TypeScript |
+**Provenance Note**:
+- The final implementation was reviewed and tested by the project team.
+- Technical claims are grounded in the cited primary sources, not AI-generated hallucinations.
+- Generated suggestions were checked before being incorporated.
 
-## 📁 Project Structure
-
-```
-synapticity/
-├── public/              # Static assets
-├── src/
-│   ├── components/      # React components
-│   │   ├── NeuralGrid.tsx          # Neural network visualization
-│   │   ├── TeachInterface.tsx      # Teaching UI
-│   │   ├── RecallInterface.tsx     # Recall testing UI
-│   │   ├── ControlPanel.tsx        # Parameter controls
-│   │   ├── StateDebugPanel.tsx     # Weight matrix viewer
-│   │   ├── BDHModule.tsx           # BDH/BDH-CQ content
-│   │   └── SixtySecondTest.tsx     # Quiz component
-│   ├── lib/
-│   │   └── NeuralNetwork.ts        # Core Hebbian learning logic
-│   ├── types/
-│   │   └── index.ts                # TypeScript interfaces
-│   ├── styles/
-│   │   └── index.css               # Global styles + Tailwind
-│   ├── App.tsx                     # Main application
-│   └── main.tsx                    # Entry point
-├── index.html
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── tailwind.config.js
-└── README.md
-```
-
-## 🧪 Key Components
-
-### NeuralNetwork Class
-
-The core of the simulation implements Hebbian learning:
-
-```typescript
-// Hebbian learning rule: Δw = η × aᵢ × aⱼ
-private hebbianUpdate(inputWord: string, outputWord: string): void {
-  const i = this.getIndex(inputWord);
-  const j = this.getIndex(outputWord);
-  
-  const ai = this.activations[i];
-  const aj = this.activations[j];
-  
-  const deltaW = this.learningRate * ai * aj;
-  this.weights[i][j] += deltaW;
-}
-```
-
-### Modular Utilities
-
-For advanced use cases, we also provide modular utilities in `src/utils/`:
-
-```typescript
-import { createInitialState, teach, recall } from './utils';
-
-// Create network state
-let state = createInitialState(6, 0.1);
-
-// Teach association
-state = teach(state, 0, 1, 3); // Node 0 → Node 1, 3 times
-
-// Test recall
-const result = recall(state.weights, 0);
-```
-
-**See [UTILITIES_GUIDE.md](UTILITIES_GUIDE.md) for complete API reference.**
-
-### NeuralGrid Component
-
-Visualizes the network state with SVG:
-- Nodes sized and colored by activation
-- Edges colored by weight (red = weak, green = strong)
-- Edge thickness proportional to weight
-- Smooth animations on state changes
-
-## 🎨 Design Decisions
-
-1. **Plain JavaScript Neural Network**: No external ML libraries to keep the mechanism transparent and educational
-2. **SVG Visualization**: Scalable, accessible, and performant
-3. **Circular Layout**: Shows all-to-all connections clearly
-4. **Color Coding**: Intuitive weak → strong progression (red → orange → green)
-5. **State Debug Panel**: Exposes internal state for deeper learning
-6. **Tab-based UI**: Separates simulation, theory (BDH), and assessment (test)
-
-## ♿ Accessibility Features
-
-- Full ARIA labels on all interactive elements
-- Keyboard navigation support
-- Screen reader friendly
-- High contrast color scheme
-- Focus indicators
-- Semantic HTML structure
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-```
-
-### Netlify
-
-```bash
-# Install Netlify CLI
-npm i -g netlify-cli
-
-# Build and deploy
-npm run build
-netlify deploy --prod --dir=dist
-```
-
-### GitHub Pages
-
-```bash
-# Build
-npm run build
-
-# Deploy (configure base URL in vite.config.ts first)
-npm run deploy
-```
-
-## 🧑‍💻 Development
-
-```bash
-# Run dev server with hot reload
-npm run dev
-
-# Type checking
-npm run lint
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-## 📊 Success Metrics
-
-| Metric | Target |
-|--------|--------|
-| **Learning Outcome** | 3/3 on Sixty-Second Test |
-| **Performance** | < 1 second feedback |
-| **Mobile Support** | Works on all screen sizes |
-| **Accessibility** | Keyboard + ARIA compliant |
-| **User Engagement** | Completes all 5 sections |
-
-## 🤝 Contributing
-
-This is an educational project built for the Pathway Track competition. Contributions are welcome after the competition period.
-
-## 📄 License
-
-MIT License - see LICENSE file for details
-
-## 🙏 Acknowledgments
+## 🙏 Credits
 
 - **Dragon Hatchling (BDH)** research team for the synaptic memory concept
 - **BDH-CQ** researchers for contextual reasoning insights
 - **Pathway Track** for inspiring this educational resource
 
-## 📧 Contact
-
-For questions or feedback about this project, please open an issue on GitHub.
-
 ---
 
-**Built with ❤️ for understanding how connections become memory**
-
-⭐⭐⭐⭐⭐ **No one else is building this** — A truly unique interactive approach to synaptic plasticity education.
+**Built for understanding how connections become memory.**
