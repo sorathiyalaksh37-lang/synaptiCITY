@@ -32,7 +32,9 @@ export const CompetingMemoryPanel: React.FC<CompetingMemoryPanelProps> = ({
       <div className="competition-heading">
         <div>
           <h2>One cue. Two associations.</h2>
-          <p>Strengthen the second path and watch the actual margin change.</p>
+          <p>
+            You now have two learned paths from <strong>{input}</strong>: <strong>{input} → {firstOutput}</strong> and <strong>{input} → {secondOutput}</strong>. Recall selects the strongest learned path.
+          </p>
         </div>
         <span className="competition-mark">↙ ↘</span>
       </div>
@@ -74,8 +76,8 @@ export const CompetingMemoryPanel: React.FC<CompetingMemoryPanelProps> = ({
         <span>{isAmbiguous ? '!' : 'i'}</span>
         <p>
           {isAmbiguous
-            ? 'The strengths are close, so recall is genuinely ambiguous. The model still chooses its actual highest-scoring output.'
-            : 'Both connections can coexist in this toy model. Similar strengths create competition; this model does not implement biological forgetting.'}
+            ? 'The strengths are close, so recall is genuinely ambiguous. The model selects whichever path currently has the higher weight.'
+            : 'Both connection weights coexist in this toy model. Recall selects the strongest learned path without erasing the other.'}
         </p>
       </div>
     </section>
