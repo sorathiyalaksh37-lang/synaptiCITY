@@ -21,22 +21,22 @@ export const StateDebugPanel: React.FC<StateDebugPanelProps> = ({
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6">
+    <section className="debug-panel">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between text-xl font-bold text-white mb-4 hover:text-blue-400 transition-colors"
+        className="debug-toggle"
         aria-expanded={isExpanded}
         aria-controls="debug-panel-content"
       >
-        <span>State Debug Panel</span>
-        <span className="text-2xl">{isExpanded ? '▼' : '▶'}</span>
+        <span><span className="panel-kicker">TECHNICAL DETAIL</span><strong>State snapshot</strong></span>
+        <span className="debug-chevron">{isExpanded ? '−' : '+'}</span>
       </button>
 
       {isExpanded && (
-        <div id="debug-panel-content" className="space-y-4">
+        <div id="debug-panel-content" className="debug-content">
           {/* Weight Matrix */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-300 mb-2">Weight Matrix</h3>
+            <h3>Weight matrix</h3>
             <div className="overflow-x-auto">
               <table className="text-xs border-collapse">
                 <thead>
@@ -75,12 +75,12 @@ export const StateDebugPanel: React.FC<StateDebugPanelProps> = ({
 
           {/* Activations */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-300 mb-2">Current Activations</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            <h3>Current activations</h3>
+            <div className="activation-grid">
               {vocabulary.map((word, i) => (
                 <div
                   key={word}
-                  className={`px-3 py-2 rounded ${
+                    className={`activation-cell ${
                     activations[i] > 0 ? 'bg-blue-600' : 'bg-gray-700'
                   }`}
                 >
@@ -95,8 +95,8 @@ export const StateDebugPanel: React.FC<StateDebugPanelProps> = ({
 
           {/* Color Legend */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-300 mb-2">Weight Legend</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+            <h3>Weight legend</h3>
+            <div className="debug-legend">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-gray-800 border border-gray-600 rounded"></div>
                 <span className="text-gray-300">&lt; 0.1</span>
@@ -117,6 +117,6 @@ export const StateDebugPanel: React.FC<StateDebugPanelProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 };
