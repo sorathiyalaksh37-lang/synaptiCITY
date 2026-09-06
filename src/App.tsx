@@ -275,7 +275,7 @@ function App() {
             </section>
 
             <ExperimentStageRail stages={STAGES} activeStage={activeStage} completedStages={completedStages} onSelect={selectStage} />
-            <GuidedTour step={activeStage} completedStages={completedStages} onNext={() => setActiveStage(Math.min(5, activeStage + 1))} onSkip={() => setActiveStage(1)} />
+            <GuidedTour step={activeStage} completedStages={completedStages} onNext={() => setActiveStage(activeStage >= 5 ? 1 : activeStage + 1)} onSkip={() => setActiveStage(1)} />
 
             <section className="lab-layout ride-layout" ref={simulationRef}>
               <div className="graph-column">
