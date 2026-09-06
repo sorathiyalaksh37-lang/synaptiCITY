@@ -1,159 +1,465 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export const BDHModule: React.FC = () => {
+  const [activeComparisonTab, setActiveComparisonTab] = useState<'memory' | 'computation' | 'scaling'>('memory');
+
   return (
-    <div className="bg-gray-800 rounded-lg p-6 space-y-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold text-white mb-4">
-        Connection to Real AI: BDH & BDH-CQ
-      </h2>
+    <div className="research-module">
+      {/* Keyframes for Restrained Exhibit Motion */}
+      <style>{`
+        @keyframes signal-flow {
+          0% { left: 0%; opacity: 0; }
+          20% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { left: 100%; opacity: 0; }
+        }
+        @keyframes signal-flow-down {
+          0% { top: 0%; opacity: 0; }
+          20% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+        @keyframes pulse-ring {
+          0%, 100% { transform: scale(1); opacity: 0.6; }
+          50% { transform: scale(1.15); opacity: 1; }
+        }
+        .animate-signal-x {
+          position: absolute;
+          top: 50%;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: var(--cyan);
+          box-shadow: 0 0 12px var(--cyan);
+          transform: translateY(-50%);
+          animation: signal-flow 2.8s ease-in-out infinite;
+        }
+        .animate-signal-y {
+          position: absolute;
+          left: 50%;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: var(--violet);
+          box-shadow: 0 0 12px var(--violet);
+          transform: translateX(-50%);
+          animation: signal-flow-down 3s ease-in-out infinite;
+        }
+        .animate-pulse-ring {
+          animation: pulse-ring 3s ease-in-out infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-signal-x, .animate-signal-y, .animate-pulse-ring {
+            animation: none !important;
+          }
+        }
+      `}</style>
 
-      {/* Introduction */}
-      <div className="space-y-3">
-        <h3 className="text-xl font-semibold text-blue-400">
-          From Toy Model to Real Architecture
-        </h3>
-        <p className="text-gray-300">
-          What you just experienced—memory emerging from connection strength changes—isn't just
-          a teaching tool. It's the same mechanism powering cutting-edge AI systems like{' '}
-          <strong className="text-white">Dragon Hatchling (BDH)</strong> and{' '}
-          <strong className="text-white">BDH-CQ</strong>.
+      {/* CENTRAL CONCEPT CHAIN BREADCRUMB */}
+      <section className="research-panel">
+        <span className="panel-kicker">EXHIBIT NARRATIVE CHAIN</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px', font: '12px var(--mono)', marginTop: '8px', color: 'var(--muted)' }}>
+          <strong style={{ color: 'var(--cyan)' }}>SYNAPTIC PLASTICITY</strong>
+          <span style={{ color: 'var(--faint)' }}>→</span>
+          <span>CONNECTION STRENGTH</span>
+          <span style={{ color: 'var(--faint)' }}>→</span>
+          <strong style={{ color: 'var(--cyan)' }}>LEARNED STATE</strong>
+          <span style={{ color: 'var(--faint)' }}>→</span>
+          <span>RECALL</span>
+          <span style={{ color: 'var(--faint)' }}>→</span>
+          <strong style={{ color: 'var(--violet)' }}>BDH RECURRENT STATE</strong>
+          <span style={{ color: 'var(--faint)' }}>→</span>
+          <strong style={{ color: 'var(--violet)' }}>BDH-CQ LATENT REASONING</strong>
+        </div>
+      </section>
+
+      {/* 1. BDH HERO */}
+      <section className="research-panel">
+        <div className="panel-heading-row">
+          <div>
+            <span className="panel-kicker">RESEARCH CONNECTION / BDH & BRAIN-INSPIRED COMPUTATION</span>
+            <h2>From toy memory to recurrent state.</h2>
+          </div>
+          <span className="action-index">01</span>
+        </div>
+        <p className="panel-intro">
+          In our toy experiment, memory lives in changing connection strengths between words.
+          <strong> Dragon Hatchling (BDH)</strong> takes a related computational idea into modern AI research: carrying information in a
+          dynamically updated <em>recurrent hidden state</em>.
         </p>
-      </div>
 
-      {/* BDH Section */}
-      <div className="bg-gray-900 rounded-lg p-5 space-y-3">
-        <h3 className="text-lg font-semibold text-green-400">
-          Dragon Hatchling (BDH)
-        </h3>
-        <p className="text-gray-300 text-sm">
-          BDH reformulates attention as <strong>synaptic memory</strong> through Hebbian-style writes,
-          enabling models to learn from context without massive key-value caches.
-        </p>
-        
-        <div className="bg-gray-800 p-4 rounded font-mono text-sm text-gray-300 overflow-x-auto">
-          <div className="mb-2 text-blue-300">// Core recurrent update</div>
-          <div>h<sub>t</sub> = f(W · x<sub>t</sub> + U · h<sub>t-1</sub>)</div>
-          <div className="mt-3 text-gray-400">Where:</div>
-          <ul className="mt-1 ml-4 space-y-1 text-xs">
-            <li>• h<sub>t</sub> = hidden state at time t</li>
-            <li>• W, U = learned weight matrices</li>
-            <li>• x<sub>t</sub> = input at time t</li>
-            <li>• f = non-linear activation function</li>
-          </ul>
+        {/* Visual State-Flow Diagram */}
+        <div style={{ marginTop: '20px', padding: '18px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', font: '10px var(--mono)', color: 'var(--faint)', marginBottom: '12px' }}>
+            <span style={{ color: 'var(--cyan)', fontWeight: 600 }}>CONCEPTUAL MODEL</span>
+            <span>Information carrying forward through internal state</span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', textAlign: 'center', font: '12px var(--mono)', alignItems: 'center' }}>
+            <div style={{ padding: '14px', border: '1px solid var(--line)', background: 'rgba(16, 22, 26, 0.82)' }}>
+              <span style={{ fontSize: '9px', color: 'var(--faint)', textTransform: 'uppercase', display: 'block' }}>INPUT TOKEN</span>
+              <strong style={{ color: 'var(--cyan)', fontSize: '14px' }}>DOG</strong>
+            </div>
+
+            <div style={{ padding: '14px', border: '1px solid var(--line)', background: 'rgba(16, 22, 26, 0.82)', position: 'relative' }}>
+              <span style={{ fontSize: '9px', color: 'var(--faint)', textTransform: 'uppercase', display: 'block' }}>STATE (h₀)</span>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', paddingTop: '8px' }}>
+                <span className="animate-pulse-ring" style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--cyan)' }} />
+                <span className="animate-pulse-ring" style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--cyan)' }} />
+                <span className="animate-pulse-ring" style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--cyan)' }} />
+              </div>
+            </div>
+
+            <div style={{ padding: '14px', border: '1px solid rgba(102, 217, 255, 0.4)', background: 'rgba(102, 217, 255, 0.05)' }}>
+              <span style={{ fontSize: '9px', color: 'var(--cyan)', textTransform: 'uppercase', display: 'block' }}>UPDATED STATE (h₁)</span>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', paddingTop: '8px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--cyan)', boxShadow: '0 0 8px var(--cyan)' }} />
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--cyan)', boxShadow: '0 0 8px var(--cyan)' }} />
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--cyan)', boxShadow: '0 0 8px var(--cyan)' }} />
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--cyan)', boxShadow: '0 0 8px var(--cyan)' }} />
+              </div>
+            </div>
+
+            <div style={{ padding: '14px', border: '1px solid rgba(125, 215, 170, 0.4)', background: 'rgba(125, 215, 170, 0.05)' }}>
+              <span style={{ fontSize: '9px', color: 'var(--green)', textTransform: 'uppercase', display: 'block' }}>RECALLED OUTPUT</span>
+              <strong style={{ color: 'var(--green)', fontSize: '14px' }}>ANIMAL</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. THE CENTRAL CONNECTION */}
+      <section className="research-panel">
+        <div className="panel-heading-row">
+          <div>
+            <span className="panel-kicker">THE CENTRAL CONNECTION</span>
+            <h2>Learning changes what the system carries forward.</h2>
+          </div>
+          <span className="action-index">02</span>
         </div>
 
-        <div className="text-sm text-gray-300 space-y-2">
-          <p><strong>Key Innovation:</strong></p>
-          <ul className="ml-4 space-y-1">
-            <li>• Attention mechanism as synaptic memory</li>
-            <li>• Recurrent state updates instead of large caches</li>
-            <li>• Efficient in-context learning</li>
-          </ul>
-        </div>
-      </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginTop: '18px', font: '12px var(--mono)' }}>
+          {/* Left: Toy Experiment */}
+          <div style={{ padding: '16px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <span style={{ color: 'var(--cyan)', fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: '10px' }}>
+              SYNAPTICITY TOY MODEL
+            </span>
+            <div style={{ color: 'var(--muted)', lineHeight: '1.8' }}>
+              <div>DOG → ANIMAL</div>
+              <div style={{ color: 'var(--cyan)' }}>↓ Connection strength increases (Δw = η × aᵢ × aⱼ)</div>
+              <div>↓ Weight matrix stores memory</div>
+              <div style={{ color: 'var(--green)' }}>↓ Outgoing matrix recall retrieves highest score</div>
+            </div>
+          </div>
 
-      {/* BDH-CQ Section */}
-      <div className="bg-gray-900 rounded-lg p-5 space-y-3">
-        <h3 className="text-lg font-semibold text-purple-400">
-          BDH-CQ (Contextual Memory + Reasoning)
-        </h3>
-        <p className="text-gray-300 text-sm">
-          BDH-CQ extends the synaptic memory mechanism with <strong>latent reasoning</strong>—learning
-          from demonstrations without requiring chain-of-thought explanations.
-        </p>
-        
-        <div className="text-sm text-gray-300 space-y-2">
-          <p><strong>Capabilities:</strong></p>
-          <ul className="ml-4 space-y-1">
-            <li>• Learning from demonstrations (contextual memory)</li>
-            <li>• Reasoning without verbal chain-of-thought</li>
-            <li>• Evaluated on ARC-AGI benchmark</li>
-            <li>• Scalable architecture</li>
-          </ul>
+          {/* Right: BDH */}
+          <div style={{ padding: '16px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <span style={{ color: 'var(--violet)', fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: '10px' }}>
+              BDH ARCHITECTURE
+            </span>
+            <div style={{ color: 'var(--muted)', lineHeight: '1.8' }}>
+              <div>INPUT TOKEN (x<sub>t</sub>)</div>
+              <div style={{ color: 'var(--violet)' }}>↓ Recurrent state update (h<sub>t</sub> = f(W·x<sub>t</sub> + U·h<sub>t-1</sub>))</div>
+              <div>↓ Dynamic hidden state carries context forward</div>
+              <div style={{ color: 'var(--violet)' }}>↓ Downstream computation reads recurrent state</div>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-blue-900/30 border-l-4 border-blue-400 p-3 text-sm text-gray-300">
-          <p className="font-semibold text-blue-300">Published Evidence:</p>
-          <p className="mt-1">
-            BDH and BDH-CQ have published results on benchmarks including ARC-AGI and Sudoku.
-            These results come from the original research teams, not our toy simulation.
-          </p>
+        <div className="equation-block">
+          <span className="equation-label">Illustrative Recurrence (Conceptual Model)</span>
+          <code>h<sub>t</sub> = f(W · x<sub>t</sub> + U · h<sub>t-1</sub>)</code>
+          <small style={{ color: 'var(--faint)', display: 'block', marginTop: '6px', fontSize: '11px', lineHeight: '1.5' }}>
+            * Pedagogical simplification. BDH's literal math updates a sparse synapse-state matrix via positive activations rather than a dense vector RNN transition.
+          </small>
         </div>
-      </div>
+      </section>
 
-      {/* Comparison Table */}
-      <div>
-        <h3 className="text-xl font-semibold text-white mb-3">
-          Toy Model vs. Real System
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
+      {/* 3. EXPERIMENT VS BDH COMPARISON */}
+      <section className="research-panel">
+        <div className="panel-heading-row">
+          <div>
+            <span className="panel-kicker">MECHANISM COMPARISON</span>
+            <h2>How SynaptiCITY stores learning vs. how BDH carries state.</h2>
+          </div>
+          <span className="action-index">03</span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginTop: '18px', font: '12px var(--mono)' }}>
+          {/* Toy Model Weight Bars */}
+          <div style={{ padding: '16px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <span style={{ color: 'var(--faint)', fontWeight: 600, display: 'block', marginBottom: '10px', textTransform: 'uppercase' }}>
+              YOUR TOY EXPERIMENT (SYNAPSE WEIGHTS)
+            </span>
+            <div style={{ marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--muted)', marginBottom: '4px' }}>
+                <span>DOG → ANIMAL</span>
+                <span style={{ color: 'var(--cyan)', fontWeight: 600 }}>w = 0.41</span>
+              </div>
+              <div style={{ width: '100%', height: '6px', background: '#080b0e', border: '1px solid var(--line)', borderRadius: '3px', overflow: 'hidden' }}>
+                <div style={{ width: '82%', height: '100%', background: 'var(--cyan)' }} />
+              </div>
+            </div>
+
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--muted)', marginBottom: '4px' }}>
+                <span>DOG → PET</span>
+                <span style={{ color: 'var(--violet)', fontWeight: 600 }}>w = 0.40</span>
+              </div>
+              <div style={{ width: '100%', height: '6px', background: '#080b0e', border: '1px solid var(--line)', borderRadius: '3px', overflow: 'hidden' }}>
+                <div style={{ width: '80%', height: '100%', background: 'var(--violet)' }} />
+              </div>
+            </div>
+            <p style={{ color: 'var(--muted)', marginTop: '14px', fontSize: '12px', lineHeight: '1.6' }}>
+              Your experiment stored learning by changing connection strengths between words in an explicit matrix.
+            </p>
+          </div>
+
+          {/* BDH Recurrent State Transition */}
+          <div style={{ padding: '16px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <span style={{ color: 'var(--faint)', fontWeight: 600, display: 'block', marginBottom: '10px', textTransform: 'uppercase' }}>
+              BDH ARCHITECTURE (RECURRENT STATE)
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', textAlign: 'center', padding: '14px 0', border: '1px solid var(--line)', background: 'rgba(16, 22, 26, 0.82)' }}>
+              <div>
+                <span style={{ fontSize: '9px', color: 'var(--faint)', display: 'block' }}>INPUT</span>
+                <span style={{ color: 'var(--cyan)', fontWeight: 600 }}>x<sub>t</sub></span>
+              </div>
+              <span style={{ color: 'var(--violet)' }}>→</span>
+              <div>
+                <span style={{ fontSize: '9px', color: 'var(--violet)', display: 'block' }}>STATE (h<sub>t-1</sub>)</span>
+                <span style={{ color: 'var(--violet)' }}>● ● ●</span>
+              </div>
+              <span style={{ color: 'var(--violet)' }}>→</span>
+              <div>
+                <span style={{ fontSize: '9px', color: 'var(--green)', display: 'block' }}>STATE (h<sub>t</sub>)</span>
+                <span style={{ color: 'var(--green)' }}>● ● ● ●</span>
+              </div>
+            </div>
+            <p style={{ color: 'var(--muted)', marginTop: '14px', fontSize: '12px', lineHeight: '1.6' }}>
+              BDH explores a different way to carry learned/internal state: updating a recurrent hidden state as processing proceeds.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. INTERACTIVE ARCHITECTURE COMPARISON TABLE */}
+      <section className="research-panel">
+        <div className="panel-heading-row">
+          <div>
+            <span className="panel-kicker">INTERACTIVE ARCHITECTURE COMPARISON</span>
+            <h2>Two Ways to Carry Context</h2>
+          </div>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            <button
+              onClick={() => setActiveComparisonTab('memory')}
+              className="outline-button"
+              style={{ borderColor: activeComparisonTab === 'memory' ? 'var(--cyan)' : undefined, color: activeComparisonTab === 'memory' ? 'var(--cyan)' : undefined }}
+            >
+              MEMORY
+            </button>
+            <button
+              onClick={() => setActiveComparisonTab('computation')}
+              className="outline-button"
+              style={{ borderColor: activeComparisonTab === 'computation' ? 'var(--cyan)' : undefined, color: activeComparisonTab === 'computation' ? 'var(--cyan)' : undefined }}
+            >
+              COMPUTATION
+            </button>
+            <button
+              onClick={() => setActiveComparisonTab('scaling')}
+              className="outline-button"
+              style={{ borderColor: activeComparisonTab === 'scaling' ? 'var(--cyan)' : undefined, color: activeComparisonTab === 'scaling' ? 'var(--cyan)' : undefined }}
+            >
+              SCALING
+            </button>
+          </div>
+        </div>
+
+        <div style={{ overflowX: 'auto', marginTop: '18px' }}>
+          <table className="comparison-table">
             <thead>
-              <tr className="bg-gray-700">
-                <th className="border border-gray-600 px-3 py-2 text-left text-white">Aspect</th>
-                <th className="border border-gray-600 px-3 py-2 text-left text-white">Our Toy Model</th>
-                <th className="border border-gray-600 px-3 py-2 text-left text-white">BDH/BDH-CQ</th>
+              <tr>
+                <th>DIMENSION</th>
+                <th>STANDARD TRANSFORMER</th>
+                <th>BDH ARCHITECTURE</th>
               </tr>
             </thead>
-            <tbody className="text-gray-300">
+            <tbody>
               <tr>
-                <td className="border border-gray-600 px-3 py-2 font-semibold">Scale</td>
-                <td className="border border-gray-600 px-3 py-2">6-word vocabulary</td>
-                <td className="border border-gray-600 px-3 py-2">Variable scale</td>
+                <td><strong>Memory Footprint</strong></td>
+                <td>Linear KV cache growth O(N) with context length.</td>
+                <td>Bounded O(1) recurrent state matrix footprint.</td>
               </tr>
               <tr>
-                <td className="border border-gray-600 px-3 py-2 font-semibold">Learning Rule</td>
-                <td className="border border-gray-600 px-3 py-2">Hebbian: Δw = η × aᵢ × aⱼ</td>
-                <td className="border border-gray-600 px-3 py-2">Hebbian-inspired with backprop</td>
+                <td><strong>Sequence Scaling</strong></td>
+                <td>Quadratic O(N²) attention computation across all tokens.</td>
+                <td>Constant O(1) per-step hidden state transition update.</td>
               </tr>
               <tr>
-                <td className="border border-gray-600 px-3 py-2 font-semibold">Memory</td>
-                <td className="border border-gray-600 px-3 py-2">Visible weight matrix</td>
-                <td className="border border-gray-600 px-3 py-2">Hidden synaptic state</td>
+                <td><strong>Synaptic Plasticity</strong></td>
+                <td>Static weights during inference; memory is external KV cache.</td>
+                <td>Dynamic recurrent state writes inspired by Hebbian plasticity.</td>
               </tr>
               <tr>
-                <td className="border border-gray-600 px-3 py-2 font-semibold">Interference</td>
-                <td className="border border-gray-600 px-3 py-2">Demonstrated directly</td>
-                <td className="border border-gray-600 px-3 py-2">Managed through architecture</td>
+                <td><strong>Interference Management</strong></td>
+                <td>Softmax attention weights separate token representations.</td>
+                <td>Managed through sparse active activations (Kosowski et al., 2025).</td>
               </tr>
               <tr>
-                <td className="border border-gray-600 px-3 py-2 font-semibold">Purpose</td>
-                <td className="border border-gray-600 px-3 py-2">Educational visualization</td>
-                <td className="border border-gray-600 px-3 py-2">Production AI reasoning</td>
+                <td><strong>ARC-AGI Benchmark</strong></td>
+                <td>Requires extensive verbal CoT tokens for multi-step tasks.</td>
+                <td>BDH-CQ scores 29.5% pass@2 on ARC-AGI-1 at ~$0.0007/task.</td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
 
-      {/* References / Further Reading */}
-      <div className="bg-gray-900 rounded-lg p-5 space-y-3">
-        <h3 className="text-lg font-semibold text-white">References / Further Reading</h3>
-        <ul className="text-sm text-gray-300 space-y-3">
-          <li>
-            • <strong>BDH Architecture:</strong> Kosowski et al. — <em>The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain</em> —{' '}
-            <a href="https://arxiv.org/abs/2509.26507" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">arXiv:2509.26507</a>
+      {/* 5. RESEARCH INSIGHTS */}
+      <section className="research-panel">
+        <div className="panel-heading-row">
+          <div>
+            <span className="panel-kicker">RESEARCH INSIGHTS</span>
+            <h2>Why This Research Direction Matters</h2>
+          </div>
+          <span className="action-index">05</span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginTop: '18px' }}>
+          <div style={{ padding: '16px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <span style={{ color: 'var(--cyan)', font: '18px var(--mono)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>01</span>
+            <strong style={{ color: 'var(--ink)', fontSize: '13px', display: 'block', marginBottom: '4px' }}>Persistent Internal State</strong>
+            <p style={{ color: 'var(--muted)', fontSize: '12px', margin: 0, lineHeight: '1.6' }}>
+              Demonstrates how persistent internal hidden states carry information forward across sequence steps without expanding token memory.
+            </p>
+          </div>
+
+          <div style={{ padding: '16px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <span style={{ color: 'var(--cyan)', font: '18px var(--mono)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>02</span>
+            <strong style={{ color: 'var(--ink)', fontSize: '13px', display: 'block', marginBottom: '4px' }}>In-Context Adaptation</strong>
+            <p style={{ color: 'var(--muted)', fontSize: '12px', margin: 0, lineHeight: '1.6' }}>
+              State updates support dynamic adaptation from recent context without requiring full backpropagation parameter updates.
+            </p>
+          </div>
+
+          <div style={{ padding: '16px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <span style={{ color: 'var(--cyan)', font: '18px var(--mono)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>03</span>
+            <strong style={{ color: 'var(--ink)', fontSize: '13px', display: 'block', marginBottom: '4px' }}>Compute & Memory Efficiency</strong>
+            <p style={{ color: 'var(--muted)', fontSize: '12px', margin: 0, lineHeight: '1.6' }}>
+              Recurrent hidden states offer energy-efficient constant-memory lookup compared to dense key-value attention stores.
+            </p>
+          </div>
+
+          <div style={{ padding: '16px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <span style={{ color: 'var(--cyan)', font: '18px var(--mono)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>04</span>
+            <strong style={{ color: 'var(--ink)', fontSize: '13px', display: 'block', marginBottom: '4px' }}>Neural Hardware Alignment</strong>
+            <p style={{ color: 'var(--muted)', fontSize: '12px', margin: 0, lineHeight: '1.6' }}>
+              Brain-inspired sparse co-activation is a guiding engineering framework for hardware-efficient modern AI architectures.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. BDH-CQ SECTION */}
+      <section className="research-panel">
+        <div className="panel-heading-row">
+          <div>
+            <span className="panel-kicker-amber">THEN THE IDEA EVOLVES</span>
+            <h2>BDH-CQ: Recurrent Latent Reasoning</h2>
+          </div>
+          <span className="action-index">06</span>
+        </div>
+        <p className="panel-intro">
+          BDH-CQ extends base BDH by demonstrating how recurrent latent states can perform multi-step reasoning from demonstrations
+          without requiring explicit verbalized chain-of-thought tokens. Evaluated on the ARC-AGI-1 benchmark, BDH-CQ achieved
+          <strong> 29.5% pass@2 at ~$0.0007/task</strong>.
+        </p>
+      </section>
+
+      {/* 7. PRIMARY RESEARCH ARCHIVE */}
+      <section className="research-panel">
+        <div className="panel-heading-row">
+          <div>
+            <span className="panel-kicker">PRIMARY RESEARCH ARCHIVE</span>
+            <h2>Verified Primary Sources</h2>
+          </div>
+          <span className="action-index">07</span>
+        </div>
+
+        <ul className="reference-list" style={{ marginTop: '18px' }}>
+          <li style={{ padding: '14px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
+              <div>
+                <strong style={{ color: 'var(--ink)', display: 'block' }}>
+                  The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain (2025)
+                </strong>
+                <span style={{ color: 'var(--faint)', fontSize: '11px' }}>
+                  Kosowski, A., Uznański, P., Chorowski, J., Stamirowska, Z., & Bartoszkiewicz, M.
+                </span>
+              </div>
+              <a href="https://arxiv.org/abs/2509.26507" target="_blank" rel="noopener noreferrer" className="outline-button">
+                arXiv:2509.26507 →
+              </a>
+            </div>
           </li>
-          <li>
-            • <strong>BDH-CQ:</strong> Engdahl et al. — <em>BDH-CQ: In-Context Learning with Recurrent Latent Reasoning</em> —{' '}
-            <a href="https://arxiv.org/abs/2608.09888" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">arXiv:2608.09888</a>
+
+          <li style={{ padding: '14px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
+              <div>
+                <strong style={{ color: 'var(--ink)', display: 'block' }}>
+                  BDH-CQ: In-Context Learning with Recurrent Latent Reasoning (2026)
+                </strong>
+                <span style={{ color: 'var(--faint)', fontSize: '11px' }}>
+                  Engdahl, B., Kosowski, A., Chorowski, J., Stamirowska, Z., Uznański, P., et al.
+                </span>
+              </div>
+              <a href="https://arxiv.org/abs/2608.09888" target="_blank" rel="noopener noreferrer" className="outline-button">
+                arXiv:2608.09888 →
+              </a>
+            </div>
           </li>
-          <li>
-            • <strong>Supporting Research (TTT):</strong> Sun et al. — <em>Learning to (Learn at Test Time): RNNs with Expressive Hidden States</em> —{' '}
-            <a href="https://arxiv.org/abs/2407.04620" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">arXiv:2407.04620</a>
+
+          <li style={{ padding: '14px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
+              <div>
+                <strong style={{ color: 'var(--ink)', display: 'block' }}>
+                  Learning to (Learn at Test Time): RNNs with Expressive Hidden States (2024)
+                </strong>
+                <span style={{ color: 'var(--faint)', fontSize: '11px' }}>
+                  Sun, Y., Li, X., Dalal, K., Xu, J., Vikram, A., Zhang, G., Dubois, Y., et al.
+                </span>
+              </div>
+              <a href="https://arxiv.org/abs/2407.04620" target="_blank" rel="noopener noreferrer" className="outline-button">
+                arXiv:2407.04620 →
+              </a>
+            </div>
           </li>
         </ul>
-      </div>
+      </section>
 
-      {/* Important Distinction */}
-      <div className="bg-yellow-900/20 border-l-4 border-yellow-500 p-4 text-sm text-gray-300">
-        <p className="font-semibold text-yellow-300 mb-2">⚠️ Important Distinction</p>
-        <p>
-          Our toy model demonstrates <strong>one mechanism</strong> used in real systems. It is NOT
-          a reimplementation of BDH or BDH-CQ. Published benchmark results (ARC-AGI, Sudoku) come
-          from the original research papers, not our simulation.
-        </p>
-      </div>
+      {/* 8. SCOPE & METHODOLOGICAL LIMITS */}
+      <section className="honesty-panel">
+        <div className="panel-heading-row">
+          <div>
+            <span className="panel-kicker-amber">IMPORTANT DISTINCTION</span>
+            <h2>Scope & Methodological Limits</h2>
+          </div>
+        </div>
+        <div className="honesty-columns">
+          <p>
+            <b>THIS IS</b>
+            A small educational demonstration illustrating how local connection weights and recurrent hidden states represent learned associations.
+          </p>
+          <p>
+            <b>THIS IS NOT</b>
+            A full production reimplementation of BDH, BDH-CQ, or a biological brain simulator.
+          </p>
+          <p>
+            <b>BENCHMARK CONTEXT</b>
+            BDH-CQ achieved 29.5% pass@2 on ARC-AGI-1 at ~$0.0007/task, demonstrating cost-efficient latent reasoning from sequence demonstrations.
+          </p>
+        </div>
+      </section>
     </div>
   );
 };

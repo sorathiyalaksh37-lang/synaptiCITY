@@ -543,7 +543,8 @@ button:disabled {
 .inspector-panel,
 .competition-panel,
 .history-panel,
-.debug-panel {
+.debug-panel,
+.research-panel {
   border: 1px solid var(--line);
   background: rgba(16, 22, 26, 0.82);
 }
@@ -553,7 +554,8 @@ button:disabled {
 .control-panel,
 .inspector-panel,
 .competition-panel,
-.history-panel {
+.history-panel,
+.research-panel {
   padding: 21px;
 }
 
@@ -2108,6 +2110,101 @@ input:focus-visible {
   color: var(--cyan);
   font: 9px var(--mono);
   letter-spacing: .12em;
+}
+
+.research-module {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.research-panel ul {
+  margin: 10px 0 0 18px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.equation-block {
+  margin: 16px 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  background: rgba(9, 14, 17, 0.7);
+  font: 13px var(--mono);
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.equation-block .equation-label {
+  color: var(--cyan);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  text-align: left;
+  color: var(--muted);
+}
+
+.comparison-table th {
+  color: var(--ink);
+  font: 10px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(102, 217, 255, 0.05);
+}
+
+.reference-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.reference-list a {
+  color: var(--cyan);
+}
+
+.quiz-option {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border: 1px solid var(--line);
+  background: rgba(16, 22, 26, 0.82);
+  color: var(--muted);
+  text-align: left;
+  font-size: 14px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.quiz-option:hover {
+  border-color: var(--cyan);
+  color: var(--ink);
+}
+
+.quiz-progress {
+  height: 2px;
+  background: var(--line);
+  margin: 20px 0;
+}
+
+.quiz-progress > div {
+  height: 100%;
+  background: var(--cyan);
 }
 
 .teach-panel,
