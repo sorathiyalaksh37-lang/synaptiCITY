@@ -1,0 +1,71 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Outer hexagon -->
+  <path d="M100 20 L160 57.5 L160 132.5 L100 170 L40 132.5 L40 57.5 Z" 
+        stroke="#5CBFAD" 
+        stroke-width="2" 
+        fill="none" 
+        opacity="0.7"/>
+  
+  <!-- Inner hexagon (3D perspective) -->
+  <path d="M100 40 L140 65 L140 120 L100 145 L60 120 L60 65 Z" 
+        stroke="#5CBFAD" 
+        stroke-width="1.5" 
+        fill="rgba(92, 191, 173, 0.05)" 
+        opacity="0.6"/>
+  
+  <!-- Central vertical line -->
+  <line x1="100" y1="20" x2="100" y2="170" 
+        stroke="#5CBFAD" 
+        stroke-width="1.5" 
+        opacity="0.5"/>
+  
+  <!-- Horizontal line -->
+  <line x1="60" y1="95" x2="140" y2="95" 
+        stroke="#5CBFAD" 
+        stroke-width="1.5" 
+        opacity="0.4"/>
+  
+  <!-- Left synapse (dark shape) -->
+  <path d="M75 80 L75 110 L82 115 L82 75 Z" 
+        fill="#2A4A47" 
+        opacity="0.8"/>
+  
+  <!-- Right synapse (dark shape) -->
+  <path d="M125 80 L125 110 L118 115 L118 75 Z" 
+        fill="#2A4A47" 
+        opacity="0.8"/>
+  
+  <!-- Inner circle (dashed) -->
+  <circle cx="100" cy="95" r="35" 
+          stroke="#5CBFAD" 
+          stroke-width="1.5" 
+          stroke-dasharray="3,3" 
+          fill="none" 
+          opacity="0.5"/>
+  
+  <!-- Connection nodes with glow -->
+  <circle cx="100" cy="45" r="3.5" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="100" cy="145" r="3.5" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="70" cy="65" r="3" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="130" cy="65" r="3" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="70" cy="125" r="3" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="130" cy="125" r="3" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="60" cy="95" r="3" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="140" cy="95" r="3" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="85" cy="95" r="3" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="115" cy="95" r="3" fill="#5CBFAD" filter="url(#glow)"/>
+  
+  <!-- Central node (emphasized) -->
+  <circle cx="100" cy="95" r="4" fill="#5CBFAD" filter="url(#glow)"/>
+  <circle cx="100" cy="95" r="2" fill="#7DD9C8"/>
+</svg>

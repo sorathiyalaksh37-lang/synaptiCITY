@@ -12,6 +12,8 @@ import { ExperimentStageRail, type ExperimentStage } from './components/Experime
 import { ConnectionInspector, type ConnectionFeedback } from './components/ConnectionInspector';
 import { CompetingMemoryPanel } from './components/CompetingMemoryPanel';
 import { TeachingHistory } from './components/TeachingHistory';
+import { playWhooshSound } from './utils/transitionSound';
+import { Logo } from './components/Logo';
 import type { Association, Connection, Node } from './types';
 
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
@@ -231,10 +233,10 @@ function App() {
   return (
     <div className="app-shell">
       <header className="site-header">
-        <button className="brand-lockup" onClick={() => { setActiveTab('simulation'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Return to SynapCity home">
-          <span className="brand-mark"><span /><span /><span /></span>
+        <button className="brand-lockup" onClick={() => { setActiveTab('simulation'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Return to synaptiCITY home">
+          <Logo className="logo-icon" />
           <span>
-            <strong>SynapCity</strong>
+            <strong>synaptiCITY</strong>
             <small>when connections become memory</small>
           </span>
         </button>

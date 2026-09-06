@@ -1,26 +1,122 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ========================================================================
+   Synaptic Bioluminescence Design System
+   Color Tokens, Typography, and Base Styles
+   ======================================================================== */
+
 :root {
-  font-family: "DM Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
-  color: #e8edf2;
-  background: #080b0e;
+  /* Typography Families */
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+  
+  /* Color Tokens - Surfaces */
+  --surface: #10131c;
+  --surface-dim: #10131c;
+  --surface-bright: #363943;
+  --surface-container-lowest: #0b0e17;
+  --surface-container-low: #181b25;
+  --surface-container: #1c1f29;
+  --surface-container-high: #272a34;
+  --surface-container-highest: #32343f;
+  --surface-variant: #32343f;
+  
+  /* Color Tokens - On Surface */
+  --on-surface: #e0e2ef;
+  --on-surface-variant: #bdc8d1;
+  --inverse-surface: #e0e2ef;
+  --inverse-on-surface: #2d303a;
+  
+  /* Color Tokens - Primary (Neon Cyan) */
+  --primary: #8ed5ff;
+  --on-primary: #00354a;
+  --primary-container: #38bdf8;
+  --on-primary-container: #004965;
+  --inverse-primary: #00668a;
+  --primary-fixed: #c4e7ff;
+  --primary-fixed-dim: #7bd0ff;
+  --on-primary-fixed: #001e2c;
+  --on-primary-fixed-variant: #004c69;
+  
+  /* Color Tokens - Secondary (Electric Indigo) */
+  --secondary: #bdc2ff;
+  --on-secondary: #131e8c;
+  --secondary-container: #2f3aa3;
+  --on-secondary-container: #a8afff;
+  --secondary-fixed: #e0e0ff;
+  --secondary-fixed-dim: #bdc2ff;
+  --on-secondary-fixed: #000767;
+  --on-secondary-fixed-variant: #2f3aa3;
+  
+  /* Color Tokens - Tertiary (Synaptic Violet) */
+  --tertiary: #e1c0ff;
+  --on-tertiary: #490081;
+  --tertiary-container: #ce9cff;
+  --on-tertiary-container: #5f2198;
+  --tertiary-fixed: #f0dbff;
+  --tertiary-fixed-dim: #ddb8ff;
+  --on-tertiary-fixed: #2c0051;
+  --on-tertiary-fixed-variant: #62259b;
+  
+  /* Color Tokens - Error (Apex Rose) */
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+  
+  /* Color Tokens - Outline */
+  --outline: #87929a;
+  --outline-variant: #3e484f;
+  --surface-tint: #7bd0ff;
+  
+  /* Legacy compatibility aliases */
+  --background: #10131c;
+  --on-background: #e0e2ef;
+  --ink: #e0e2ef;
+  --muted: #bdc8d1;
+  --faint: #87929a;
+  --line: rgba(56, 189, 248, 0.15);
+  --line-strong: rgba(56, 189, 248, 0.28);
+  --cyan: #38bdf8;
+  --violet: #c084fc;
+  --amber: #e4ac69;
+  --green: #7dd7aa;
+  --rose: #f43f5e;
+  --indigo: #818cf8;
+  
+  /* Spacing Scale (8px base rhythm) */
+  --space-2xs: 0.125rem;  /* 2px */
+  --space-xs: 0.25rem;    /* 4px */
+  --space-sm: 0.5rem;     /* 8px */
+  --space-md: 1rem;       /* 16px */
+  --space-lg: 1.5rem;     /* 24px */
+  --space-xl: 2rem;       /* 32px */
+  --space-2xl: 3rem;      /* 48px */
+  --space-3xl: 4.5rem;    /* 72px */
+  --gutter-mobile: 1rem;
+  --gutter-desktop: 1.5rem;
+  --container-max: 1440px;
+  
+  /* Border Radius */
+  --rounded-sm: 0.5rem;
+  --rounded: 1rem;
+  --rounded-md: 1.5rem;
+  --rounded-lg: 2rem;
+  --rounded-xl: 3rem;
+  --rounded-full: 9999px;
+  
+  /* Typography Settings */
+  font-family: var(--font-body);
+  color: var(--on-surface);
+  background: var(--background);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --ink: #e8edf2;
-  --muted: #87939f;
-  --faint: #56616b;
-  --line: rgba(174, 194, 208, 0.15);
-  --line-strong: rgba(174, 194, 208, 0.28);
-  --surface: #10161a;
-  --surface-raised: #151d22;
-  --cyan: #66d9ff;
-  --violet: #b49cff;
-  --amber: #e4ac69;
-  --green: #7dd7aa;
-  --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -32,8 +128,9 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 18% 0%, rgba(38, 76, 93, 0.2), transparent 31rem),
-    #080b0e;
+    radial-gradient(circle at 18% 0%, rgba(56, 189, 248, 0.08), transparent 31rem),
+    radial-gradient(circle at 82% 100%, rgba(129, 140, 248, 0.06), transparent 28rem),
+    #10131c;
 }
 
 button,
@@ -55,18 +152,106 @@ button:disabled {
 }
 
 .mono {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
+}
+
+/* ========================================================================
+   Typography Utilities - Synaptic Bioluminescence Design System
+   ======================================================================== */
+
+/* Display Typography */
+.text-display-lg {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 64px;
+  letter-spacing: -0.03em;
+}
+
+.text-display-lg-mobile {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 44px;
+  letter-spacing: -0.02em;
+}
+
+/* Headlines */
+.text-headline-lg {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: -0.02em;
+}
+
+.text-headline-md {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: -0.01em;
+}
+
+.text-headline-sm {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 26px;
+  letter-spacing: 0;
+}
+
+/* Body Text */
+.text-body-lg {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
+  letter-spacing: 0;
+}
+
+.text-body-md {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.01em;
+}
+
+.text-body-sm {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.02em;
+}
+
+/* Code & Labels */
+.text-label-code-lg {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.04em;
+}
+
+.text-label-code-sm {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.08em;
 }
 
 .app-shell {
-  width: min(1440px, 100%);
+  width: min(var(--container-max), 100%);
   min-height: 100vh;
   margin: 0 auto;
   background-image:
-    linear-gradient(rgba(154, 182, 199, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(154, 182, 199, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.035) 1px, transparent 1px);
   background-size: 44px 44px;
-  border-inline: 1px solid rgba(174, 194, 208, 0.08);
+  border-inline: 1px solid rgba(56, 189, 248, 0.08);
 }
 
 .site-header {
@@ -76,7 +261,7 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--line);
-  background: rgba(8, 11, 14, 0.82);
+  background: rgba(16, 19, 28, 0.85);
   backdrop-filter: blur(16px);
 }
 
@@ -124,7 +309,8 @@ button:disabled {
 .panel-kicker,
 .why-label,
 .choice-label {
-  font: 10px var(--mono);
+  font-family: var(--font-mono);
+  font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -213,15 +399,18 @@ button:disabled {
 }
 
 .eyebrow {
-  color: var(--cyan);
-  font: 10px var(--mono);
+  color: var(--primary-container);
+  font-family: var(--font-mono);
+  font-size: 10px;
   letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .hero-intro h2,
 .module-heading h2 {
   margin: 14px 0 0;
-  color: var(--ink);
+  color: var(--on-surface);
+  font-family: var(--font-display);
   font-size: clamp(36px, 5vw, 70px);
   font-weight: 300;
   letter-spacing: -0.055em;
@@ -229,7 +418,7 @@ button:disabled {
 }
 
 .hero-intro h2 em {
-  color: var(--cyan);
+  color: var(--primary-container);
   font-style: normal;
 }
 
@@ -1515,9 +1704,11 @@ input:focus-visible {
 
 .brand-lockup strong {
   display: block;
-  color: var(--ink);
-  font: 600 18px/1 var(--sans);
-  letter-spacing: .12em;
+  color: var(--on-surface);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   transition: color .2s ease;
 }
 
@@ -1525,8 +1716,9 @@ input:focus-visible {
   display: block;
   margin-top: 5px;
   color: var(--faint);
-  font: 9px/1 var(--mono);
-  letter-spacing: .12em;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -2532,3 +2724,173 @@ input:focus-visible {
     display: block;
   }
 }
+
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Remove old brand-mark styles since we're using the new logo */
+.brand-mark {
+  display: none;
+}
+
+
+/* ========================================================================
+   Glassmorphism & Bioluminescent Effects
+   Synaptic Bioluminescence Design System
+   ======================================================================== */
+
+/* Glass Panel Levels */
+.glass-level-1 {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+}
+
+.glass-level-2 {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.12);
+}
+
+.glass-level-3 {
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(192, 132, 252, 0.4);
+  box-shadow: 
+    0 0 10px rgba(244, 63, 94, 0.5),
+    0 0 32px rgba(192, 132, 252, 0.3);
+}
+
+/* Bioluminescent Glows */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+}
+
+.glow-indigo {
+  box-shadow: 0 0 20px rgba(129, 140, 248, 0.4);
+}
+
+.glow-violet {
+  box-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
+}
+
+.glow-rose {
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.5);
+}
+
+/* Synaptic Node Indicator */
+.node-indicator {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-container);
+}
+
+.node-indicator::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.3);
+}
+
+.node-indicator::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.15);
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Tactical HUD Button Styles */
+.btn-primary-activation {
+  padding: 13px 18px;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: var(--rounded-full);
+  background: rgba(15, 23, 42, 0.8);
+  color: var(--on-surface);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-activation:hover {
+  box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.3);
+  color: var(--primary-fixed);
+}
+
+.btn-apex-trigger {
+  padding: 13px 18px;
+  border: none;
+  border-radius: var(--rounded-full);
+  background: linear-gradient(135deg, #c084fc 0%, #f43f5e 100%);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  animation: pulse-activation 2s ease-in-out infinite;
+}
+
+@keyframes pulse-activation {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(244, 63, 94, 0.7);
+  }
+}
+
+/* Formula Badge */
+.formula-badge {
+  padding: 6px 12px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: var(--rounded-full);
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--primary-container);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Hebbian Tag */
+.hebbian-tag {
+  padding: 6px 12px;
+  border: 1px solid var(--primary-container);
+  border-radius: var(--rounded-full);
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--primary-container);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+
