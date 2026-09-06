@@ -76,8 +76,8 @@ export const CompetingMemoryPanel: React.FC<CompetingMemoryPanelProps> = ({
         <span>{isAmbiguous ? '!' : 'i'}</span>
         <p>
           {isAmbiguous
-            ? 'The strengths are close, so recall is genuinely ambiguous. The model selects whichever path currently has the higher weight.'
-            : 'Both connection weights coexist in this toy model. Recall selects the strongest learned path without erasing the other.'}
+            ? 'The strengths are close, so recall is genuinely ambiguous. Inactive connections decay slightly (2% per pulse) as new associations are taught.'
+            : 'Both connection weights coexist in this model, while inactive connections decay slightly (2% per pulse) during each teaching event to model short-term memory fading.'}
         </p>
       </div>
     </section>

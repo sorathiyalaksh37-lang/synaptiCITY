@@ -354,7 +354,7 @@ function App() {
 
             <section className="honesty-panel" ref={completionRef} style={{ scrollMarginTop: '80px' }}>
               <div><span className="eyebrow">SCIENTIFIC HONESTY</span><h3>What this simulation is — and isn't.</h3></div>
-              <div className="honesty-columns"><p><b>THIS IS</b>A small educational neural-network model; a live demonstration of weighted associations and Hebbian-style learning.</p><p><b>THIS IS NOT</b>A biological brain simulation, a literal model of human memory, or an implementation of BDH.</p><p><b>IMPORTANT LIMIT</b>Associations can coexist. Teaching PET does not biologically erase or weaken ANIMAL in this toy model.</p></div>
+              <div className="honesty-columns"><p><b>THIS IS</b>A small educational neural-network model; a live demonstration of weighted associations and Hebbian-style learning.</p><p><b>THIS IS NOT</b>A biological brain simulation, a literal model of human memory, or an implementation of BDH.</p><p><b>REAL DECAY</b>Inactive connection weights decay slightly (2% per pulse) on each teaching event, demonstrating short-term synaptic memory fading.</p></div>
             </section>
 
             <section className="lower-lab-grid">

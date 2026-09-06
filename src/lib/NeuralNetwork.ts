@@ -98,6 +98,21 @@ export class NeuralNetwork {
   }
 
   /**
+   * Decay all weights except the target (excludeInput -> excludeOutput) connection
+   */
+  decayOthers(excludeInput: string, excludeOutput: string, rate: number = 0.02): void {
+    const iExclude = this.getIndex(excludeInput);
+    const jExclude = this.getIndex(excludeOutput);
+
+    for (let i = 0; i < this.vocabSize; i++) {
+      for (let j = 0; j < this.vocabSize; j++) {
+        if (i === iExclude && j === jExclude) continue;
+        this.weights[i][j] = Math.max(0, this.weights[i][j] * (1 - rate));
+      }
+    }
+  }
+
+  /**
    * Teach the network an association through repetition.
    * Returns weight-change data so the UI can display a live feedback panel.
    */
@@ -119,6 +134,9 @@ export class NeuralNetwork {
 
       // Apply Hebbian update ("wire together")
       this.hebbianUpdate(inputWord, outputWord);
+
+      // Decay inactive connections slightly on each pulse
+      this.decayOthers(inputWord, outputWord, 0.02);
     }
 
     const newWeight = this.weights[i][j];
