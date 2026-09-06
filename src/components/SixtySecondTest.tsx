@@ -109,15 +109,15 @@ const questions: ExtendedQuestion[] = [
     id: 8,
     category: 'BDH',
     categoryLabel: 'EXPERIMENT → BDH',
-    question: "What is the legitimate conceptual relationship between the synaptiCITY experiment and BDH research?",
+    question: "What is the legitimate conceptual relationship between the SynapCity experiment and BDH research?",
     options: [
-      "SynaptiCITY is a full production reimplementation of BDH and BDH-CQ",
+      "SynapCity is a full production reimplementation of BDH and BDH-CQ",
       "Both explore memory-like behavior through internal state changes, but use different underlying mechanisms",
-      "SynaptiCITY proves that BDH is a literal, 1-to-1 simulation of the human brain",
+      "SynapCity proves that BDH is a literal, 1-to-1 simulation of the human brain",
       "There is no relationship between connection weight learning and neural AI research"
     ],
     correctAnswer: 1,
-    explanation: "SynaptiCITY demonstrates simple Hebbian weight changes, while BDH investigates recurrent latent state architectures. They are conceptually related computational ideas, not identical implementations."
+    explanation: "SynapCity demonstrates simple Hebbian weight changes, while BDH investigates recurrent latent state architectures. They are conceptually related computational ideas, not identical implementations."
   },
   {
     id: 9,

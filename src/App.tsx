@@ -261,10 +261,10 @@ function App() {
   return (
     <div className="app-shell">
       <header className="site-header">
-        <button className="brand-lockup" onClick={() => { setActiveTab('simulation'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Return to synaptiCITY home">
+        <button className="brand-lockup" onClick={() => { setActiveTab('simulation'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Return to SynapCity home">
           <span className="brand-mark"><span /><span /><span /></span>
           <span>
-            <strong>synaptiCITY</strong>
+            <strong>SynapCity</strong>
             <small>when connections become memory</small>
           </span>
         </button>
@@ -368,7 +368,7 @@ function App() {
         {activeTab === 'test' && <div className="standalone-module"><div className="module-heading"><span className="eyebrow">KNOWLEDGE CHECK / 03</span><h2>Can you read<br /><em>the synapse?</em></h2><p>Use what you observed in the laboratory, not a memorized definition.</p></div><SixtySecondTest /></div>}
       </main>
 
-      <footer className="site-footer"><span>synaptiCITY / educational neural model</span><span className="mono">the animation visualizes the computation</span></footer>
+      <footer className="site-footer"><span>SynapCity / educational neural model</span><span className="mono">the animation visualizes the computation</span></footer>
     </div>
   );
 }

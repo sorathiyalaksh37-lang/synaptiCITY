@@ -142,7 +142,7 @@ export const BDHModule: React.FC = () => {
           {/* Left: Toy Experiment */}
           <div style={{ padding: '16px', border: '1px solid var(--line)', background: 'rgba(9, 14, 17, 0.7)' }}>
             <span style={{ color: 'var(--cyan)', fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: '10px' }}>
-              SYNAPTICITY TOY MODEL
+              SYNAPCITY TOY MODEL
             </span>
             <div style={{ color: 'var(--muted)', lineHeight: '1.8' }}>
               <div>DOG → ANIMAL</div>
@@ -180,7 +180,7 @@ export const BDHModule: React.FC = () => {
         <div className="panel-heading-row">
           <div>
             <span className="panel-kicker">MECHANISM COMPARISON</span>
-            <h2>How SynaptiCITY stores learning vs. how BDH carries state.</h2>
+            <h2>How SynapCity stores learning vs. how BDH carries state.</h2>
           </div>
           <span className="action-index">03</span>
         </div>
