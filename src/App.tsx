@@ -170,8 +170,8 @@ function App() {
               <button
                 onClick={() => setActiveTab('simulation')}
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'simulation'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
               >
                 Simulation
@@ -181,8 +181,8 @@ function App() {
               <button
                 onClick={() => setActiveTab('bdh')}
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'bdh'
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
               >
                 BDH/BDH-CQ
@@ -192,8 +192,8 @@ function App() {
               <button
                 onClick={() => setActiveTab('test')}
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'test'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
               >
                 Test
@@ -231,10 +231,10 @@ function App() {
             )}
 
             {/* Guided Tour */}
-            <GuidedTour 
-              step={tutorialStep} 
-              onNext={() => setTutorialStep(s => s + 1)} 
-              onSkip={() => setTutorialStep(0)} 
+            <GuidedTour
+              step={tutorialStep}
+              onNext={() => setTutorialStep(s => s + 1)}
+              onSkip={() => setTutorialStep(0)}
             />
 
             {/* Main Grid */}
@@ -318,9 +318,10 @@ function App() {
                     {/* Strength bar */}
                     <div className="mt-3">
                       <div className="flex justify-between text-xs text-gray-400 mb-1">
-                        <span>Synapse strength</span>
-                        <span>{Math.round(learningFeedback.newWeight * 100)}%</span>
+                        <span>Connection strength</span>
+                        <span>{learningFeedback.newWeight.toFixed(3)}</span>
                       </div>
+
                       <div className="w-full bg-gray-700 rounded-full h-2">
                         <div
                           className="h-2 rounded-full transition-all duration-700"
@@ -330,10 +331,14 @@ function App() {
                               learningFeedback.newWeight < 0.3
                                 ? '#ef4444'
                                 : learningFeedback.newWeight < 0.6
-                                ? '#f59e0b'
-                                : '#10b981',
+                                  ? '#f59e0b'
+                                  : '#10b981',
                           }}
                         />
+                      </div>
+
+                      <div className="text-right text-xs text-gray-400 mt-1">
+                        {(learningFeedback.newWeight * 100).toFixed(1)}%
                       </div>
                     </div>
 
@@ -394,11 +399,10 @@ function App() {
                 </li>
               </ol>
 
-              <p className="mt-3 text-sm text-gray-400">
-                When multiple associations become strong, they can coexist in the
-                network. If their strengths become similar, recall can become
-                <strong> ambiguous</strong> because the network must choose between
-                competing learned associations.
+              <p className="text-sm text-gray-400 mt-2">
+                Multiple associations can coexist in the network. When their connection
+                strengths become similar, recall can become ambiguous because the network
+                must choose between competing learned associations.
               </p>
             </div>
           </div>
@@ -417,11 +421,6 @@ function App() {
           <p>
             Built for educational purposes. Not a reimplementation of
             BDH/BDH-CQ.
-          </p>
-
-          <p className="mt-2">
-            ⭐⭐⭐⭐⭐ A uniquely interactive approach to understanding
-            synaptic plasticity
           </p>
         </div>
       </footer>
