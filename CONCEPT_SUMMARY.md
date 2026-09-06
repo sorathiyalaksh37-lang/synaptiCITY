@@ -83,7 +83,7 @@ BDH-CQ extends BDH with **contextual reasoning** capabilities:
 1. **Learning from Demonstrations**: Absorbs patterns from examples without explicit instruction
 2. **Latent Reasoning**: Performs multi-step reasoning internally without verbal chain-of-thought
 3. **Contextual Memory**: Maintains task-relevant information across reasoning steps
-4. **Interference Management**: Better handles competing memories than naive Hebbian systems
+4. **Interference Management**: Incorporates mechanisms to handle competing memories
 
 **Architecture Differences:**
 - BDH-CQ adds specialized attention heads for reasoning
@@ -103,15 +103,15 @@ We demonstrate raw Hebbian learning and its interference problem. BDH-CQ solves 
 |-----------|-----------|------------|--------------|
 | **ARC-AGI** | Abstract reasoning | Published scores available | Tests few-shot generalization |
 | **Sudoku** | Constraint satisfaction | Solved via in-context learning | Tests logical reasoning |
-| **Scaling Study** | 1B → 600B params | Performance scales predictably | Tests architecture robustness |
+| **Scaling Study** | Variable scale | Evaluates behavior across model scales | Tests architecture robustness |
 
 ### BDH-CQ Benchmarks (2026)
 
-| Benchmark | Task Type | BDH-CQ Result | Improvement over BDH |
-|-----------|-----------|---------------|---------------------|
-| **ARC-AGI** | Abstract reasoning | Published results | Demonstrated gains |
-| **Few-Shot Learning** | Various domains | Learns from 3-5 examples | Faster adaptation |
-| **Reasoning Tasks** | Multi-step problems | Solves without CoT | More efficient inference |
+| Benchmark | Task Type | BDH-CQ Result | Significance |
+|-----------|-----------|---------------|--------------|
+| **ARC-AGI** | Abstract reasoning | Published results | Demonstrated capabilities |
+| **Few-Shot Learning** | Various domains | Learns from few examples | Contextual adaptation |
+| **Reasoning Tasks** | Multi-step problems | Solves without CoT | Alternative to verbal reasoning |
 
 ### Important Clarifications
 
@@ -251,17 +251,17 @@ Adding these would obscure the core insight: memory emerges from connection chan
 Modern large language models face a critical challenge: **memory without storage**. Transformers use attention mechanisms that require storing key-value pairs for every token, consuming massive memory and compute.
 
 **The Problem:**
-- GPT-4: Estimated 100B+ KV cache entries for long contexts
-- Claude 3: 200K token context requires enormous attention matrices
+- Transformer KV caches grow with context length, increasing the memory required to retain prior token representations.
+- Standard full attention has quadratic compute and memory scaling with sequence length.
 - Cost: Memory bandwidth becomes the bottleneck, not computation
 
 ### BDH's Solution
 
 BDH shows that attention can be reformulated as synaptic memory—connections that strengthen through use, rather than explicit storage. This is:
 
-1. **More Efficient**: Recurrent state vs. full attention cache
-2. **More Biological**: Matches how brains actually work
-3. **More Scalable**: Memory grows with parameters, not context length
+1. **Different memory mechanism**: recurrent state rather than an explicit full attention cache.
+2. **More brain-inspired**: draws on principles of synaptic plasticity without claiming biological equivalence
+3. **Different scaling trade-off**: memory is represented in learned/recurrent state rather than an explicit token-by-token KV cache.
 
 ### Why Education Matters
 

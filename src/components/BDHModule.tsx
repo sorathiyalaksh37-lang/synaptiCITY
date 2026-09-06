@@ -67,8 +67,8 @@ export const BDHModule: React.FC = () => {
           <ul className="ml-4 space-y-1">
             <li>• Learning from demonstrations (contextual memory)</li>
             <li>• Reasoning without verbal chain-of-thought</li>
-            <li>• Proven on ARC-AGI benchmark</li>
-            <li>• Scales from 1B to 600B parameters</li>
+            <li>• Evaluated on ARC-AGI benchmark</li>
+            <li>• Scalable architecture</li>
           </ul>
         </div>
 
@@ -99,7 +99,7 @@ export const BDHModule: React.FC = () => {
               <tr>
                 <td className="border border-gray-600 px-3 py-2 font-semibold">Scale</td>
                 <td className="border border-gray-600 px-3 py-2">6-word vocabulary</td>
-                <td className="border border-gray-600 px-3 py-2">1B-600B parameters</td>
+                <td className="border border-gray-600 px-3 py-2">Variable scale</td>
               </tr>
               <tr>
                 <td className="border border-gray-600 px-3 py-2 font-semibold">Learning Rule</td>
