@@ -310,12 +310,7 @@ function App() {
             </section>
 
             <section className="welcome-panel" id="how-it-works">
-              <div>
-                <span className="eyebrow">WELCOME ABOARD / 00</span>
-                <h3>Every idea begins as a connection.</h3>
-                <p>Every repetition can strengthen that connection. Your job: teach the network, ride the signal, and discover what it remembers.</p>
-              </div>
-              <div className="metaphor-map">
+              <div className="metaphor-map w-full">
                 <span><b>WORD</b><i>NODE</i></span><em>→</em>
                 <span><b>CONNECTION</b><i>SYNAPSE</i></span><em>→</em>
                 <span><b>REPETITION</b><i>STRENGTH</i></span><em>→</em>
