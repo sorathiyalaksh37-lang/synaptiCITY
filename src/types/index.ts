@@ -24,6 +24,3 @@ export interface TestQuestion {
   correctAnswer: number;
   explanation: string;
 }
-
-// Re-export NetworkState from utils
-export type { NetworkState, TeachingEvent } from '../utils/teach';
