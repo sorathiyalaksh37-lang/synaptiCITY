@@ -12,6 +12,7 @@ import { ExperimentStageRail, type ExperimentStage } from './components/Experime
 import { ConnectionInspector, type ConnectionFeedback } from './components/ConnectionInspector';
 import { CompetingMemoryPanel } from './components/CompetingMemoryPanel';
 import { TeachingHistory } from './components/TeachingHistory';
+import { playWhooshSound } from './utils/transitionSound';
 import type { Association, Connection, Node } from './types';
 
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
@@ -51,9 +52,29 @@ function App() {
   const [recallSnapshot, setRecallSnapshot] = useState<RecallSnapshot | null>(null);
   const [history, setHistory] = useState<ConnectionFeedback[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const stageGuideRef = useRef<HTMLDivElement>(null);
   const simulationRef = useRef<HTMLElement>(null);
+  const recallRef = useRef<HTMLElement>(null);
+  const completionRef = useRef<HTMLElement>(null);
 
   const forceUpdate = () => setUpdateTrigger((previous) => previous + 1);
+
+  const scrollToTarget = (element: HTMLElement | null) => {
+    if (!element) return;
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    element.scrollIntoView({
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
+  };
+
+  const handleStartRide = () => {
+    selectStage(1);
+    playWhooshSound(soundEnabled);
+    scrollToTarget(stageGuideRef.current);
+  };
 
   const playTone = (frequency: number, duration = 0.12, type: OscillatorType = 'sine') => {
     if (!soundEnabled || typeof window === 'undefined') return;
@@ -154,21 +175,26 @@ function App() {
       playTone(520, 0.22);
 
       if (association.input === 'DOG' && association.output === 'ANIMAL') {
-        completed(1);
-        // Stage 2 requires genuine repetition: only complete it if the learner
-        // has already taught DOG→ANIMAL at least once before this action.
         const priorAnimalTeaches = history.filter(
           (entry) => entry.input === 'DOG' && entry.output === 'ANIMAL'
         ).length;
-        if (priorAnimalTeaches >= 1) {
+        if (priorAnimalTeaches === 0) {
+          completed(1);
+          setActiveStage(2);
+          playWhooshSound(soundEnabled);
+          scrollToTarget(simulationRef.current);
+        } else if (priorAnimalTeaches >= 1) {
           completed(2);
+          setActiveStage(3);
+          playWhooshSound(soundEnabled);
+          scrollToTarget(recallRef.current);
         }
-        // Auto-advance: if stage 2 is now done move to stage 3, else move to stage 2
-        setActiveStage(priorAnimalTeaches >= 1 ? 3 : 2);
       }
-      if (association.input === 'DOG' && association.output === 'PET') {
+      if (association.input === 'DOG' && association.output === 'PET' && completedStages.includes(3)) {
         completed(4);
         setActiveStage(5);
+        playWhooshSound(soundEnabled);
+        scrollToTarget(recallRef.current);
       }
 
       window.setTimeout(() => {
@@ -185,13 +211,23 @@ function App() {
     playTone(380, 0.2);
 
     if (inputWord === 'DOG') {
-      completed(3);
       const hasCompetingPath = history.some((entry) => entry.input === 'DOG' && entry.output === 'PET');
-      // Stage 5 requires the learner to have already taught DOG→PET (stage 4 completed).
-      // Use completedStages snapshot to check — stage 4 would have been marked by handleTeach.
-      const stage4Done = hasCompetingPath; // DOG→PET teach also completes(4) synchronously
-      if (stage4Done) completed(5);
-      setActiveStage(stage4Done ? 5 : 4);
+      const stage4Done = hasCompetingPath;
+
+      if (!completedStages.includes(3)) {
+        completed(3);
+        setActiveStage(4);
+        setSelectedInput('DOG');
+        setSelectedOutput('PET');
+        setSelectionFocus('input');
+        playWhooshSound(soundEnabled);
+        scrollToTarget(simulationRef.current);
+      } else if (stage4Done && !completedStages.includes(5)) {
+        completed(5);
+        setActiveStage(5);
+        playWhooshSound(soundEnabled);
+        scrollToTarget(completionRef.current);
+      }
     }
     window.setTimeout(() => setHighlightedConnection(null), 2000);
   };
@@ -258,7 +294,7 @@ function App() {
                 <h2>Learning isn't a<br /><em>button press.</em></h2>
                 <p className="hero-lede">Ride through a tiny learning network and watch connections strengthen with experience.</p>
                 <div className="hero-actions">
-                  <button className="hero-cta" onClick={() => simulationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>START THE RIDE <span>↗</span></button>
+                  <button className="hero-cta" onClick={handleStartRide}>START THE RIDE <span>↗</span></button>
                   <button className="hero-link" onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>HOW IT WORKS <span>↓</span></button>
                 </div>
               </div>
@@ -287,10 +323,12 @@ function App() {
               </div>
             </section>
 
-            <ExperimentStageRail stages={STAGES} activeStage={activeStage} completedStages={completedStages} onSelect={selectStage} />
-            <GuidedTour step={activeStage} completedStages={completedStages} onNext={() => setActiveStage(activeStage >= 5 ? 1 : activeStage + 1)} onSkip={() => setActiveStage(1)} />
+            <div ref={stageGuideRef} style={{ scrollMarginTop: '80px' }}>
+              <ExperimentStageRail stages={STAGES} activeStage={activeStage} completedStages={completedStages} onSelect={selectStage} />
+              <GuidedTour step={activeStage} completedStages={completedStages} onNext={() => setActiveStage(activeStage >= 5 ? 1 : activeStage + 1)} onSkip={() => setActiveStage(1)} />
+            </div>
 
-            <section className="lab-layout ride-layout" ref={simulationRef}>
+            <section className="lab-layout ride-layout" ref={simulationRef} style={{ scrollMarginTop: '80px' }}>
               <div className="graph-column">
                 <div className="section-label"><span>STATION 01 — NEURAL RIDE</span><span className="mono">{connections.length.toString().padStart(2, '0')} visible paths</span></div>
                 <div className="graph-frame ride-stage">
@@ -314,12 +352,12 @@ function App() {
               <span className="rule-note mono">REAL WEIGHTS<br />NO FAKE METRICS</span>
             </section>
 
-            <section className="recall-layout">
+            <section className="recall-layout" ref={recallRef} style={{ scrollMarginTop: '80px' }}>
               <RecallInterface vocabulary={VOCABULARY} input={recallInput} result={recallSnapshot} onInputChange={setRecallInput} onRecall={handleRecall} disabled={teachingPhase !== 'idle'} />
               <CompetingMemoryPanel input="DOG" firstOutput="ANIMAL" secondOutput="PET" firstWeight={firstWeight} secondWeight={secondWeight} predicted={recallSnapshot?.predicted ?? null} margin={margin} hasRecall={Boolean(recallSnapshot)} />
             </section>
 
-            <section className="honesty-panel">
+            <section className="honesty-panel" ref={completionRef} style={{ scrollMarginTop: '80px' }}>
               <div><span className="eyebrow">SCIENTIFIC HONESTY</span><h3>What this simulation is — and isn't.</h3></div>
               <div className="honesty-columns"><p><b>THIS IS</b>A small educational neural-network model; a live demonstration of weighted associations and Hebbian-style learning.</p><p><b>THIS IS NOT</b>A biological brain simulation, a literal model of human memory, or an implementation of BDH.</p><p><b>IMPORTANT LIMIT</b>Associations can coexist. Teaching PET does not biologically erase or weaken ANIMAL in this toy model.</p></div>
             </section>
