@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { NeuralNetwork } from './lib/NeuralNetwork';
 import { NeuralGrid } from './components/NeuralGrid';
 import { TeachInterface } from './components/TeachInterface';
@@ -8,108 +8,160 @@ import { StateDebugPanel } from './components/StateDebugPanel';
 import { BDHModule } from './components/BDHModule';
 import { SixtySecondTest } from './components/SixtySecondTest';
 import { GuidedTour } from './components/GuidedTour';
-import type { Node, Connection, Association } from './types';
+import { ExperimentStageRail, type ExperimentStage } from './components/ExperimentStageRail';
+import { ConnectionInspector, type ConnectionFeedback } from './components/ConnectionInspector';
+import { CompetingMemoryPanel } from './components/CompetingMemoryPanel';
+import { TeachingHistory } from './components/TeachingHistory';
+import type { Association, Connection, Node } from './types';
 
-// Initial vocabulary
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
+
+const STAGES: ExperimentStage[] = [
+  { id: 1, label: 'First connection', detail: 'DOG → ANIMAL' },
+  { id: 2, label: 'Strengthen it', detail: 'Repeat the pulse' },
+  { id: 3, label: 'Recall', detail: 'Choose a route' },
+  { id: 4, label: 'The fork', detail: 'DOG → PET' },
+  { id: 5, label: 'Competing paths', detail: 'Compare the margin' },
+];
+
+type Tab = 'simulation' | 'bdh' | 'test';
+type SelectionFocus = 'input' | 'output';
+
+interface RecallSnapshot {
+  input: string;
+  predicted: string;
+  connectionStrength: number;
+  allScores: Map<string, number>;
+}
 
 function App() {
   const [network] = useState(() => new NeuralNetwork(VOCABULARY, 0.1));
   const [, setUpdateTrigger] = useState(0);
-  const [activeTab, setActiveTab] = useState<'simulation' | 'bdh' | 'test'>(
-    'simulation'
-  );
-  const [highlightedConnection, setHighlightedConnection] = useState<{
-    from: string;
-    to: string;
-  } | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('simulation');
+  const [activeStage, setActiveStage] = useState(1);
+  const [completedStages, setCompletedStages] = useState<number[]>([]);
+  const [selectedInput, setSelectedInput] = useState('DOG');
+  const [selectedOutput, setSelectedOutput] = useState('ANIMAL');
+  const [selectionFocus, setSelectionFocus] = useState<SelectionFocus>('input');
+  const [repetitions, setRepetitions] = useState(3);
+  const [recallInput, setRecallInput] = useState('DOG');
+  const [highlightedConnection, setHighlightedConnection] = useState<{ from: string; to: string } | null>(null);
   const [teachingPhase, setTeachingPhase] = useState<'idle' | 'firing' | 'done'>('idle');
-  const [tutorialStep, setTutorialStep] = useState(1);
-  const [learningFeedback, setLearningFeedback] = useState<{
-    input: string;
-    output: string;
-    previousWeight: number;
-    newWeight: number;
-    deltaWeight: number;
-  } | null>(null);
+  const [feedback, setFeedback] = useState<ConnectionFeedback | null>(null);
+  const [recallSnapshot, setRecallSnapshot] = useState<RecallSnapshot | null>(null);
+  const [history, setHistory] = useState<ConnectionFeedback[]>([]);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const simulationRef = useRef<HTMLElement>(null);
 
-  // Force re-render when network state changes
-  const forceUpdate = () => setUpdateTrigger(prev => prev + 1);
+  const forceUpdate = () => setUpdateTrigger((previous) => previous + 1);
 
-  // Generate node positions in a circular layout
-  const generateNodes = (): Node[] => {
+  const playTone = (frequency: number, duration = 0.12, type: OscillatorType = 'sine') => {
+    if (!soundEnabled || typeof window === 'undefined') return;
+    const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = type;
+    oscillator.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.0001, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.06, context.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration);
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + duration + 0.02);
+    window.setTimeout(() => void context.close(), 300);
+  };
+
+  const nodes: Node[] = (() => {
     const centerX = 300;
     const centerY = 200;
-    const radius = 120;
-
+    const radius = 130;
+    const activations = network.getActivations();
     return VOCABULARY.map((word, index) => {
-      const angle =
-        (index / VOCABULARY.length) * 2 * Math.PI - Math.PI / 2;
-
-      return {
-        id: word,
-        label: word,
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle),
-        activation: network.getActivations()[index],
-      };
+      const angle = (index / VOCABULARY.length) * 2 * Math.PI - Math.PI / 2;
+      return { id: word, label: word, x: centerX + radius * Math.cos(angle), y: centerY + radius * Math.sin(angle), activation: activations[index] };
     });
-  };
+  })();
 
-  // Generate connections from the latest weight matrix
-  const generateConnections = (): Connection[] => {
+  const connections: Connection[] = (() => {
     const weights = network.getWeights();
-    const connections: Connection[] = [];
-
-    for (let i = 0; i < VOCABULARY.length; i++) {
-      for (let j = 0; j < VOCABULARY.length; j++) {
-        if (i !== j && weights[i][j] > 0.01) {
-          connections.push({
-            from: VOCABULARY[i],
-            to: VOCABULARY[j],
-            weight: weights[i][j],
-          });
-        }
+    const result: Connection[] = [];
+    for (let i = 0; i < VOCABULARY.length; i += 1) {
+      for (let j = 0; j < VOCABULARY.length; j += 1) {
+        if (i !== j && weights[i][j] > 0.01) result.push({ from: VOCABULARY[i], to: VOCABULARY[j], weight: weights[i][j] });
       }
     }
+    return result;
+  })();
 
-    return connections;
+  const currentWeight = network.getWeight(selectedInput, selectedOutput);
+  const learningRate = network.getLearningRate();
+  const saturation = currentWeight >= 0.999;
+
+  const completed = (stage: number) => {
+    setCompletedStages((previous) => previous.includes(stage) ? previous : [...previous, stage].sort((a, b) => a - b));
   };
 
-  // Always derive visualization data from the current network state.
-  const nodes = generateNodes();
-  const connections = generateConnections();
+  const selectStage = (stage: number) => {
+    setActiveStage(stage);
+    if (stage === 1 || stage === 2 || stage === 4) {
+      setSelectedInput('DOG');
+      setSelectedOutput(stage === 4 ? 'PET' : 'ANIMAL');
+      setSelectionFocus('input');
+    }
+    if (stage === 3 || stage === 5) setRecallInput('DOG');
+    simulationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
-  const handleTeach = (
-    association: Association,
-    repetitions: number
-  ) => {
-    // Phase 1 — "fire together": light up both nodes before weights update
+  const handleNodeSelect = (word: string) => {
+    if (selectionFocus === 'input') {
+      setSelectedInput(word);
+      if (word === selectedOutput) setSelectedOutput(VOCABULARY.find((candidate) => candidate !== word) ?? 'ANIMAL');
+      setSelectionFocus('output');
+    } else {
+      if (word !== selectedInput) setSelectedOutput(word);
+      setSelectionFocus('input');
+    }
+    playTone(230, 0.08);
+  };
+
+  const handleTeach = (association: Association, count: number) => {
+    if (teachingPhase !== 'idle') return;
+    setSelectedInput(association.input);
+    setSelectedOutput(association.output);
     setTeachingPhase('firing');
     setHighlightedConnection({ from: association.input, to: association.output });
+    playTone(260, 0.16, 'triangle');
 
-    // Small delay so the animation renders before the (synchronous) weight update
-    setTimeout(() => {
-      const result = network.teach(
-        association.input,
-        association.output,
-        repetitions
-      );
-
-      // Phase 2 — "wire together": weights updated, pulse travels the edge
-      setTeachingPhase('done');
-      forceUpdate();
-
-      setLearningFeedback({
+    window.setTimeout(() => {
+      const result = network.teach(association.input, association.output, count);
+      const nextFeedback: ConnectionFeedback = {
         input: association.input,
         output: association.output,
         previousWeight: result.previousWeight,
         newWeight: result.newWeight,
         deltaWeight: result.deltaWeight,
-      });
+        repetitions: count,
+      };
+      setFeedback(nextFeedback);
+      setHistory((previous) => [nextFeedback, ...previous].slice(0, 8));
+      setTeachingPhase('done');
+      forceUpdate();
+      playTone(520, 0.22);
 
-      // Clear highlight after animation completes
-      setTimeout(() => {
+      if (association.input === 'DOG' && association.output === 'ANIMAL') {
+        completed(1);
+        completed(2);
+        setActiveStage(2);
+      }
+      if (association.input === 'DOG' && association.output === 'PET') {
+        completed(4);
+        setActiveStage(5);
+      }
+
+      window.setTimeout(() => {
         setHighlightedConnection(null);
         setTeachingPhase('idle');
       }, 1800);
@@ -118,312 +170,159 @@ function App() {
 
   const handleRecall = (inputWord: string) => {
     const result = network.recall(inputWord);
+    setRecallSnapshot({ input: inputWord, predicted: result.word, connectionStrength: result.confidence, allScores: result.allScores });
+    setHighlightedConnection(result.word ? { from: inputWord, to: result.word } : null);
+    playTone(380, 0.2);
 
-    if (result.word) {
-      setHighlightedConnection({
-        from: inputWord,
-        to: result.word,
-      });
-
-      setTimeout(() => {
-        setHighlightedConnection(null);
-      }, 2000);
+    if (inputWord === 'DOG') {
+      completed(3);
+      const hasCompetingPath = history.some((entry) => entry.input === 'DOG' && entry.output === 'PET');
+      if (hasCompetingPath) completed(5);
+      setActiveStage(hasCompetingPath ? 5 : 4);
     }
-
-    return {
-      predicted: result.word,
-      connectionStrength: result.confidence,
-      allScores: result.allScores,
-    };
-  };
-
-  const handleLearningRateChange = (rate: number) => {
-    network.setLearningRate(rate);
-    forceUpdate();
+    window.setTimeout(() => setHighlightedConnection(null), 2000);
   };
 
   const handleReset = () => {
     network.reset();
-    setLearningFeedback(null);
+    setActiveStage(1);
+    setCompletedStages([]);
+    setSelectedInput('DOG');
+    setSelectedOutput('ANIMAL');
+    setRecallInput('DOG');
+    setSelectionFocus('input');
+    setFeedback(null);
+    setRecallSnapshot(null);
+    setHistory([]);
     setHighlightedConnection(null);
+    setTeachingPhase('idle');
     forceUpdate();
+    playTone(180, 0.12);
   };
 
+  const firstWeight = network.getWeight('DOG', 'ANIMAL');
+  const secondWeight = network.getWeight('DOG', 'PET');
+  const margin = recallSnapshot ? Math.abs(firstWeight - secondWeight) : null;
+  const navItems: Array<{ id: Tab; label: string; note: string }> = [
+    { id: 'simulation', label: 'The ride', note: 'live experiment' },
+    { id: 'bdh', label: 'Toy model → BDH', note: 'research context' },
+    { id: 'test', label: 'Can you predict?', note: 'knowledge check' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
-      {/* Header */}
-      <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                synaptiCITY
-              </h1>
-
-              <p className="text-sm text-gray-400 mt-1">
-                When Connections Become Memory
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              {/* Simulation Tab */}
-              <button
-                onClick={() => setActiveTab('simulation')}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'simulation'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-              >
-                Simulation
-              </button>
-
-              {/* BDH Tab */}
-              <button
-                onClick={() => setActiveTab('bdh')}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'bdh'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-              >
-                BDH/BDH-CQ
-              </button>
-
-              {/* Test Tab */}
-              <button
-                onClick={() => setActiveTab('test')}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${activeTab === 'test'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-              >
-                Test
-              </button>
-            </div>
-          </div>
+    <div className="app-shell">
+      <header className="site-header">
+        <button className="brand-lockup" onClick={() => { setActiveTab('simulation'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Return to synaptiCITY home">
+          <span className="brand-mark"><span /><span /><span /></span>
+          <span>
+            <strong>synaptiCITY</strong>
+            <small>when connections become memory</small>
+          </span>
+        </button>
+        <div className="header-tools">
+          <span className="model-status"><i /> MODEL ONLINE</span>
+          <button className={`sound-toggle ${soundEnabled ? 'is-on' : ''}`} onClick={() => setSoundEnabled((value) => !value)} aria-pressed={soundEnabled}>
+            {soundEnabled ? 'SOUND ON' : 'SOUND OFF'}
+          </button>
+          <span className="eta-readout mono">η {learningRate.toFixed(2)}</span>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Simulation Tab */}
+      <nav className="primary-nav" aria-label="Primary">
+        {navItems.map((item) => (
+          <button key={item.id} className={`nav-tab ${activeTab === item.id ? 'is-active' : ''}`} onClick={() => setActiveTab(item.id)}>
+            <span>{item.label}</span><small>{item.note}</small>
+          </button>
+        ))}
+      </nav>
+
+      <main className="app-main">
         {activeTab === 'simulation' && (
-          <div className="space-y-6">
-            {/* Introduction */}
-            {tutorialStep === 0 && (
-              <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500/30 rounded-lg p-6">
-                <h2 className="text-2xl font-bold mb-3">
-                  🧠 What if memory isn't a place, but a change?
-                </h2>
-
-                <p className="text-gray-300">
-                  In this simulation, you'll discover how{' '}
-                  <strong>synaptic plasticity</strong>—the strengthening
-                  of connections between neurons—creates memory. No
-                  storage cells, no databases. Just connections that learn.
-                </p>
-                <button
-                  onClick={() => setTutorialStep(1)}
-                  className="mt-4 text-blue-400 hover:text-blue-300 text-sm font-semibold transition-colors"
-                >
-                  Start Guided Tour →
-                </button>
-              </div>
-            )}
-
-            {/* Guided Tour */}
-            <GuidedTour
-              step={tutorialStep}
-              onNext={() => setTutorialStep(s => s + 1)}
-              onSkip={() => setTutorialStep(0)}
-            />
-
-            {/* Main Grid */}
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/* Visualization */}
-              <div className="lg:col-span-2">
-                <div className="bg-gray-800 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">
-                      Neural Network
-                    </h3>
-                    {teachingPhase !== 'idle' && (
-                      <span className="text-xs px-2 py-1 rounded-full bg-sky-900/50 text-sky-300 border border-sky-600/40 animate-pulse">
-                        {teachingPhase === 'firing' ? '⚡ Neurons firing…' : '🔗 Synapse wiring…'}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="h-96">
-                    <NeuralGrid
-                      nodes={nodes}
-                      connections={connections}
-                      highlightedConnection={highlightedConnection}
-                    />
-                  </div>
+          <div className="simulation-world">
+            <section className="hero-intro hero-landing">
+              <div className="hero-copy">
+                <span className="eyebrow">AN INTERACTIVE NEURAL LEARNING EXPERIENCE</span>
+                <h2>Learning isn't a<br /><em>button press.</em></h2>
+                <p className="hero-lede">Ride through a tiny learning network and watch connections strengthen with experience.</p>
+                <div className="hero-actions">
+                  <button className="hero-cta" onClick={() => simulationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>START THE RIDE <span>↗</span></button>
+                  <button className="hero-link" onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>HOW IT WORKS <span>↓</span></button>
                 </div>
               </div>
+              <div className="hero-visual" aria-label="Animated neural network preview">
+                <div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" />
+                <div className="hero-track track-a" /><div className="hero-track track-b" /><div className="hero-track track-c" />
+                {['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'].map((word, index) => (
+                  <span key={word} className={`hero-node hero-node-${index}`}><b>{word.slice(0, 1)}</b><small>{word}</small></span>
+                ))}
+                <span className="hero-pulse pulse-a" /><span className="hero-pulse pulse-b" />
+                <div className="hero-visual-label"><i /> LIVE MODEL / 06 NODES</div>
+              </div>
+            </section>
 
-              {/* Controls */}
-              <div className={`space-y-6 transition-opacity duration-500 ${tutorialStep > 0 && tutorialStep !== 2 && tutorialStep !== 4 ? 'opacity-40 pointer-events-none' : ''}`}>
-                <TeachInterface
-                  vocabulary={VOCABULARY}
-                  onTeach={handleTeach}
-                  suggestedInput={tutorialStep === 2 || tutorialStep === 4 ? 'DOG' : undefined}
-                  suggestedOutput={tutorialStep === 2 ? 'ANIMAL' : tutorialStep === 4 ? 'PET' : undefined}
-                  suggestedRepetitions={tutorialStep === 2 || tutorialStep === 4 ? 3 : undefined}
-                />
+            <section className="welcome-panel" id="how-it-works">
+              <div>
+                <span className="eyebrow">WELCOME ABOARD / 00</span>
+                <h3>Every idea begins as a connection.</h3>
+                <p>Every repetition can strengthen that connection. Your job: teach the network, ride the signal, and discover what it remembers.</p>
+              </div>
+              <div className="metaphor-map">
+                <span><b>WORD</b><i>NODE</i></span><em>→</em>
+                <span><b>CONNECTION</b><i>SYNAPSE</i></span><em>→</em>
+                <span><b>REPETITION</b><i>STRENGTH</i></span><em>→</em>
+                <span><b>RECALL</b><i>PATH SELECTION</i></span>
+              </div>
+            </section>
 
-                <div className={tutorialStep > 0 ? 'opacity-40 pointer-events-none' : ''}>
-                  <ControlPanel
-                    learningRate={network.getLearningRate()}
-                    onLearningRateChange={handleLearningRateChange}
-                    onReset={handleReset}
-                  />
+            <ExperimentStageRail stages={STAGES} activeStage={activeStage} completedStages={completedStages} onSelect={selectStage} />
+            <GuidedTour step={activeStage} completedStages={completedStages} onNext={() => setActiveStage(Math.min(5, activeStage + 1))} onSkip={() => setActiveStage(1)} />
+
+            <section className="lab-layout ride-layout" ref={simulationRef}>
+              <div className="graph-column">
+                <div className="section-label"><span>STATION 01 — NEURAL RIDE</span><span className="mono">{connections.length.toString().padStart(2, '0')} visible paths</span></div>
+                <div className="graph-frame ride-stage">
+                  <div className="stage-overlay"><span className="stage-chip">LIVE COMPUTATION</span><span className="mono">TRACK STATE / {teachingPhase === 'idle' ? 'RESTING' : 'FIRING'}</span></div>
+                  <NeuralGrid nodes={nodes} connections={connections} highlightedConnection={highlightedConnection} selectedNodes={{ input: selectedInput, output: selectedOutput }} selectionFocus={selectionFocus} onNodeSelect={handleNodeSelect} />
+                  {teachingPhase !== 'idle' && <div className="computation-state"><span className="status-dot" />{teachingPhase === 'firing' ? 'CO-ACTIVATING NODES' : 'UPDATING SYNAPSE'}</div>}
                 </div>
-
-                {learningFeedback && (
-                  <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
-                    <h3 className="font-semibold text-blue-300 mb-2">
-                      ⚡ Synapse Strengthened
-                    </h3>
-
-                    {/* Visual: Hebbian rule in plain English */}
-                    <p className="text-xs text-sky-300 mb-3 italic">
-                      "Neurons that fire together, wire together" — Donald Hebb, 1949
-                    </p>
-
-                    <p className="text-sm text-gray-300 font-mono">
-                      {learningFeedback.input}{' '}
-                      <span className="text-sky-400">→</span>{' '}
-                      {learningFeedback.output}
-                    </p>
-
-                    {/* Before / After weight display */}
-                    <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                      <div className="bg-gray-900 rounded p-2">
-                        <span className="text-gray-400 text-xs">Before</span>
-                        <p className="font-semibold text-white font-mono">
-                          {learningFeedback.previousWeight.toFixed(3)}
-                        </p>
-                      </div>
-
-                      <div className="bg-gray-900 rounded p-2 border border-emerald-700/50">
-                        <span className="text-emerald-400 text-xs">After</span>
-                        <p className="font-semibold text-emerald-300 font-mono">
-                          {learningFeedback.newWeight.toFixed(3)}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Strength bar */}
-                    <div className="mt-3">
-                      <div className="flex justify-between text-xs text-gray-400 mb-1">
-                        <span>Connection strength</span>
-                        <span>{learningFeedback.newWeight.toFixed(3)}</span>
-                      </div>
-
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div
-                          className="h-2 rounded-full transition-all duration-700"
-                          style={{
-                            width: `${Math.min(learningFeedback.newWeight * 100, 100)}%`,
-                            background:
-                              learningFeedback.newWeight < 0.3
-                                ? '#ef4444'
-                                : learningFeedback.newWeight < 0.6
-                                  ? '#f59e0b'
-                                  : '#10b981',
-                          }}
-                        />
-                      </div>
-
-                      <div className="text-right text-xs text-gray-400 mt-1">
-                        {(learningFeedback.newWeight * 100).toFixed(1)}%
-                      </div>
-                    </div>
-
-                    <div className="mt-2 text-sm flex items-center gap-2">
-                      <span className="text-gray-400">Δw =</span>
-                      <span className="font-semibold text-emerald-400 font-mono">
-                        +{Math.abs(learningFeedback.deltaWeight).toFixed(3)}
-                      </span>
-                      <span className="text-gray-500 text-xs">(η × aᵢ × aⱼ)</span>
-                    </div>
-
-                    {learningFeedback.newWeight >= 0.999 && (
-                      <p className="mt-2 text-xs text-yellow-300 bg-yellow-900/20 rounded p-2">
-                        🔒 Connection saturated — this synapse has reached maximum strength.
-                      </p>
-                    )}
-                  </div>
-                )}
+                <div className="graph-caption"><span>Click a node to choose {selectionFocus === 'input' ? 'the source' : 'the target'}.</span><span className="mono">weight → track width + glow</span></div>
               </div>
 
-              {/* Recall */}
-              <div className={`space-y-6 transition-opacity duration-500 ${tutorialStep > 0 && tutorialStep !== 3 && tutorialStep !== 4 ? 'opacity-40 pointer-events-none' : ''}`}>
-                <RecallInterface
-                  vocabulary={VOCABULARY}
-                  onRecall={handleRecall}
-                  suggestedInput={tutorialStep === 3 || tutorialStep === 4 ? 'DOG' : undefined}
-                />
+              <div className="control-column">
+                <TeachInterface vocabulary={VOCABULARY} input={selectedInput} output={selectedOutput} selectionFocus={selectionFocus} repetitions={repetitions} currentWeight={currentWeight} learningRate={learningRate} onInputChange={(value) => { setSelectedInput(value); setSelectionFocus('output'); }} onOutputChange={(value) => { setSelectedOutput(value); setSelectionFocus('input'); }} onFocusSelection={setSelectionFocus} onRepetitionsChange={setRepetitions} onTeach={handleTeach} disabled={teachingPhase !== 'idle'} />
+                <ConnectionInspector feedback={feedback} learningRate={learningRate} selectedInput={selectedInput} selectedOutput={selectedOutput} currentWeight={currentWeight} saturation={saturation} />
+                <ControlPanel learningRate={learningRate} onLearningRateChange={(rate) => { network.setLearningRate(rate); forceUpdate(); }} onReset={handleReset} disabled={teachingPhase !== 'idle'} />
               </div>
+            </section>
 
-              {/* Debug Panel */}
-              <div className="lg:col-span-2">
-                <StateDebugPanel
-                  weights={network.getWeights()}
-                  vocabulary={VOCABULARY}
-                  activations={network.getActivations()}
-                />
-              </div>
-            </div>
+            <section className="science-callout">
+              <span className="equation-mark">Δw</span>
+              <div><span className="eyebrow">WHY DID THE CONNECTION CHANGE?</span><h3>When two units fire together, this toy model wires them together.</h3><p>The actual Hebbian rule is <strong className="mono">Δw = η × aᵢ × aⱼ</strong>. Watch the before, after, and delta after every teaching event.</p></div>
+              <span className="rule-note mono">REAL WEIGHTS<br />NO FAKE METRICS</span>
+            </section>
 
-            {/* Competing Memories Demo */}
-            <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-6">
-              <h3 className="text-xl font-bold mb-3 text-yellow-300">
-                🔬 Try This: Competing Memories
-              </h3>
+            <section className="recall-layout">
+              <RecallInterface vocabulary={VOCABULARY} input={recallInput} result={recallSnapshot} onInputChange={setRecallInput} onRecall={handleRecall} disabled={teachingPhase !== 'idle'} />
+              <CompetingMemoryPanel input="DOG" firstOutput="ANIMAL" secondOutput="PET" firstWeight={firstWeight} secondWeight={secondWeight} predicted={recallSnapshot?.predicted ?? null} margin={margin} hasRecall={Boolean(recallSnapshot)} />
+            </section>
 
-              <ol className="space-y-2 text-gray-300">
-                <li>
-                  1. Teach DOG → ANIMAL (repeat 5 times)
-                </li>
-                <li>
-                  2. Test recall: DOG → ? (should predict ANIMAL)
-                </li>
-                <li>
-                  3. Now teach DOG → PET (repeat 5 times)
-                </li>
-                <li>
-                  4. Test recall again: DOG → ? (compare the learned associations)
-                </li>
-              </ol>
+            <section className="honesty-panel">
+              <div><span className="eyebrow">SCIENTIFIC HONESTY</span><h3>What this simulation is — and isn't.</h3></div>
+              <div className="honesty-columns"><p><b>THIS IS</b>A small educational neural-network model; a live demonstration of weighted associations and Hebbian-style learning.</p><p><b>THIS IS NOT</b>A biological brain simulation, a literal model of human memory, or an implementation of BDH.</p><p><b>IMPORTANT LIMIT</b>Associations can coexist. Teaching PET does not biologically erase or weaken ANIMAL in this toy model.</p></div>
+            </section>
 
-              <p className="text-sm text-gray-400 mt-2">
-                Multiple associations can coexist in the network. When their connection
-                strengths become similar, recall can become ambiguous because the network
-                must choose between competing learned associations.
-              </p>
-            </div>
+            <section className="lower-lab-grid">
+              <TeachingHistory entries={history} />
+              <StateDebugPanel weights={network.getWeights()} vocabulary={VOCABULARY} activations={network.getActivations()} />
+            </section>
           </div>
         )}
 
-        {/* BDH/BDH-CQ Tab */}
-        {activeTab === 'bdh' && <BDHModule />}
-
-        {/* Test Tab */}
-        {activeTab === 'test' && <SixtySecondTest />}
+        {activeTab === 'bdh' && <div className="standalone-module"><div className="module-heading"><span className="eyebrow">RESEARCH CONTEXT / 02</span><h2>From toy memory<br /><em>to BDH.</em></h2><p>Zoom out from the live experiment. Explore the conceptual bridge without confusing this toy model for the research concept.</p></div><BDHModule /></div>}
+        {activeTab === 'test' && <div className="standalone-module"><div className="module-heading"><span className="eyebrow">KNOWLEDGE CHECK / 03</span><h2>Can you read<br /><em>the synapse?</em></h2><p>Use what you observed in the laboratory, not a memorized definition.</p></div><SixtySecondTest /></div>}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-gray-800/50 border-t border-gray-700 mt-12 py-6">
-        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-400">
-          <p>
-            Built for educational purposes. Not a reimplementation of
-            BDH/BDH-CQ.
-          </p>
-        </div>
-      </footer>
+      <footer className="site-footer"><span>synaptiCITY / educational neural model</span><span className="mono">the animation visualizes the computation</span></footer>
     </div>
   );
 }

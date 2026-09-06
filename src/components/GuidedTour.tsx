@@ -2,75 +2,71 @@ import React from 'react';
 
 interface GuidedTourProps {
   step: number;
+  completedStages: number[];
   onNext: () => void;
   onSkip: () => void;
 }
 
-export const GuidedTour: React.FC<GuidedTourProps> = ({ step, onNext, onSkip }) => {
-  if (step === 0 || step > 4) return null;
+const stageCopy = [
+  {
+    kicker: 'STAGE 01 / OBSERVE',
+    title: 'Make a connection',
+    content: 'Choose DOG as the source and ANIMAL as the target. Send one or more teaching pulses and watch the actual edge appear.',
+    action: 'Move to strengthening',
+  },
+  {
+    kicker: 'STAGE 02 / REPEAT',
+    title: 'Strengthen it',
+    content: 'Repeat the same co-activation. The line is not a metaphor: its weight, thickness, and Δw are read from the model.',
+    action: 'Move to recall',
+  },
+  {
+    kicker: 'STAGE 03 / PREDICT',
+    title: 'Test memory',
+    content: 'Recall DOG. The network compares every outgoing score and returns its actual highest-scoring association.',
+    action: 'Create competition',
+  },
+  {
+    kicker: 'STAGE 04 / COMPETE',
+    title: 'Create competition',
+    content: 'Teach DOG → PET. Both paths are kept visible so you can compare their real strengths instead of being handed a scripted result.',
+    action: 'Explore the limitation',
+  },
+  {
+    kicker: 'STAGE 05 / QUESTION',
+    title: 'Explore the limitation',
+    content: 'Strengthen the competing path and recall again. Similar strengths can make the result ambiguous; this toy model does not implement biological forgetting.',
+    action: 'Restart experiment',
+  },
+];
 
-  const steps = [
-    {
-      title: "Welcome to synaptiCITY",
-      content: "Below is a resting neural network. Notice that all connections are thin and grey. The network hasn't learned any strong associations yet.",
-      action: "Next: Teach an association"
-    },
-    {
-      title: "Neurons that fire together, wire together",
-      content: "Let's teach the network that a DOG is an ANIMAL. We've pre-filled the teaching panel below. Click 'Teach Association' to send 3 learning pulses through the network, then click Next.",
-      action: "Next: Test the memory"
-    },
-    {
-      title: "Testing the Memory",
-      content: "Now let's see what the network recalls when it sees the word DOG. We've pre-filled the recall panel. Click 'What does it recall?' to test the prediction, then click Next.",
-      action: "Next: Create Interference"
-    },
-    {
-      title: "Memory Interference",
-      content: "What happens if we teach it another association for DOG? Change the teaching panel to DOG → PET, teach it 3 times, and then test recall again. Notice how the previous memory competes with the new one!",
-      action: "Finish Tour"
-    }
-  ];
-
-  const currentInfo = steps[step - 1];
+export const GuidedTour: React.FC<GuidedTourProps> = ({
+  step,
+  completedStages,
+  onNext,
+  onSkip,
+}) => {
+  const current = stageCopy[Math.max(0, Math.min(step - 1, stageCopy.length - 1))];
+  const isComplete = completedStages.includes(step);
 
   return (
-    <div className="bg-gradient-to-r from-blue-900/60 to-purple-900/60 border border-blue-400/40 rounded-lg p-6 shadow-lg mb-6 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gray-800">
-        <div 
-          className="h-full bg-blue-400 transition-all duration-500"
-          style={{ width: `${(step / 4) * 100}%` }}
-        />
+    <section className="stage-brief">
+      <div className="stage-brief-marker">
+        <span>{current.kicker}</span>
+        <span className={isComplete ? 'brief-complete' : ''}>{isComplete ? 'OBSERVED ✓' : 'READY'}</span>
       </div>
-      
-      <div className="flex justify-between items-start">
+      <div className="stage-brief-body">
         <div>
-          <span className="text-blue-300 text-sm font-bold tracking-wider uppercase mb-1 block">
-            Step {step} of 4
-          </span>
-          <h2 className="text-2xl font-bold text-white mb-2">
-            {currentInfo.title}
-          </h2>
-          <p className="text-gray-200 text-lg max-w-3xl">
-            {currentInfo.content}
-          </p>
+          <h2>{current.title}</h2>
+          <p>{current.content}</p>
         </div>
-        <button 
-          onClick={onSkip}
-          className="text-gray-400 hover:text-white transition-colors text-sm"
-        >
-          Skip Tour
-        </button>
+        <div className="stage-brief-actions">
+          <button className="text-button" onClick={onSkip}>Reset view</button>
+          <button className="outline-button" onClick={onNext}>
+            {step === 5 ? 'Back to stage 01' : current.action} <span>→</span>
+          </button>
+        </div>
       </div>
-
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={onNext}
-          className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded shadow-lg transition-colors"
-        >
-          {currentInfo.action}
-        </button>
-      </div>
-    </div>
+    </section>
   );
 };

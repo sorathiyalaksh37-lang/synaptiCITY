@@ -5,6 +5,9 @@ interface NeuralGridProps {
   nodes: Node[];
   connections: Connection[];
   highlightedConnection?: { from: string; to: string } | null;
+  selectedNodes?: { input: string; output: string };
+  selectionFocus?: 'input' | 'output';
+  onNodeSelect?: (word: string) => void;
 }
 
 /**
@@ -34,6 +37,9 @@ export const NeuralGrid: React.FC<NeuralGridProps> = ({
   nodes,
   connections,
   highlightedConnection,
+  selectedNodes,
+  selectionFocus = 'input',
+  onNodeSelect,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -83,15 +89,6 @@ export const NeuralGrid: React.FC<NeuralGridProps> = ({
     };
   }, [highlightedConnection]);
 
-  // Find highlighted connection data
-  const highlightedConn = highlightedConnection
-    ? connections.find(
-        c =>
-          c.from === highlightedConnection.from &&
-          c.to === highlightedConnection.to
-      )
-    : null;
-
   const fromNode = highlightedConnection
     ? nodes.find(n => n.id === highlightedConnection.from)
     : null;
@@ -106,7 +103,7 @@ export const NeuralGrid: React.FC<NeuralGridProps> = ({
     fromNode && toNode ? lerp(fromNode.y, toNode.y, pulseT) : 0;
 
   return (
-    <div className="w-full h-full bg-gray-900 rounded-lg p-4 flex flex-col">
+    <div className="neural-grid">
       {/* Inline keyframe animations — zero runtime dependencies */}
       <style>{`
         @keyframes nodeRipple {
@@ -258,7 +255,10 @@ export const NeuralGrid: React.FC<NeuralGridProps> = ({
               !!highlightedConnection && highlightedConnection.from === node.id;
             const isTarget =
               !!highlightedConnection && highlightedConnection.to === node.id;
-            const isActive = isSource || isTarget || node.activation > 0;
+            const isSelectedInput = selectedNodes?.input === node.id;
+            const isSelectedOutput = selectedNodes?.output === node.id;
+            const isSelected = isSelectedInput || isSelectedOutput;
+            const isActive = isSource || isTarget || node.activation > 0 || isSelected;
 
             const fillColor = isSource
               ? '#0ea5e9'   // sky-500 — pre-synaptic neuron fires
@@ -271,7 +271,20 @@ export const NeuralGrid: React.FC<NeuralGridProps> = ({
             const strokeColor = isActive ? '#e0f2fe' : '#374151';
 
             return (
-              <g key={node.id}>
+              <g
+                key={node.id}
+                className={`neural-node ${isSelected ? 'is-selected' : ''}`}
+                role={onNodeSelect ? 'button' : undefined}
+                tabIndex={onNodeSelect ? 0 : undefined}
+                aria-label={onNodeSelect ? `Select ${node.label} as ${selectionFocus}` : undefined}
+                onClick={() => onNodeSelect?.(node.id)}
+                onKeyDown={(event) => {
+                  if (onNodeSelect && (event.key === 'Enter' || event.key === ' ')) {
+                    event.preventDefault();
+                    onNodeSelect(node.id);
+                  }
+                }}
+              >
                 {/* Ripple ring — plays once while highlighted */}
                 {isActive && highlightedConnection && (
                   <circle
@@ -303,6 +316,19 @@ export const NeuralGrid: React.FC<NeuralGridProps> = ({
                     {node.label} (activation: {node.activation.toFixed(2)})
                   </title>
                 </circle>
+
+                {isSelected && !isSource && !isTarget && (
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={35}
+                    fill="none"
+                    stroke={isSelectedInput ? '#66d9ff' : '#b49cff'}
+                    strokeWidth={1}
+                    strokeDasharray="3 4"
+                    opacity={0.8}
+                  />
+                )}
 
                 {/* Node label */}
                 <text
@@ -354,7 +380,7 @@ export const NeuralGrid: React.FC<NeuralGridProps> = ({
       </svg>
 
       {/* Legend */}
-      <div className="mt-3 flex flex-wrap items-center gap-5 text-xs text-gray-400 px-1">
+      <div className="graph-legend">
         <div className="flex items-center gap-1.5">
           <svg width="28" height="6">
             <line x1="0" y1="3" x2="28" y2="3" stroke="#ef4444" strokeWidth="2" />

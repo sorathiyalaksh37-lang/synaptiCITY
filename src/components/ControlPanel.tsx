@@ -14,12 +14,18 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   disabled = false
 }) => {
   return (
-    <div className="bg-gray-800 rounded-lg p-6 space-y-4">
-      <h2 className="text-xl font-bold text-white mb-4">Controls</h2>
+    <section className="control-panel">
+      <div className="panel-heading-row">
+        <div>
+          <span className="panel-kicker">INSTRUMENT / PARAMETER</span>
+          <h2>Learning rate</h2>
+        </div>
+        <span className="mono parameter-value">η {learningRate.toFixed(2)}</span>
+      </div>
 
       <div>
-        <label htmlFor="learning-rate" className="block text-sm font-medium text-gray-300 mb-2">
-          Learning Rate (η): {learningRate.toFixed(2)}
+        <label htmlFor="learning-rate" className="range-label">
+          <span>How quickly the synapse changes</span>
         </label>
         <input
           id="learning-rate"
@@ -30,14 +36,14 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           value={learningRate}
           onChange={(e) => onLearningRateChange(Number(e.target.value))}
           disabled={disabled}
-          className="w-full"
+           className="instrument-range"
           aria-label="Learning rate parameter"
         />
-        <div className="flex justify-between text-xs text-gray-400 mt-1">
-          <span>Slow (0.01)</span>
-          <span>Fast (0.5)</span>
+        <div className="range-scale">
+          <span>slow / 0.01</span>
+          <span>fast / 0.50</span>
         </div>
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="control-explanation">
           Controls how quickly connections strengthen. Higher = faster learning, but each teaching step changes the connection more strongly.
         </p>
       </div>
@@ -45,22 +51,17 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       <button
         onClick={onReset}
         disabled={disabled}
-        className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+        className="reset-action"
         aria-label="Reset network"
       >
-        Reset Network
+        <span>Reset experiment</span><span>↺</span>
       </button>
 
-      <div className="mt-4 p-4 bg-gray-900 rounded text-sm text-gray-300">
-        <p className="font-semibold mb-2">🧠 Hebbian Learning Rule:</p>
-        <p className="font-mono text-xs mb-2">Δw = η × aᵢ × aⱼ</p>
-        <ul className="text-xs space-y-1">
-          <li>• Δw = change in connection weight</li>
-          <li>• η = learning rate (eta)</li>
-          <li>• aᵢ = activation of neuron i</li>
-          <li>• aⱼ = activation of neuron j</li>
-        </ul>
-      </div>
-    </div>
+      <details className="technical-detail">
+        <summary>Read the rule</summary>
+        <p className="mono">Δw = η × aᵢ × aⱼ</p>
+        <p>η is the learning rate. aᵢ and aⱼ are the live activations of the selected nodes.</p>
+      </details>
+    </section>
   );
 };

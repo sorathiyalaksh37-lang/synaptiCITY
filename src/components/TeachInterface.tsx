@@ -1,130 +1,119 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import type { Association } from '../types';
 
 interface TeachInterfaceProps {
   vocabulary: string[];
+  input: string;
+  output: string;
+  selectionFocus: 'input' | 'output';
+  repetitions: number;
+  currentWeight: number;
+  learningRate: number;
+  onInputChange: (value: string) => void;
+  onOutputChange: (value: string) => void;
+  onFocusSelection: (focus: 'input' | 'output') => void;
+  onRepetitionsChange: (value: number) => void;
   onTeach: (association: Association, repetitions: number) => void;
   disabled?: boolean;
-  suggestedInput?: string;
-  suggestedOutput?: string;
-  suggestedRepetitions?: number;
 }
 
 export const TeachInterface: React.FC<TeachInterfaceProps> = ({
   vocabulary,
+  input,
+  output,
+  selectionFocus,
+  repetitions,
+  currentWeight,
+  learningRate,
+  onInputChange,
+  onOutputChange,
+  onFocusSelection,
+  onRepetitionsChange,
   onTeach,
   disabled = false,
-  suggestedInput,
-  suggestedOutput,
-  suggestedRepetitions
 }) => {
-  const [input, setInput] = useState(suggestedInput || '');
-  const [output, setOutput] = useState(suggestedOutput || '');
-  const [repetitions, setRepetitions] = useState(suggestedRepetitions || 3);
-
-  useEffect(() => {
-    if (suggestedInput) setInput(suggestedInput);
-    if (suggestedOutput) setOutput(suggestedOutput);
-    if (suggestedRepetitions) setRepetitions(suggestedRepetitions);
-  }, [suggestedInput, suggestedOutput, suggestedRepetitions]);
-
-  const handleTeach = () => {
-    if (input && output && input !== output) {
-      onTeach({ input: input.toUpperCase(), output: output.toUpperCase() }, repetitions);
-      // Keep the values for repeated teaching
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !disabled) {
-      handleTeach();
-    }
-  };
+  const projectedWeight = Math.min(1, currentWeight + learningRate * repetitions);
+  const projectedDelta = projectedWeight - currentWeight;
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 space-y-4">
-      <h2 className="text-xl font-bold text-white mb-4">Teach an Association</h2>
-      
-      <div className="space-y-4">
+    <section className="teach-panel">
+      <div className="panel-heading-row">
         <div>
-          <label htmlFor="input-word" className="block text-sm font-medium text-gray-300 mb-2">
-            Input Word
-          </label>
-          <select
-            id="input-word"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={disabled}
-            className="w-full bg-gray-700 text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-            aria-label="Select input word"
-          >
-            <option value="">Select...</option>
-            {vocabulary.map(word => (
-              <option key={word} value={word}>{word}</option>
-            ))}
-          </select>
+          <span className="panel-kicker">ACTION / TEACH</span>
+          <h2>Fire together.</h2>
         </div>
+        <span className="action-index">01</span>
+      </div>
+      <p className="panel-intro">Select two nodes to create or strengthen a directed association.</p>
 
-        <div className="text-center text-2xl text-gray-400">→</div>
-
-        <div>
-          <label htmlFor="output-word" className="block text-sm font-medium text-gray-300 mb-2">
-            Output Word
-          </label>
-          <select
-            id="output-word"
-            value={output}
-            onChange={(e) => setOutput(e.target.value)}
-            disabled={disabled}
-            className="w-full bg-gray-700 text-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-            aria-label="Select output word"
-          >
-            <option value="">Select...</option>
-            {vocabulary.filter(w => w !== input).map(word => (
-              <option key={word} value={word}>{word}</option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="repetitions" className="block text-sm font-medium text-gray-300 mb-2">
-            Repetitions: {repetitions}
-          </label>
-          <input
-            id="repetitions"
-            type="range"
-            min="1"
-            max="10"
-            value={repetitions}
-            onChange={(e) => setRepetitions(Number(e.target.value))}
-            disabled={disabled}
-            className="w-full"
-            aria-label="Number of repetitions"
-          />
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
-            <span>1</span>
-            <span>10</span>
-          </div>
-        </div>
-
+      <div className="association-picker">
         <button
-          onClick={handleTeach}
-          disabled={disabled || !input || !output || input === output}
-          onKeyPress={handleKeyPress}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-          aria-label="Teach association"
+          className={`node-choice ${selectionFocus === 'input' ? 'is-focused' : ''}`}
+          onClick={() => onFocusSelection('input')}
+          disabled={disabled}
         >
-          Teach Association
+          <span className="choice-label">SOURCE</span>
+          <strong>{input}</strong>
+          <small>pre-synaptic</small>
+        </button>
+        <span className="association-arrow">→</span>
+        <button
+          className={`node-choice node-choice-target ${selectionFocus === 'output' ? 'is-focused' : ''}`}
+          onClick={() => onFocusSelection('output')}
+          disabled={disabled}
+        >
+          <span className="choice-label">TARGET</span>
+          <strong>{output}</strong>
+          <small>post-synaptic</small>
         </button>
       </div>
 
-      <div className="mt-4 p-4 bg-gray-900 rounded text-sm text-gray-300">
-        <p className="font-semibold mb-2">💡 How it works:</p>
-        <p>
-          Each time you teach an association, the connection between these two words strengthens.
-          More repetitions = stronger memory. Watch the line thickness and color change!
-        </p>
+      <div className="select-row">
+        <label>
+          <span>Source node</span>
+          <select value={input} onChange={(event) => onInputChange(event.target.value)} disabled={disabled}>
+            {vocabulary.map((word) => <option key={word}>{word}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>Target node</span>
+          <select value={output} onChange={(event) => onOutputChange(event.target.value)} disabled={disabled}>
+            {vocabulary.filter((word) => word !== input).map((word) => <option key={word}>{word}</option>)}
+          </select>
+        </label>
       </div>
-    </div>
+
+      <div className="repetition-control">
+        <div className="range-label">
+          <span>Teaching pulses</span>
+          <strong className="mono">{repetitions.toString().padStart(2, '0')}</strong>
+        </div>
+        <input
+          type="range"
+          min="1"
+          max="10"
+          value={repetitions}
+          onChange={(event) => onRepetitionsChange(Number(event.target.value))}
+          disabled={disabled}
+          aria-label="Teaching pulses"
+        />
+        <div className="range-scale"><span>01</span><span>10</span></div>
+      </div>
+
+      <div className="preview-readout">
+        <span>PROJECTED Δw</span>
+        <strong className="mono">+{projectedDelta.toFixed(3)}</strong>
+        <small>{currentWeight.toFixed(3)} → {projectedWeight.toFixed(3)} at η = {learningRate.toFixed(2)}</small>
+      </div>
+
+      <button
+        className="primary-action"
+        onClick={() => onTeach({ input, output }, repetitions)}
+        disabled={disabled || !input || !output || input === output}
+      >
+        <span>{disabled ? 'COMPUTATION IN PROGRESS' : 'TEACH ASSOCIATION'}</span>
+        <span>↗</span>
+      </button>
+    </section>
   );
 };
