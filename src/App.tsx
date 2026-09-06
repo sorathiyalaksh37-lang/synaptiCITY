@@ -105,6 +105,8 @@ function App() {
   };
 
   const selectStage = (stage: number) => {
+    const highestCompletedStage = completedStages.length > 0 ? Math.max(...completedStages) : 0;
+    if (stage > highestCompletedStage + 1) return; // reject illegal jump
     setActiveStage(stage);
     if (stage === 1 || stage === 2 || stage === 4) {
       setSelectedInput('DOG');
@@ -153,8 +155,16 @@ function App() {
 
       if (association.input === 'DOG' && association.output === 'ANIMAL') {
         completed(1);
-        completed(2);
-        setActiveStage(2);
+        // Stage 2 requires genuine repetition: only complete it if the learner
+        // has already taught DOG→ANIMAL at least once before this action.
+        const priorAnimalTeaches = history.filter(
+          (entry) => entry.input === 'DOG' && entry.output === 'ANIMAL'
+        ).length;
+        if (priorAnimalTeaches >= 1) {
+          completed(2);
+        }
+        // Auto-advance: if stage 2 is now done move to stage 3, else move to stage 2
+        setActiveStage(priorAnimalTeaches >= 1 ? 3 : 2);
       }
       if (association.input === 'DOG' && association.output === 'PET') {
         completed(4);
@@ -177,8 +187,11 @@ function App() {
     if (inputWord === 'DOG') {
       completed(3);
       const hasCompetingPath = history.some((entry) => entry.input === 'DOG' && entry.output === 'PET');
-      if (hasCompetingPath) completed(5);
-      setActiveStage(hasCompetingPath ? 5 : 4);
+      // Stage 5 requires the learner to have already taught DOG→PET (stage 4 completed).
+      // Use completedStages snapshot to check — stage 4 would have been marked by handleTeach.
+      const stage4Done = hasCompetingPath; // DOG→PET teach also completes(4) synchronously
+      if (stage4Done) completed(5);
+      setActiveStage(stage4Done ? 5 : 4);
     }
     window.setTimeout(() => setHighlightedConnection(null), 2000);
   };
