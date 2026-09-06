@@ -12,7 +12,6 @@ import { ExperimentStageRail, type ExperimentStage } from './components/Experime
 import { ConnectionInspector, type ConnectionFeedback } from './components/ConnectionInspector';
 import { CompetingMemoryPanel } from './components/CompetingMemoryPanel';
 import { TeachingHistory } from './components/TeachingHistory';
-import { playWhooshSound } from './utils/transitionSound';
 import type { Association, Connection, Node } from './types';
 
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
@@ -51,7 +50,6 @@ function App() {
   const [feedback, setFeedback] = useState<ConnectionFeedback | null>(null);
   const [recallSnapshot, setRecallSnapshot] = useState<RecallSnapshot | null>(null);
   const [history, setHistory] = useState<ConnectionFeedback[]>([]);
-  const [soundEnabled, setSoundEnabled] = useState(false);
   const stageGuideRef = useRef<HTMLDivElement>(null);
   const simulationRef = useRef<HTMLElement>(null);
   const recallRef = useRef<HTMLElement>(null);
@@ -72,28 +70,10 @@ function App() {
 
   const handleStartRide = () => {
     selectStage(1);
-    playWhooshSound(soundEnabled);
     scrollToTarget(stageGuideRef.current);
   };
 
-  const playTone = (frequency: number, duration = 0.12, type: OscillatorType = 'sine') => {
-    if (!soundEnabled || typeof window === 'undefined') return;
-    const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const context = new AudioContextClass();
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.type = type;
-    oscillator.frequency.value = frequency;
-    gain.gain.setValueAtTime(0.0001, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.06, context.currentTime + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration);
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start();
-    oscillator.stop(context.currentTime + duration + 0.02);
-    window.setTimeout(() => void context.close(), 300);
-  };
+
 
   const nodes: Node[] = (() => {
     const centerX = 300;
@@ -147,7 +127,6 @@ function App() {
       if (word !== selectedInput) setSelectedOutput(word);
       setSelectionFocus('input');
     }
-    playTone(230, 0.08);
   };
 
   const handleTeach = (association: Association, count: number) => {
@@ -156,7 +135,6 @@ function App() {
     setSelectedOutput(association.output);
     setTeachingPhase('firing');
     setHighlightedConnection({ from: association.input, to: association.output });
-    playTone(260, 0.16, 'triangle');
 
     window.setTimeout(() => {
       const result = network.teach(association.input, association.output, count);
@@ -172,7 +150,6 @@ function App() {
       setHistory((previous) => [nextFeedback, ...previous].slice(0, 8));
       setTeachingPhase('done');
       forceUpdate();
-      playTone(520, 0.22);
 
       if (association.input === 'DOG' && association.output === 'ANIMAL') {
         const priorAnimalTeaches = history.filter(
@@ -181,19 +158,16 @@ function App() {
         if (priorAnimalTeaches === 0) {
           completed(1);
           setActiveStage(2);
-          playWhooshSound(soundEnabled);
           scrollToTarget(simulationRef.current);
         } else if (priorAnimalTeaches >= 1) {
           completed(2);
           setActiveStage(3);
-          playWhooshSound(soundEnabled);
           scrollToTarget(recallRef.current);
         }
       }
       if (association.input === 'DOG' && association.output === 'PET' && completedStages.includes(3)) {
         completed(4);
         setActiveStage(5);
-        playWhooshSound(soundEnabled);
         scrollToTarget(recallRef.current);
       }
 
@@ -208,7 +182,6 @@ function App() {
     const result = network.recall(inputWord);
     setRecallSnapshot({ input: inputWord, predicted: result.word, connectionStrength: result.confidence, allScores: result.allScores });
     setHighlightedConnection(result.word ? { from: inputWord, to: result.word } : null);
-    playTone(380, 0.2);
 
     if (inputWord === 'DOG') {
       const hasCompetingPath = history.some((entry) => entry.input === 'DOG' && entry.output === 'PET');
@@ -220,12 +193,10 @@ function App() {
         setSelectedInput('DOG');
         setSelectedOutput('PET');
         setSelectionFocus('input');
-        playWhooshSound(soundEnabled);
         scrollToTarget(simulationRef.current);
       } else if (stage4Done && !completedStages.includes(5)) {
         completed(5);
         setActiveStage(5);
-        playWhooshSound(soundEnabled);
         scrollToTarget(completionRef.current);
       }
     }
@@ -246,7 +217,6 @@ function App() {
     setHighlightedConnection(null);
     setTeachingPhase('idle');
     forceUpdate();
-    playTone(180, 0.12);
   };
 
   const firstWeight = network.getWeight('DOG', 'ANIMAL');
@@ -270,9 +240,6 @@ function App() {
         </button>
         <div className="header-tools">
           <span className="model-status"><i /> MODEL ONLINE</span>
-          <button className={`sound-toggle ${soundEnabled ? 'is-on' : ''}`} onClick={() => setSoundEnabled((value) => !value)} aria-pressed={soundEnabled}>
-            {soundEnabled ? 'SOUND ON' : 'SOUND OFF'}
-          </button>
           <span className="eta-readout mono">η {learningRate.toFixed(2)}</span>
         </div>
       </header>
