@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { NeuralNetwork } from './lib/NeuralNetwork';
 import { NeuralGrid } from './components/NeuralGrid';
 import { TeachInterface } from './components/TeachInterface';
@@ -12,7 +12,11 @@ import { ExperimentStageRail, type ExperimentStage } from './components/Experime
 import { ConnectionInspector, type ConnectionFeedback } from './components/ConnectionInspector';
 import { CompetingMemoryPanel } from './components/CompetingMemoryPanel';
 import { TeachingHistory } from './components/TeachingHistory';
+import { ThemeSwitcher } from './components/ThemeSwitcher';
+import { WeightHeatmap } from './components/WeightHeatmap';
+import { TutorialOverlay } from './components/TutorialOverlay';
 import { playWhooshSound } from './utils/transitionSound';
+import { saveNetworkState, loadNetworkState, hasStoredState } from './utils/storage';
 import { Logo } from './components/Logo';
 import type { Association, Connection, Node } from './types';
 
@@ -28,6 +32,7 @@ const STAGES: ExperimentStage[] = [
 
 type Tab = 'simulation' | 'bdh' | 'test';
 type SelectionFocus = 'input' | 'output';
+type ViewMode = 'graph' | 'heatmap';
 
 interface RecallSnapshot {
   input: string;
@@ -39,6 +44,8 @@ interface RecallSnapshot {
 function App() {
   const [network] = useState(() => new NeuralNetwork(VOCABULARY, 0.1));
   const [, setUpdateTrigger] = useState(0);
+  const [viewMode, setViewMode] = useState<ViewMode>('graph');
+  const [showTutorial, setShowTutorial] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('simulation');
   const [activeStage, setActiveStage] = useState(1);
   const [completedStages, setCompletedStages] = useState<number[]>([]);
@@ -58,6 +65,45 @@ function App() {
   const completionRef = useRef<HTMLElement>(null);
 
   const forceUpdate = () => setUpdateTrigger((previous) => previous + 1);
+
+  // Load saved state on mount
+  useEffect(() => {
+    if (hasStoredState()) {
+      const savedState = loadNetworkState();
+      if (savedState) {
+        // Restore network weights
+        const weights = savedState.weights;
+        weights.forEach((row, i) => {
+          row.forEach((weight, j) => {
+            if (i !== j && weight > 0) {
+              network.teach(VOCABULARY[i], VOCABULARY[j], 1);
+            }
+          });
+        });
+        network.setLearningRate(savedState.learningRate);
+        
+        // Restore history
+        setHistory(savedState.history);
+        forceUpdate();
+      }
+    }
+  }, []);
+
+  // Save state whenever network changes
+  useEffect(() => {
+    const state = {
+      weights: network.getWeights(),
+      vocabulary: VOCABULARY,
+      learningRate: network.getLearningRate(),
+      history,
+      timestamp: Date.now(),
+    };
+    saveNetworkState(state);
+  }, [history, network]);
+
+  const handleTutorialComplete = () => {
+    setShowTutorial(false);
+  };
 
   const scrollToTarget = (element: HTMLElement | null) => {
     if (!element) return;
@@ -232,6 +278,8 @@ function App() {
 
   return (
     <div className="app-shell">
+      <TutorialOverlay onComplete={handleTutorialComplete} />
+      
       <header className="site-header">
         <button className="brand-lockup" onClick={() => { setActiveTab('simulation'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Return to synaptiCITY home">
           <Logo className="logo-icon" />
@@ -241,6 +289,7 @@ function App() {
           </span>
         </button>
         <div className="header-tools">
+          <ThemeSwitcher />
           <span className="model-status"><i /> MODEL ONLINE</span>
           <span className="eta-readout mono">η {learningRate.toFixed(2)}</span>
         </div>
@@ -294,13 +343,39 @@ function App() {
 
             <section className="lab-layout ride-layout" ref={simulationRef} style={{ scrollMarginTop: '80px' }}>
               <div className="graph-column">
-                <div className="section-label"><span>STATION 01 — NEURAL RIDE</span><span className="mono">{connections.length.toString().padStart(2, '0')} visible paths</span></div>
-                <div className="graph-frame ride-stage">
-                  <div className="stage-overlay"><span className="stage-chip">LIVE COMPUTATION</span><span className="mono">TRACK STATE / {teachingPhase === 'idle' ? 'RESTING' : 'FIRING'}</span></div>
-                  <NeuralGrid nodes={nodes} connections={connections} highlightedConnection={highlightedConnection} selectedNodes={{ input: selectedInput, output: selectedOutput }} selectionFocus={selectionFocus} onNodeSelect={handleNodeSelect} />
-                  {teachingPhase !== 'idle' && <div className="computation-state"><span className="status-dot" />{teachingPhase === 'firing' ? 'CO-ACTIVATING NODES' : 'UPDATING SYNAPSE'}</div>}
+                <div className="section-label">
+                  <span>STATION 01 — NEURAL RIDE</span>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <button
+                      className={`view-toggle ${viewMode === 'graph' ? 'is-active' : ''}`}
+                      onClick={() => setViewMode('graph')}
+                      title="Graph view"
+                    >
+                      GRAPH
+                    </button>
+                    <button
+                      className={`view-toggle ${viewMode === 'heatmap' ? 'is-active' : ''}`}
+                      onClick={() => setViewMode('heatmap')}
+                      title="Heatmap view"
+                    >
+                      HEATMAP
+                    </button>
+                    <span className="mono">{connections.length.toString().padStart(2, '0')} visible paths</span>
+                  </div>
                 </div>
-                <div className="graph-caption"><span>Click a node to choose {selectionFocus === 'input' ? 'the source' : 'the target'}.</span><span className="mono">weight → track width + glow</span></div>
+                
+                {viewMode === 'graph' ? (
+                  <>
+                    <div className="graph-frame ride-stage">
+                      <div className="stage-overlay"><span className="stage-chip">LIVE COMPUTATION</span><span className="mono">TRACK STATE / {teachingPhase === 'idle' ? 'RESTING' : 'FIRING'}</span></div>
+                      <NeuralGrid nodes={nodes} connections={connections} highlightedConnection={highlightedConnection} selectedNodes={{ input: selectedInput, output: selectedOutput }} selectionFocus={selectionFocus} onNodeSelect={handleNodeSelect} />
+                      {teachingPhase !== 'idle' && <div className="computation-state"><span className="status-dot" />{teachingPhase === 'firing' ? 'CO-ACTIVATING NODES' : 'UPDATING SYNAPSE'}</div>}
+                    </div>
+                    <div className="graph-caption"><span>Click a node to choose {selectionFocus === 'input' ? 'the source' : 'the target'}.</span><span className="mono">weight → track width + glow</span></div>
+                  </>
+                ) : (
+                  <WeightHeatmap weights={network.getWeights()} vocabulary={VOCABULARY} />
+                )}
               </div>
 
               <div className="control-column">
