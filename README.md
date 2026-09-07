@@ -232,6 +232,17 @@ Our toy model demonstrates **one mechanism** used in real systems. It is NOT a r
 - **Visual Assets**: Custom hexagonal neural network logo design
 - **Code License**: This project is licensed under the MIT License.
 
+## 📚 Documentation
+
+- **[README.md](./README.md)** - You are here! Overview and quick start
+- **[FAQ.md](./FAQ.md)** - Frequently asked questions
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - How to contribute to the project
+- **[API.md](./API.md)** - Backend API documentation
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deployment guide for backend
+- **[PWA_GUIDE.md](./PWA_GUIDE.md)** - Progressive Web App features
+- **[PROGRESS.md](./PROGRESS.md)** - Development progress tracker
+- **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)** - Technical overview
+
 ## 🛠️ Development
 
 ### Available Scripts
