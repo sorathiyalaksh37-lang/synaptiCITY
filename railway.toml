@@ -1,6 +1,5 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "npm install --production=false"
 
 [deploy]
 startCommand = "npm run server:prod"
