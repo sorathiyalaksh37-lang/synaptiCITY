@@ -4478,3 +4478,539 @@ input:focus-visible {
     transform: rotate(90deg);
   }
 }
+
+
+/* ========================================================================
+   Phase 2 Part 2 - 3D Visualization, Animation Controls, Formula Playground
+   ======================================================================== */
+
+/* 3D Neural Network */
+.neural-network-3d {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border: 1px solid var(--line);
+  border-radius: var(--rounded);
+  background: rgba(16, 19, 28, 0.8);
+  overflow: hidden;
+}
+
+.canvas-container {
+  width: 100%;
+  height: 100%;
+}
+
+.controls-3d {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 16px;
+  border-radius: var(--rounded-full);
+  background: rgba(16, 19, 28, 0.9);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+
+.control-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--on-surface-variant);
+}
+
+.hint-icon {
+  font-size: 14px;
+}
+
+/* Animation Controls */
+.animation-controls {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--rounded);
+  background: rgba(16, 19, 28, 0.8);
+}
+
+.controls-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.controls-header h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.frame-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.playback-controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.control-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--on-surface);
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover:not(:disabled) {
+  border-color: var(--primary-container);
+  background: rgba(56, 189, 248, 0.1);
+  transform: scale(1.1);
+}
+
+.control-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.control-btn-primary {
+  width: 56px;
+  height: 56px;
+  border-color: var(--primary-container);
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.control-btn-primary:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.25);
+}
+
+.timeline {
+  position: relative;
+  margin-bottom: 16px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.timeline-slider {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  outline: none;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.timeline-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary-container);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.timeline-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary-container);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.timeline-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-container), var(--tertiary));
+  border-radius: 3px;
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+.speed-control {
+  padding: 16px;
+  border-radius: var(--rounded);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+}
+
+.speed-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--on-surface-variant);
+}
+
+.speed-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--primary-container);
+}
+
+.speed-options {
+  display: flex;
+  gap: 8px;
+}
+
+.speed-btn {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--rounded);
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.speed-btn:hover {
+  border-color: var(--primary-container);
+  color: var(--primary-container);
+}
+
+.speed-btn.is-active {
+  border-color: var(--primary-container);
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--primary-container);
+}
+
+/* Formula Playground */
+.formula-playground {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--rounded);
+  background: rgba(16, 19, 28, 0.8);
+}
+
+.playground-header {
+  margin-bottom: 16px;
+}
+
+.playground-header h4 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.playground-subtitle {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.formula-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.formula-option {
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--rounded-full);
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+}
+
+.formula-option:hover {
+  border-color: var(--primary-container);
+  color: var(--primary-container);
+}
+
+.formula-option.is-active {
+  border-color: var(--primary-container);
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--primary-container);
+}
+
+.formula-display {
+  margin-bottom: 20px;
+}
+
+.formula-card {
+  padding: 20px;
+  border: 1px solid var(--primary-container);
+  border-radius: var(--rounded);
+  background: rgba(56, 189, 248, 0.05);
+  text-align: center;
+}
+
+.formula-latex {
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-container);
+  letter-spacing: 0.02em;
+}
+
+.formula-desc {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--on-surface-variant);
+}
+
+.variables-panel {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--rounded);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+}
+
+.variables-panel h5 {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.variables-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.variable-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.variable-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.variable-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.variable-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--primary-container);
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.1);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-container);
+}
+
+.variable-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--on-surface-variant);
+}
+
+.variable-value {
+  padding: 4px 10px;
+  border-radius: var(--rounded);
+  background: rgba(0, 0, 0, 0.3);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.variable-slider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  background: var(--line);
+  outline: none;
+}
+
+.variable-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary-container);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.variable-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary-container);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.slider-bounds {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.result-panel {
+  padding: 20px;
+  border: 2px solid var(--primary-container);
+  border-radius: var(--rounded);
+  background: rgba(56, 189, 248, 0.05);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.result-label {
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.result-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.result-symbol {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--on-surface-variant);
+}
+
+.result-number {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.result-number.positive {
+  color: var(--success);
+}
+
+.result-number.negative {
+  color: var(--error);
+}
+
+.result-number.zero {
+  color: var(--muted);
+}
+
+.result-interpretation {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--on-surface-variant);
+}
+
+.playground-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--rounded);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+}
+
+.playground-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--muted);
+}
+
+.playground-note span {
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .neural-network-3d {
+    height: 400px;
+  }
+
+  .playback-controls {
+    gap: 6px;
+  }
+
+  .control-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .control-btn-primary {
+    width: 50px;
+    height: 50px;
+  }
+
+  .formula-selector {
+    flex-direction: column;
+  }
+
+  .formula-latex {
+    font-size: 16px;
+  }
+
+  .result-number {
+    font-size: 24px;
+  }
+}
