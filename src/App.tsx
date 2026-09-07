@@ -29,6 +29,9 @@ import { LearningRuleSelector } from './components/LearningRuleSelector';
 import { AchievementPanel } from './components/AchievementPanel';
 import { AdminDashboard } from './components/AdminDashboard';
 import { UserProfile } from './components/UserProfile';
+import { MultiLayerVisualizer } from './components/MultiLayerVisualizer';
+import { AttentionMechanism } from './components/AttentionMechanism';
+import { BDHBridge } from './components/BDHBridge';
 import type { Association, Connection, Node } from './types';
 
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
@@ -41,7 +44,7 @@ const STAGES: ExperimentStage[] = [
   { id: 5, label: 'Competing paths', detail: 'Compare the margin' },
 ];
 
-type Tab = 'simulation' | 'bdh' | 'test' | 'community' | 'advanced' | 'account';
+type Tab = 'simulation' | 'bdh' | 'test' | 'community' | 'advanced' | 'account' | 'ai';
 type SelectionFocus = 'input' | 'output';
 type ViewMode = 'graph' | 'heatmap';
 type CommunityTab = 'browse' | 'share' | 'submit';
@@ -411,6 +414,7 @@ function App() {
     { id: 'simulation', label: 'The ride', note: 'live experiment' },
     { id: 'bdh', label: 'Toy model → BDH', note: 'research context' },
     { id: 'test', label: 'Can you predict?', note: 'knowledge check' },
+    { id: 'ai', label: 'Advanced AI', note: 'deep learning' },
     { id: 'community', label: 'Community', note: 'share & explore' },
     { id: 'advanced', label: 'Advanced', note: 'tools & features' },
     { id: 'account', label: 'Account', note: 'profile & settings' },
@@ -572,6 +576,22 @@ function App() {
 
         {activeTab === 'bdh' && <div className="standalone-module"><div className="module-heading"><span className="eyebrow">RESEARCH CONTEXT / 02</span><h2>From toy memory<br /><em>to BDH.</em></h2><p>Zoom out from the live experiment. Explore the conceptual bridge without confusing this toy model for the research concept.</p></div><BDHModule /></div>}
         {activeTab === 'test' && <div className="standalone-module"><div className="module-heading"><span className="eyebrow">KNOWLEDGE CHECK / 03</span><h2>Can you read<br /><em>the synapse?</em></h2><p>Use what you observed in the laboratory, not a memorized definition.</p></div><SixtySecondTest /></div>}
+        
+        {activeTab === 'ai' && (
+          <div className="standalone-module ai-module">
+            <div className="module-heading">
+              <span className="eyebrow">ADVANCED AI FEATURES / 04</span>
+              <h2>Deep Learning<br /><em>& Modern AI</em></h2>
+              <p>Explore multi-layer networks, attention mechanisms, and the bridge to BDH research.</p>
+            </div>
+            
+            <div className="ai-features">
+              <MultiLayerVisualizer />
+              <AttentionMechanism />
+              <BDHBridge />
+            </div>
+          </div>
+        )}
         
         {activeTab === 'community' && (
           <div className="standalone-module community-module">

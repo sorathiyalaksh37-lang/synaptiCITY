@@ -7265,3 +7265,27 @@ input:focus-visible {
     padding: 24px 16px;
   }
 }
+
+
+/* ==========================================================================
+   AI MODULE STYLES
+   ========================================================================== */
+
+.ai-module {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.ai-features {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+@media (max-width: 768px) {
+  .ai-module {
+    padding: 24px 16px;
+  }
+}
