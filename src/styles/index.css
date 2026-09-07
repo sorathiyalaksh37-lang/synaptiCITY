@@ -7289,3 +7289,174 @@ input:focus-visible {
     padding: 24px 16px;
   }
 }
+
+
+/* ========================================================================
+   PWA & Mobile Optimizations
+   ======================================================================== */
+
+/* PWA Safe Area (for notch/status bar on iOS) */
+.app-shell {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Prevent pull-to-refresh on mobile */
+body {
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent zoom on input focus (iOS) */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Touch-friendly tap targets */
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Smooth scrolling for iOS */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+a, button {
+  -webkit-tap-highlight-color: rgba(56, 189, 248, 0.3);
+}
+
+/* PWA Install Prompt Animation */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Mobile Navigation Improvements */
+@media screen and (max-width: 768px) {
+  .main-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .main-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .tab-button {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+/* Offline Mode Styling */
+.offline-mode {
+  filter: grayscale(0.3);
+  opacity: 0.95;
+}
+
+.offline-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--tertiary-container);
+  color: var(--on-tertiary-container);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 100;
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Touch Gesture Visual Feedback */
+.touch-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.3);
+  transform: scale(0);
+  animation: ripple-animation 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Improved Mobile Canvas Performance */
+canvas {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform;
+}
+
+/* Mobile-Optimized Modal/Dialog */
+@media screen and (max-width: 768px) {
+  .modal-content, .dialog-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* iOS PWA Status Bar Spacing */
+@media (display-mode: standalone) {
+  .site-header {
+    padding-top: calc(env(safe-area-inset-top) + 0.5rem);
+  }
+}
+
+/* Prevent text selection on interactive elements */
+.neural-grid, .control-panel, .teach-interface {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* High-performance 3D transforms for mobile */
+.neural-node, .connection-line {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Mobile Landscape Optimizations */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .app-shell {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--surface);
+  }
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#181b25;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#38bdf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="192" height="192" fill="url(#bg)" rx="38.400000000000006"/>
+  
+  <!-- Neural network nodes -->
+  <circle cx="48" cy="57.599999999999994" r="15.36" fill="url(#glow)" opacity="0.9"/>
+  <circle cx="144" cy="57.599999999999994" r="15.36" fill="url(#glow)" opacity="0.9"/>
+  <circle cx="96" cy="134.39999999999998" r="15.36" fill="url(#glow)" opacity="0.9"/>
+  
+  <!-- Connections -->
+  <line x1="48" y1="57.599999999999994" x2="144" y2="57.599999999999994" 
+        stroke="url(#glow)" stroke-width="3.84" opacity="0.6"/>
+  <line x1="48" y1="57.599999999999994" x2="96" y2="134.39999999999998" 
+        stroke="url(#glow)" stroke-width="3.84" opacity="0.6"/>
+  <line x1="144" y1="57.599999999999994" x2="96" y2="134.39999999999998" 
+        stroke="url(#glow)" stroke-width="3.84" opacity="0.6"/>
+  
+  <!-- Text (only on larger icons) -->
+  
+</svg>

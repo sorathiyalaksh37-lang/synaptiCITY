@@ -32,6 +32,9 @@ import { UserProfile } from './components/UserProfile';
 import { MultiLayerVisualizer } from './components/MultiLayerVisualizer';
 import { AttentionMechanism } from './components/AttentionMechanism';
 import { BDHBridge } from './components/BDHBridge';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
+import { OfflineBanner } from './components/OfflineBanner';
+import { useServiceWorker } from './hooks/useServiceWorker';
 import type { Association, Connection, Node } from './types';
 
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
@@ -60,6 +63,7 @@ interface RecallSnapshot {
 function App() {
   const [network] = useState(() => new NeuralNetwork(VOCABULARY, 0.1));
   const [, setUpdateTrigger] = useState(0);
+  const { isOnline, isUpdateAvailable, updateServiceWorker } = useServiceWorker();
   const [viewMode, setViewMode] = useState<ViewMode>('graph');
   const [showTutorial, setShowTutorial] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('simulation');
@@ -422,6 +426,12 @@ function App() {
 
   return (
     <div className="app-shell">
+      <OfflineBanner 
+        isOnline={isOnline} 
+        isUpdateAvailable={isUpdateAvailable}
+        onUpdate={updateServiceWorker}
+      />
+      <PWAInstallPrompt />
       <TutorialOverlay onComplete={handleTutorialComplete} />
       <KeyboardShortcutsPanel />
       
