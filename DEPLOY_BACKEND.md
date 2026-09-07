@@ -1,265 +1,259 @@
-# Backend Deployment Guide - Railway
+# 🚀 Railway Backend Deployment Guide
 
-## ✅ Prerequisites Complete
+## ✅ Prerequisites (COMPLETED)
+- [x] Supabase project created
+- [x] Railway project created
+- [x] Environment variables added to Railway
+- [x] GitHub repository connected to Railway
+- [x] Configuration files pushed to GitHub
 
-Your Supabase is set up with:
-- URL: `https://xblbatyouqzbzgednryn.supabase.co`
-- Anon Key: Configured ✅
-- Service Key: Configured ✅
-- JWT Secret: Generated ✅
+---
 
-## 🚀 Deploy to Railway (5 minutes)
+## 📋 Current Status
 
-### Step 1: Sign Up for Railway
+### Files Added/Updated
+✅ `nixpacks.toml` - Railway build configuration  
+✅ `railway.toml` - Railway deployment settings  
+✅ `package.json` - Updated server:prod script  
+✅ `.env.production` - Production environment template
 
-1. Go to **https://railway.app**
-2. Click "Login" → "Login with GitHub"
-3. Authorize Railway to access your GitHub
+### Environment Variables in Railway
+Make sure these 7 variables are set in Railway dashboard:
 
-### Step 2: Create New Project
-
-1. Click **"New Project"**
-2. Select **"Deploy from GitHub repo"**
-3. Choose your repository: **synaptiCITY**
-4. Railway will automatically detect it's a Node.js project
-
-### Step 3: Add Environment Variables
-
-In the Railway dashboard, go to **Variables** tab and add these:
-
-```bash
+```
 SUPABASE_URL=https://xblbatyouqzbzgednryn.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhibGJhdHlvdXF6YnpnZWRucnluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3OTU5ODcsImV4cCI6MjEwNDM3MTk4N30.lUCM7xwfeqQLvpkRVR0hrHhpFv0qeqS1YZruejiWgEo
-SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhibGJhdHlvdXF6YnpnZWRucnluIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODc5NTk4NywiZXhwIjoyMTA0MzcxOTg3fQ.8NSaaDeDpUZF_qe0wCawCKBh7SfhD9iEsT4ujlTr6R4
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 JWT_SECRET=997026ef7f0cfd016c24b20806336d36e5e9424b01f9b9d264a0a0b54afca771d423953f8346735fdc5e1f5ff2d1b4a1cbe3d264fcc974306fb3a5ba696e9f07
 NODE_ENV=production
 PORT=3001
 FRONTEND_URL=https://synapti-city.vercel.app
 ```
 
-**Pro Tip**: Copy-paste each line individually in Railway's variable editor.
+---
 
-### Step 4: Configure Build Settings
+## 🔄 Deployment Steps
 
-Railway should auto-detect these, but verify:
+### Step 1: Watch Railway Auto-Deploy
+1. Go to Railway dashboard: https://railway.app
+2. Click on your **synaptiCITY** project
+3. Click the **"Deployments"** tab
+4. You should see a new deployment starting automatically (from commit `4dea9d9`)
 
-**Build Command**: `npm install`  
-**Start Command**: `npm run server:prod`
+### Step 2: Monitor Build Progress
+Railway will:
+1. 🔄 Clone your GitHub repository
+2. 📦 Install Node.js 20
+3. 📥 Run `npm install --production=false`
+4. 🚀 Start server with `npm run server:prod`
 
-If not set, go to **Settings** → **Build** and add them.
+**Expected Timeline:** 2-5 minutes
 
-### Step 5: Deploy!
+### Step 3: Check Deployment Status
 
-1. Click **"Deploy"**
-2. Railway will:
-   - Clone your repo
-   - Install dependencies
-   - Build your backend
-   - Start the server
-3. Wait 2-3 minutes for deployment
+#### ✅ If Successful:
+- You'll see a **green checkmark** ✅
+- Status will show "Deployment Successful"
+- A Railway URL will be generated (e.g., `https://synapticity-production.up.railway.app`)
 
-### Step 6: Get Your Backend URL
+#### ❌ If Failed:
+- You'll see a **red X** ❌
+- Click on the failed deployment
+- Click **"View Logs"**
+- Screenshot the error and send it back
 
-Once deployed:
-1. Go to **Settings** → **Networking**
-2. Click **"Generate Domain"**
-3. You'll get a URL like: `https://synaptiCITY-production.up.railway.app`
+---
 
-**Copy this URL!** You'll need it for the frontend.
+## 🧪 Testing Your Deployment
 
-### Step 7: Test Your Backend
+### Test 1: Health Check
+Once deployed, get your Railway URL and test:
 
-Open your backend URL in browser:
+```bash
+curl https://your-app.up.railway.app/health
 ```
-https://your-app.up.railway.app/health
-```
 
-You should see:
+Expected response:
 ```json
 {
   "status": "ok",
   "timestamp": "2026-09-04T...",
-  "uptime": 123
+  "uptime": 123.45
 }
 ```
 
-✅ **Backend is live!**
+### Test 2: API Root
+```bash
+curl https://your-app.up.railway.app/
+```
+
+Expected response:
+```json
+{
+  "name": "synaptiCITY API",
+  "version": "1.0.0",
+  "description": "Backend API for synaptiCITY neural network learning platform",
+  ...
+}
+```
+
+### Test 3: Networks Endpoint
+```bash
+curl https://your-app.up.railway.app/api/networks
+```
+
+Should return an empty array or your networks (not a 500 error).
 
 ---
 
 ## 🔗 Connect Frontend to Backend
 
-### Update Frontend API URL
+Once Railway deployment is successful:
 
-1. Go to your Vercel dashboard
-2. Select your synaptiCITY project
+### Update Vercel Environment Variable
+
+1. Go to Vercel dashboard: https://vercel.com
+2. Select your **synapti-city** project
 3. Go to **Settings** → **Environment Variables**
-4. Add a new variable:
-   ```
-   VITE_API_URL=https://your-railway-app.up.railway.app/api
-   ```
-5. Redeploy your frontend (trigger by pushing a commit)
+4. Find `VITE_API_URL` or add it if missing
+5. Set value to: `https://your-app.up.railway.app`
+6. Click **Save**
+7. Go to **Deployments** tab
+8. Click **"Redeploy"** on the latest deployment
 
-**OR** update locally:
+---
 
-```typescript
-// In src/lib/api.ts
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://your-railway-app.up.railway.app/api';
+## 🎯 What Railway Does
+
+### Build Configuration (nixpacks.toml)
+```toml
+[phases.setup]
+nixPkgs = ["nodejs_20", "npm-9_x"]
+
+[phases.install]
+cmds = ["npm install --production=false"]
+
+[start]
+cmd = "npm run server:prod"
 ```
 
-Then commit and push:
-```bash
-git add .
-git commit -m "feat: connect to Railway backend"
-git push origin main
+### Deployment Configuration (railway.toml)
+```toml
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm install --production=false"
+
+[deploy]
+startCommand = "npm run server:prod"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
 ```
 
-Vercel will auto-deploy!
+### Server Start Command (package.json)
+```json
+{
+  "server:prod": "node --loader tsx server/index.ts"
+}
+```
+
+This uses Node.js native loader to run TypeScript files without compilation.
 
 ---
 
-## ✅ Verification Checklist
+## 🐛 Troubleshooting
 
-Test these endpoints:
+### Issue: "Node.js detected but native WebSocket not found"
+**Status:** FIXED ✅  
+**Solution:** Updated to use `node --loader tsx` instead of direct `tsx`
 
-1. **Health Check**
-   ```
-   GET https://your-app.up.railway.app/health
-   ```
+### Issue: Build fails during npm install
+**Check:**
+- Railway has enough memory (should be fine on free tier)
+- All dependencies are in package.json
+- No conflicting peer dependencies
 
-2. **API Documentation**
-   ```
-   GET https://your-app.up.railway.app/api
-   ```
-
-3. **Get Networks** (public)
-   ```
-   GET https://your-app.up.railway.app/api/networks
-   ```
-
-4. **Get Leaderboard** (public)
-   ```
-   GET https://your-app.up.railway.app/api/users/leaderboard
-   ```
-
-All should return JSON responses!
-
----
-
-## 🔒 Post-Deployment Security
-
-### IMPORTANT: Rotate Your Supabase Keys
-
-Since you shared your keys publicly, rotate them:
-
-1. Go to **Supabase Dashboard**
-2. **Settings** → **API**
-3. Click **"Reset API Keys"**
-4. Update the new keys in Railway environment variables
-5. Redeploy
-
-### Enable CORS
-
-Your backend already has CORS configured for:
-- `https://synapti-city.vercel.app`
-
-If you need to add more origins, update `server/index.ts`.
-
----
-
-## 📊 Monitor Your Backend
-
-### Railway Dashboard
-
-Monitor in real-time:
-- **Metrics**: CPU, Memory, Network
-- **Logs**: Console output and errors
-- **Deployments**: History and rollbacks
-
-### Set Usage Alerts
-
-1. Go to **Settings** → **Usage**
-2. Set alerts for:
-   - CPU > 80%
-   - Memory > 90%
-   - Monthly spend > $5
-
----
-
-## 💰 Free Tier Limits
-
-Railway free tier includes:
-- **$5 credit/month** (usually enough!)
-- **512MB RAM**
-- **1 CPU**
-- **100GB bandwidth**
-
-Your backend should easily stay within these limits for 1000-5000 users/month.
-
----
-
-## 🆘 Troubleshooting
-
-### Deployment Failed
-
-**Check Railway logs**:
-1. Go to **Deployments** tab
-2. Click failed deployment
-3. Read error messages
-
-**Common issues**:
+### Issue: Server starts but crashes immediately
+**Check Railway Logs for:**
 - Missing environment variables
-- Wrong start command
-- Port conflicts (Railway assigns PORT automatically)
+- Port binding issues
+- Database connection errors
 
-### Backend Not Responding
+### Issue: 502 Bad Gateway
+**Possible causes:**
+- Server not listening on PORT from environment
+- Health check endpoint not responding
+- Server crashed during startup
 
-1. Check logs for errors
-2. Verify environment variables are set
-3. Test database connection: Go to `/health` endpoint
-4. Restart service: **Settings** → **Restart**
+---
 
-### CORS Errors
+## 📝 Current Commit
 
-Update `server/index.ts`:
-```typescript
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://synapti-city.vercel.app',
-  credentials: true
-}));
+Latest commit pushed: `4dea9d9`
+
+```
+fix: Railway deployment with nixpacks config
+- Added nixpacks.toml for Node.js 20
+- Updated railway.toml with proper config
+- Fixed server:prod script to use node --loader tsx
 ```
 
 ---
 
-## 🎉 Success!
+## 🔐 Security Note
 
-Your backend should now be:
-- ✅ Deployed on Railway
-- ✅ Connected to Supabase
-- ✅ Accessible via HTTPS
-- ✅ Auto-deploying on git push
-
-**Frontend** → **Railway Backend** → **Supabase Database** ✅
+⚠️ **IMPORTANT:** After deployment succeeds, you should **rotate your Supabase keys** because they were shared in chat:
+1. Go to Supabase dashboard
+2. Settings → API
+3. Click "Reset" on service_role key
+4. Update Railway environment variable with new key
+5. Redeploy on Railway
 
 ---
 
-## 🔄 Continuous Deployment
+## ✅ Success Checklist
 
-Every time you push to GitHub:
-1. Vercel auto-deploys frontend
-2. Railway auto-deploys backend (if server/ files changed)
-3. No manual work needed!
+- [ ] Railway deployment shows green checkmark
+- [ ] Health check endpoint responds with 200 OK
+- [ ] API root endpoint returns JSON info
+- [ ] Railway URL copied
+- [ ] Vercel VITE_API_URL updated with Railway URL
+- [ ] Vercel redeployed
+- [ ] Frontend can connect to backend
+- [ ] Supabase keys rotated (security)
+
+---
+
+## 🎉 Next Steps After Successful Deployment
+
+1. **Test full integration:**
+   - Open https://synapti-city.vercel.app
+   - Try creating a neural network
+   - Check if it saves to Supabase
+   - Test authentication features
+
+2. **Monitor Railway:**
+   - Check "Metrics" tab for CPU/Memory usage
+   - Set up alerts for downtime
+   - Monitor request logs
+
+3. **Set up custom domain (optional):**
+   - Railway Settings → Domains
+   - Add your custom domain
+   - Update DNS records
+   - Update Vercel VITE_API_URL
 
 ---
 
 ## 📞 Need Help?
 
-- **Railway Docs**: https://docs.railway.app
-- **Railway Discord**: https://discord.gg/railway
-- **Your DEPLOYMENT.md**: More detailed guides
-- **GitHub Issues**: Open an issue in your repo
+If deployment fails again:
+1. Go to Railway → Deployments → Click failed deployment
+2. Copy the error logs
+3. Screenshot the error
+4. Share in chat for immediate fix
 
 ---
 
-**Last Updated**: September 4, 2026  
-**Status**: Ready to Deploy! 🚀
+**Last Updated:** September 4, 2026  
+**Commit:** 4dea9d9  
+**Status:** Waiting for Railway auto-deploy...
