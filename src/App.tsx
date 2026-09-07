@@ -34,7 +34,11 @@ import { AttentionMechanism } from './components/AttentionMechanism';
 import { BDHBridge } from './components/BDHBridge';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { OfflineBanner } from './components/OfflineBanner';
+import { AnalyticsSettings } from './components/AnalyticsSettings';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useServiceWorker } from './hooks/useServiceWorker';
+import { monitorWebVitals, monitorLongTasks } from './hooks/usePerformanceMonitor';
+import { analytics, trackTeach, trackRecall, trackNetworkShared } from './lib/analytics';
 import type { Association, Connection, Node } from './types';
 
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
@@ -51,7 +55,7 @@ type Tab = 'simulation' | 'bdh' | 'test' | 'community' | 'advanced' | 'account' 
 type SelectionFocus = 'input' | 'output';
 type ViewMode = 'graph' | 'heatmap';
 type CommunityTab = 'browse' | 'share' | 'submit';
-type AccountTab = 'profile' | 'admin';
+type AccountTab = 'profile' | 'admin' | 'analytics';
 
 interface RecallSnapshot {
   input: string;
@@ -93,6 +97,10 @@ function App() {
 
   // Load saved state on mount
   useEffect(() => {
+    // Initialize analytics and performance monitoring
+    monitorWebVitals();
+    monitorLongTasks();
+    
     if (hasStoredState()) {
       const savedState = loadNetworkState();
       if (savedState) {
@@ -300,6 +308,10 @@ function App() {
 
     window.setTimeout(() => {
       const result = network.teach(association.input, association.output, count);
+      
+      // Track analytics
+      trackTeach(association.input, association.output);
+      
       const nextFeedback: ConnectionFeedback = {
         input: association.input,
         output: association.output,
@@ -344,6 +356,9 @@ function App() {
     const result = network.recall(inputWord);
     setRecallSnapshot({ input: inputWord, predicted: result.word, connectionStrength: result.confidence, allScores: result.allScores });
     setHighlightedConnection(result.word ? { from: inputWord, to: result.word } : null);
+    
+    // Track analytics
+    trackRecall(inputWord, result.word, result.confidence > 0.5);
 
     if (inputWord === 'DOG') {
       const hasCompetingPath = history.some((entry) => entry.input === 'DOG' && entry.output === 'PET');
@@ -717,11 +732,18 @@ function App() {
               >
                 🛡️ Admin Dashboard
               </button>
+              <button
+                className={`account-tab ${accountTab === 'analytics' ? 'is-active' : ''}`}
+                onClick={() => setAccountTab('analytics')}
+              >
+                📊 Analytics & Privacy
+              </button>
             </div>
 
             <div className="account-content">
               {accountTab === 'profile' && <UserProfile />}
               {accountTab === 'admin' && <AdminDashboard />}
+              {accountTab === 'analytics' && <AnalyticsSettings />}
             </div>
           </div>
         )}
