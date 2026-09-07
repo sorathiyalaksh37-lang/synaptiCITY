@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "server": "tsx watch server/index.ts",
-    "server:prod": "NODE_ENV=production tsx server/index.ts"
+    "server:prod": "node --loader tsx server/index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.115.0",
