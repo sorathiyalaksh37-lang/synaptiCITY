@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist-server",
+    "rootDir": "./server",
+    "module": "CommonJS",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "noEmit": false,
+    "declaration": false,
+    "sourceMap": false
+  },
+  "include": ["server/**/*"],
+  "exclude": ["node_modules", "dist", "dist-server"]
+}

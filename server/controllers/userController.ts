@@ -10,7 +10,8 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
 
     // Check if id is a UUID or username
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    const idParam = Array.isArray(id) ? id[0] : id;
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idParam);
 
     const query = supabase
       .from('profiles')
@@ -18,9 +19,9 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
       .limit(1);
 
     if (isUUID) {
-      query.eq('id', id);
+      query.eq('id', idParam);
     } else {
-      query.eq('username', id);
+      query.eq('username', idParam);
     }
 
     const { data, error } = await query.single();
