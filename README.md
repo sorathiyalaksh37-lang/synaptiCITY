@@ -234,14 +234,15 @@ Our toy model demonstrates **one mechanism** used in real systems. It is NOT a r
 
 ## 📚 Documentation
 
-- **[README.md](./README.md)** - You are here! Overview and quick start
-- **[FAQ.md](./FAQ.md)** - Frequently asked questions
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - How to contribute to the project
-- **[API.md](./API.md)** - Backend API documentation
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deployment guide for backend
+- **[README.md](./README.md)** - Main overview & getting started (you are here!)
+- **[FAQ.md](./FAQ.md)** - Frequently asked questions (40+ Q&A)
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
+- **[API.md](./API.md)** - Backend API reference
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Backend deployment guide
 - **[PWA_GUIDE.md](./PWA_GUIDE.md)** - Progressive Web App features
-- **[PROGRESS.md](./PROGRESS.md)** - Development progress tracker
-- **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)** - Technical overview
+- **[ACCESSIBILITY.md](./ACCESSIBILITY.md)** - WCAG compliance audit
+- **[PROGRESS.md](./PROGRESS.md)** - Development progress (100% complete!)
+- **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)** - Technical architecture
 
 ## 🛠️ Development
 
