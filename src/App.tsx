@@ -27,6 +27,8 @@ import { SubmitNetwork, type NetworkSubmission } from './components/SubmitNetwor
 import { VocabularyBuilder } from './components/VocabularyBuilder';
 import { LearningRuleSelector } from './components/LearningRuleSelector';
 import { AchievementPanel } from './components/AchievementPanel';
+import { AdminDashboard } from './components/AdminDashboard';
+import { UserProfile } from './components/UserProfile';
 import type { Association, Connection, Node } from './types';
 
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
@@ -39,10 +41,11 @@ const STAGES: ExperimentStage[] = [
   { id: 5, label: 'Competing paths', detail: 'Compare the margin' },
 ];
 
-type Tab = 'simulation' | 'bdh' | 'test' | 'community' | 'advanced';
+type Tab = 'simulation' | 'bdh' | 'test' | 'community' | 'advanced' | 'account';
 type SelectionFocus = 'input' | 'output';
 type ViewMode = 'graph' | 'heatmap';
 type CommunityTab = 'browse' | 'share' | 'submit';
+type AccountTab = 'profile' | 'admin';
 
 interface RecallSnapshot {
   input: string;
@@ -70,6 +73,7 @@ function App() {
   const [recallSnapshot, setRecallSnapshot] = useState<RecallSnapshot | null>(null);
   const [history, setHistory] = useState<ConnectionFeedback[]>([]);
   const [communityTab, setCommunityTab] = useState<CommunityTab>('browse');
+  const [accountTab, setAccountTab] = useState<AccountTab>('profile');
   const [selectedRule, setSelectedRule] = useState<'hebbian' | 'stdp' | 'bcm' | 'oja'>('hebbian');
   const [forgettingEnabled, setForgettingEnabled] = useState(false);
   const [forgettingRate, setForgettingRate] = useState(0.02);
@@ -409,6 +413,7 @@ function App() {
     { id: 'test', label: 'Can you predict?', note: 'knowledge check' },
     { id: 'community', label: 'Community', note: 'share & explore' },
     { id: 'advanced', label: 'Advanced', note: 'tools & features' },
+    { id: 'account', label: 'Account', note: 'profile & settings' },
   ];
 
   return (
@@ -657,6 +662,36 @@ function App() {
                 xpForNextLevel={100}
                 totalXP={0}
               />
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'account' && (
+          <div className="standalone-module account-module">
+            <div className="module-heading">
+              <span className="eyebrow">ACCOUNT MANAGEMENT / 06</span>
+              <h2>Your Profile<br /><em>& Settings</em></h2>
+              <p>Manage your account, sync across devices, and access admin tools.</p>
+            </div>
+            
+            <div className="account-tabs">
+              <button
+                className={`account-tab ${accountTab === 'profile' ? 'is-active' : ''}`}
+                onClick={() => setAccountTab('profile')}
+              >
+                👤 Profile & Sync
+              </button>
+              <button
+                className={`account-tab ${accountTab === 'admin' ? 'is-active' : ''}`}
+                onClick={() => setAccountTab('admin')}
+              >
+                🛡️ Admin Dashboard
+              </button>
+            </div>
+
+            <div className="account-content">
+              {accountTab === 'profile' && <UserProfile />}
+              {accountTab === 'admin' && <AdminDashboard />}
             </div>
           </div>
         )}
