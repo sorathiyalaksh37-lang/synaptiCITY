@@ -15,8 +15,11 @@ import { TeachingHistory } from './components/TeachingHistory';
 import { ThemeSwitcher } from './components/ThemeSwitcher';
 import { WeightHeatmap } from './components/WeightHeatmap';
 import { TutorialOverlay } from './components/TutorialOverlay';
+import { KeyboardShortcutsPanel } from './components/KeyboardShortcutsPanel';
+import { ExportImportPanel } from './components/ExportImportPanel';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { playWhooshSound } from './utils/transitionSound';
-import { saveNetworkState, loadNetworkState, hasStoredState } from './utils/storage';
+import { saveNetworkState, loadNetworkState, hasStoredState, type NetworkState } from './utils/storage';
 import { Logo } from './components/Logo';
 import type { Association, Connection, Node } from './types';
 
@@ -104,6 +107,95 @@ function App() {
   const handleTutorialComplete = () => {
     setShowTutorial(false);
   };
+
+  const handleImportState = (state: NetworkState) => {
+    // Reset network
+    network.reset();
+    
+    // Restore weights
+    state.weights.forEach((row, i) => {
+      row.forEach((weight, j) => {
+        if (i !== j && weight > 0.01) {
+          const repetitions = Math.ceil(weight / state.learningRate);
+          network.teach(state.vocabulary[i], state.vocabulary[j], repetitions);
+        }
+      });
+    });
+    
+    network.setLearningRate(state.learningRate);
+    setHistory(state.history);
+    forceUpdate();
+  };
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 't',
+      description: 'Teach association',
+      action: () => {
+        if (teachingPhase === 'idle' && activeTab === 'simulation') {
+          handleTeach({ input: selectedInput, output: selectedOutput }, repetitions);
+        }
+      },
+    },
+    {
+      key: 'r',
+      description: 'Test recall',
+      action: () => {
+        if (teachingPhase === 'idle' && activeTab === 'simulation') {
+          handleRecall(recallInput);
+        }
+      },
+    },
+    {
+      key: 'r',
+      shift: true,
+      description: 'Reset network',
+      action: () => {
+        if (teachingPhase === 'idle') {
+          handleReset();
+        }
+      },
+    },
+    {
+      key: 'd',
+      description: 'Toggle theme',
+      action: () => {
+        const theme = document.documentElement.getAttribute('data-theme');
+        document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'light' : 'dark');
+      },
+    },
+    {
+      key: 'g',
+      description: 'Graph view',
+      action: () => setViewMode('graph'),
+    },
+    {
+      key: 'h',
+      description: 'Heatmap view',
+      action: () => setViewMode('heatmap'),
+    },
+    {
+      key: ']',
+      ctrl: true,
+      description: 'Next tab',
+      action: () => {
+        const tabs: Tab[] = ['simulation', 'bdh', 'test'];
+        const currentIndex = tabs.indexOf(activeTab);
+        setActiveTab(tabs[(currentIndex + 1) % tabs.length]);
+      },
+    },
+    {
+      key: '[',
+      ctrl: true,
+      description: 'Previous tab',
+      action: () => {
+        const tabs: Tab[] = ['simulation', 'bdh', 'test'];
+        const currentIndex = tabs.indexOf(activeTab);
+        setActiveTab(tabs[(currentIndex - 1 + tabs.length) % tabs.length]);
+      },
+    },
+  ]);
 
   const scrollToTarget = (element: HTMLElement | null) => {
     if (!element) return;
@@ -279,6 +371,7 @@ function App() {
   return (
     <div className="app-shell">
       <TutorialOverlay onComplete={handleTutorialComplete} />
+      <KeyboardShortcutsPanel />
       
       <header className="site-header">
         <button className="brand-lockup" onClick={() => { setActiveTab('simulation'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Return to synaptiCITY home">
@@ -290,6 +383,17 @@ function App() {
         </button>
         <div className="header-tools">
           <ThemeSwitcher />
+          <button
+            className="keyboard-help-btn"
+            onClick={() => {}}
+            title="Keyboard shortcuts (press ?)"
+            aria-label="Show keyboard shortcuts"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="4" width="14" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M5 7H5.5M7.5 7H8M10 7H10.5M12.5 7H13M5 10H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
           <span className="model-status"><i /> MODEL ONLINE</span>
           <span className="eta-readout mono">η {learningRate.toFixed(2)}</span>
         </div>
@@ -404,6 +508,16 @@ function App() {
             <section className="lower-lab-grid">
               <TeachingHistory entries={history} />
               <StateDebugPanel weights={network.getWeights()} vocabulary={VOCABULARY} activations={network.getActivations()} />
+              <ExportImportPanel
+                currentState={{
+                  weights: network.getWeights(),
+                  vocabulary: VOCABULARY,
+                  learningRate: network.getLearningRate(),
+                  history,
+                  timestamp: Date.now(),
+                }}
+                onImport={handleImportState}
+              />
             </section>
           </div>
         )}
