@@ -21,6 +21,12 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { playWhooshSound } from './utils/transitionSound';
 import { saveNetworkState, loadNetworkState, hasStoredState, type NetworkState } from './utils/storage';
 import { Logo } from './components/Logo';
+import { SharePanel } from './components/SharePanel';
+import { CommunityLibrary } from './components/CommunityLibrary';
+import { SubmitNetwork, type NetworkSubmission } from './components/SubmitNetwork';
+import { VocabularyBuilder } from './components/VocabularyBuilder';
+import { LearningRuleSelector } from './components/LearningRuleSelector';
+import { AchievementPanel } from './components/AchievementPanel';
 import type { Association, Connection, Node } from './types';
 
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
@@ -33,9 +39,10 @@ const STAGES: ExperimentStage[] = [
   { id: 5, label: 'Competing paths', detail: 'Compare the margin' },
 ];
 
-type Tab = 'simulation' | 'bdh' | 'test';
+type Tab = 'simulation' | 'bdh' | 'test' | 'community' | 'advanced';
 type SelectionFocus = 'input' | 'output';
 type ViewMode = 'graph' | 'heatmap';
+type CommunityTab = 'browse' | 'share' | 'submit';
 
 interface RecallSnapshot {
   input: string;
@@ -62,6 +69,10 @@ function App() {
   const [feedback, setFeedback] = useState<ConnectionFeedback | null>(null);
   const [recallSnapshot, setRecallSnapshot] = useState<RecallSnapshot | null>(null);
   const [history, setHistory] = useState<ConnectionFeedback[]>([]);
+  const [communityTab, setCommunityTab] = useState<CommunityTab>('browse');
+  const [selectedRule, setSelectedRule] = useState<'hebbian' | 'stdp' | 'bcm' | 'oja'>('hebbian');
+  const [forgettingEnabled, setForgettingEnabled] = useState(false);
+  const [forgettingRate, setForgettingRate] = useState(0.02);
   const stageGuideRef = useRef<HTMLDivElement>(null);
   const simulationRef = useRef<HTMLElement>(null);
   const recallRef = useRef<HTMLElement>(null);
@@ -362,10 +373,42 @@ function App() {
   const firstWeight = network.getWeight('DOG', 'ANIMAL');
   const secondWeight = network.getWeight('DOG', 'PET');
   const margin = recallSnapshot ? Math.abs(firstWeight - secondWeight) : null;
+
+  // Community handlers
+  const handleLoadCommunityNetwork = (snapshot: any) => {
+    // Reset and load the community network
+    network.reset();
+    
+    // Restore weights
+    snapshot.weights.forEach((row: number[], i: number) => {
+      row.forEach((weight: number, j: number) => {
+        if (i !== j && weight > 0.01) {
+          const repetitions = Math.ceil(weight / snapshot.learningRate);
+          network.teach(snapshot.vocabulary[i], snapshot.vocabulary[j], repetitions);
+        }
+      });
+    });
+    
+    network.setLearningRate(snapshot.learningRate);
+    setSelectedRule(snapshot.rule);
+    forceUpdate();
+    
+    // Show success notification
+    alert(`✓ Loaded network: "${snapshot.name}" by ${snapshot.author}`);
+  };
+
+  const handleSubmitNetwork = (submission: NetworkSubmission) => {
+    console.log('Network submitted to community:', submission);
+    // In production, this would send to backend API
+    // For now, just log it
+  };
+
   const navItems: Array<{ id: Tab; label: string; note: string }> = [
     { id: 'simulation', label: 'The ride', note: 'live experiment' },
     { id: 'bdh', label: 'Toy model → BDH', note: 'research context' },
     { id: 'test', label: 'Can you predict?', note: 'knowledge check' },
+    { id: 'community', label: 'Community', note: 'share & explore' },
+    { id: 'advanced', label: 'Advanced', note: 'tools & features' },
   ];
 
   return (
@@ -524,6 +567,99 @@ function App() {
 
         {activeTab === 'bdh' && <div className="standalone-module"><div className="module-heading"><span className="eyebrow">RESEARCH CONTEXT / 02</span><h2>From toy memory<br /><em>to BDH.</em></h2><p>Zoom out from the live experiment. Explore the conceptual bridge without confusing this toy model for the research concept.</p></div><BDHModule /></div>}
         {activeTab === 'test' && <div className="standalone-module"><div className="module-heading"><span className="eyebrow">KNOWLEDGE CHECK / 03</span><h2>Can you read<br /><em>the synapse?</em></h2><p>Use what you observed in the laboratory, not a memorized definition.</p></div><SixtySecondTest /></div>}
+        
+        {activeTab === 'community' && (
+          <div className="standalone-module community-module">
+            <div className="module-heading">
+              <span className="eyebrow">COMMUNITY HUB / 04</span>
+              <h2>Share & Discover<br /><em>Neural Networks</em></h2>
+              <p>Connect with the synaptiCITY community. Share your networks, explore others, and learn together.</p>
+            </div>
+            
+            <div className="community-tabs">
+              <button
+                className={`community-tab ${communityTab === 'browse' ? 'is-active' : ''}`}
+                onClick={() => setCommunityTab('browse')}
+              >
+                🌐 Browse Library
+              </button>
+              <button
+                className={`community-tab ${communityTab === 'share' ? 'is-active' : ''}`}
+                onClick={() => setCommunityTab('share')}
+              >
+                📤 Share Network
+              </button>
+              <button
+                className={`community-tab ${communityTab === 'submit' ? 'is-active' : ''}`}
+                onClick={() => setCommunityTab('submit')}
+              >
+                ✨ Submit to Library
+              </button>
+            </div>
+
+            <div className="community-content">
+              {communityTab === 'browse' && (
+                <CommunityLibrary onLoad={handleLoadCommunityNetwork} />
+              )}
+              
+              {communityTab === 'share' && (
+                <SharePanel
+                  weights={network.getWeights()}
+                  vocabulary={VOCABULARY}
+                  learningRate={learningRate}
+                  selectedRule={selectedRule}
+                />
+              )}
+              
+              {communityTab === 'submit' && (
+                <SubmitNetwork
+                  weights={network.getWeights()}
+                  vocabulary={VOCABULARY}
+                  learningRate={learningRate}
+                  selectedRule={selectedRule}
+                  onSubmit={handleSubmitNetwork}
+                />
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'advanced' && (
+          <div className="standalone-module advanced-module">
+            <div className="module-heading">
+              <span className="eyebrow">ADVANCED TOOLS / 05</span>
+              <h2>Customize & Optimize<br /><em>Your Experience</em></h2>
+              <p>Access advanced features, learning rules, vocabulary customization, and achievements.</p>
+            </div>
+            
+            <div className="advanced-grid">
+              <VocabularyBuilder
+                currentVocabulary={VOCABULARY}
+                onVocabularyChange={(newVocab) => {
+                  console.log('Vocabulary changed:', newVocab);
+                  // Note: Would need to reinitialize network with new vocabulary
+                }}
+              />
+              
+              <LearningRuleSelector
+                currentRule={selectedRule}
+                onRuleChange={setSelectedRule}
+                forgettingEnabled={forgettingEnabled}
+                forgettingRate={forgettingRate}
+                onForgettingToggle={() => setForgettingEnabled(!forgettingEnabled)}
+                onForgettingRateChange={setForgettingRate}
+              />
+              
+              <AchievementPanel
+                achievements={[]}
+                level={1}
+                xp={0}
+                xpForNextLevel={100}
+                totalXP={0}
+              />
+            </div>
+          </div>
+        )}
       </main>
 
       <footer className="site-footer"><span>SynapCity / educational neural model</span><span className="mono">the animation visualizes the computation</span></footer>
