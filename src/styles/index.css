@@ -7905,3 +7905,144 @@ canvas {
     gap: 0.5rem;
   }
 }
+
+
+/* ========================================================================
+   Loading Fallback & Code Splitting
+   ======================================================================== */
+
+.loading-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 3rem;
+  color: var(--on-surface-variant);
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--surface-container-high);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spinner-rotate 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-fallback p {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+
+/* ========================================================================
+   Accessibility - Reduced Motion
+   ======================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .loading-spinner {
+    animation: none;
+    border-top-color: var(--primary);
+  }
+  
+  .neural-node,
+  .connection-line {
+    transition: none !important;
+  }
+}
+
+/* ========================================================================
+   Accessibility - High Contrast Mode
+   ======================================================================== */
+
+@media (prefers-contrast: high) {
+  :root {
+    --surface: #000000;
+    --on-surface: #ffffff;
+    --primary: #00d9ff;
+    --outline: #ffffff;
+  }
+  
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    border: 2px solid currentColor !important;
+  }
+  
+  .neural-node {
+    stroke: #ffffff;
+    stroke-width: 2px;
+  }
+}
+
+/* ========================================================================
+   Performance Optimizations
+   ======================================================================== */
+
+/* Will-change for frequently animated elements */
+.neural-node,
+.connection-line,
+.loading-spinner {
+  will-change: transform, opacity;
+}
+
+/* Contain paint for performance */
+.neural-grid,
+.weight-heatmap,
+.canvas-container {
+  contain: paint layout;
+}
+
+/* GPU acceleration */
+.modal,
+.tooltip,
+.dropdown {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Font optimization */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-display: swap; /* Prevent FOIT */
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-display: swap;
+}
+
+/* Image loading optimization */
+img {
+  content-visibility: auto;
+}
+
+/* Lazy loading intersection observer target */
+[data-lazy] {
+  min-height: 200px;
+  background: var(--surface-container);
+}

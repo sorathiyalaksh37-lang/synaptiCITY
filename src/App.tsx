@@ -1,12 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, lazy, Suspense } from 'react';
 import { NeuralNetwork } from './lib/NeuralNetwork';
 import { NeuralGrid } from './components/NeuralGrid';
 import { TeachInterface } from './components/TeachInterface';
 import { RecallInterface } from './components/RecallInterface';
 import { ControlPanel } from './components/ControlPanel';
 import { StateDebugPanel } from './components/StateDebugPanel';
-import { BDHModule } from './components/BDHModule';
-import { SixtySecondTest } from './components/SixtySecondTest';
 import { GuidedTour } from './components/GuidedTour';
 import { ExperimentStageRail, type ExperimentStage } from './components/ExperimentStageRail';
 import { ConnectionInspector, type ConnectionFeedback } from './components/ConnectionInspector';
@@ -21,25 +19,39 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { playWhooshSound } from './utils/transitionSound';
 import { saveNetworkState, loadNetworkState, hasStoredState, type NetworkState } from './utils/storage';
 import { Logo } from './components/Logo';
-import { SharePanel } from './components/SharePanel';
-import { CommunityLibrary } from './components/CommunityLibrary';
-import { SubmitNetwork, type NetworkSubmission } from './components/SubmitNetwork';
-import { VocabularyBuilder } from './components/VocabularyBuilder';
-import { LearningRuleSelector } from './components/LearningRuleSelector';
-import { AchievementPanel } from './components/AchievementPanel';
-import { AdminDashboard } from './components/AdminDashboard';
-import { UserProfile } from './components/UserProfile';
-import { MultiLayerVisualizer } from './components/MultiLayerVisualizer';
-import { AttentionMechanism } from './components/AttentionMechanism';
-import { BDHBridge } from './components/BDHBridge';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { OfflineBanner } from './components/OfflineBanner';
-import { AnalyticsSettings } from './components/AnalyticsSettings';
-import { ErrorBoundary } from './components/ErrorBoundary';
 import { useServiceWorker } from './hooks/useServiceWorker';
 import { monitorWebVitals, monitorLongTasks } from './hooks/usePerformanceMonitor';
 import { analytics, trackTeach, trackRecall, trackNetworkShared } from './lib/analytics';
 import type { Association, Connection, Node } from './types';
+
+// Lazy load heavy components for code splitting
+const BDHModule = lazy(() => import('./components/BDHModule').then(m => ({ default: m.BDHModule })));
+const SixtySecondTest = lazy(() => import('./components/SixtySecondTest').then(m => ({ default: m.SixtySecondTest })));
+const SharePanel = lazy(() => import('./components/SharePanel').then(m => ({ default: m.SharePanel })));
+const CommunityLibrary = lazy(() => import('./components/CommunityLibrary').then(m => ({ default: m.CommunityLibrary })));
+const SubmitNetwork = lazy(() => import('./components/SubmitNetwork').then(m => ({ default: m.SubmitNetwork })));
+const VocabularyBuilder = lazy(() => import('./components/VocabularyBuilder').then(m => ({ default: m.VocabularyBuilder })));
+const LearningRuleSelector = lazy(() => import('./components/LearningRuleSelector').then(m => ({ default: m.LearningRuleSelector })));
+const AchievementPanel = lazy(() => import('./components/AchievementPanel').then(m => ({ default: m.AchievementPanel })));
+const AdminDashboard = lazy(() => import('./components/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const UserProfile = lazy(() => import('./components/UserProfile').then(m => ({ default: m.UserProfile })));
+const MultiLayerVisualizer = lazy(() => import('./components/MultiLayerVisualizer').then(m => ({ default: m.MultiLayerVisualizer })));
+const AttentionMechanism = lazy(() => import('./components/AttentionMechanism').then(m => ({ default: m.AttentionMechanism })));
+const BDHBridge = lazy(() => import('./components/BDHBridge').then(m => ({ default: m.BDHBridge })));
+const AnalyticsSettings = lazy(() => import('./components/AnalyticsSettings').then(m => ({ default: m.AnalyticsSettings })));
+
+// Import types
+import type { NetworkSubmission } from './components/SubmitNetwork';
+
+// Loading fallback component
+const LoadingFallback: React.FC<{ message?: string }> = ({ message = 'Loading...' }) => (
+  <div className="loading-fallback">
+    <div className="loading-spinner"></div>
+    <p>{message}</p>
+  </div>
+);
 
 const VOCABULARY = ['DOG', 'ANIMAL', 'PET', 'CAT', 'BIRD', 'FISH'];
 
@@ -599,8 +611,31 @@ function App() {
           </div>
         )}
 
-        {activeTab === 'bdh' && <div className="standalone-module"><div className="module-heading"><span className="eyebrow">RESEARCH CONTEXT / 02</span><h2>From toy memory<br /><em>to BDH.</em></h2><p>Zoom out from the live experiment. Explore the conceptual bridge without confusing this toy model for the research concept.</p></div><BDHModule /></div>}
-        {activeTab === 'test' && <div className="standalone-module"><div className="module-heading"><span className="eyebrow">KNOWLEDGE CHECK / 03</span><h2>Can you read<br /><em>the synapse?</em></h2><p>Use what you observed in the laboratory, not a memorized definition.</p></div><SixtySecondTest /></div>}
+        {activeTab === 'bdh' && (
+          <div className="standalone-module">
+            <div className="module-heading">
+              <span className="eyebrow">RESEARCH CONTEXT / 02</span>
+              <h2>From toy memory<br /><em>to BDH.</em></h2>
+              <p>Zoom out from the live experiment. Explore the conceptual bridge without confusing this toy model for the research concept.</p>
+            </div>
+            <Suspense fallback={<LoadingFallback message="Loading BDH module..." />}>
+              <BDHModule />
+            </Suspense>
+          </div>
+        )}
+        
+        {activeTab === 'test' && (
+          <div className="standalone-module">
+            <div className="module-heading">
+              <span className="eyebrow">KNOWLEDGE CHECK / 03</span>
+              <h2>Can you read<br /><em>the synapse?</em></h2>
+              <p>Use what you observed in the laboratory, not a memorized definition.</p>
+            </div>
+            <Suspense fallback={<LoadingFallback message="Loading quiz..." />}>
+              <SixtySecondTest />
+            </Suspense>
+          </div>
+        )}
         
         {activeTab === 'ai' && (
           <div className="standalone-module ai-module">
@@ -610,11 +645,13 @@ function App() {
               <p>Explore multi-layer networks, attention mechanisms, and the bridge to BDH research.</p>
             </div>
             
-            <div className="ai-features">
-              <MultiLayerVisualizer />
-              <AttentionMechanism />
-              <BDHBridge />
-            </div>
+            <Suspense fallback={<LoadingFallback message="Loading AI features..." />}>
+              <div className="ai-features">
+                <MultiLayerVisualizer />
+                <AttentionMechanism />
+                <BDHBridge />
+              </div>
+            </Suspense>
           </div>
         )}
         
@@ -648,28 +685,30 @@ function App() {
             </div>
 
             <div className="community-content">
-              {communityTab === 'browse' && (
-                <CommunityLibrary onLoad={handleLoadCommunityNetwork} />
-              )}
-              
-              {communityTab === 'share' && (
-                <SharePanel
-                  weights={network.getWeights()}
-                  vocabulary={VOCABULARY}
-                  learningRate={learningRate}
-                  selectedRule={selectedRule}
-                />
-              )}
-              
-              {communityTab === 'submit' && (
-                <SubmitNetwork
-                  weights={network.getWeights()}
-                  vocabulary={VOCABULARY}
-                  learningRate={learningRate}
-                  selectedRule={selectedRule}
-                  onSubmit={handleSubmitNetwork}
-                />
-              )}
+              <Suspense fallback={<LoadingFallback message="Loading community features..." />}>
+                {communityTab === 'browse' && (
+                  <CommunityLibrary onLoad={handleLoadCommunityNetwork} />
+                )}
+                
+                {communityTab === 'share' && (
+                  <SharePanel
+                    weights={network.getWeights()}
+                    vocabulary={VOCABULARY}
+                    learningRate={learningRate}
+                    selectedRule={selectedRule}
+                  />
+                )}
+                
+                {communityTab === 'submit' && (
+                  <SubmitNetwork
+                    weights={network.getWeights()}
+                    vocabulary={VOCABULARY}
+                    learningRate={learningRate}
+                    selectedRule={selectedRule}
+                    onSubmit={handleSubmitNetwork}
+                  />
+                )}
+              </Suspense>
             </div>
           </div>
         )}
@@ -682,32 +721,34 @@ function App() {
               <p>Access advanced features, learning rules, vocabulary customization, and achievements.</p>
             </div>
             
-            <div className="advanced-grid">
-              <VocabularyBuilder
-                currentVocabulary={VOCABULARY}
-                onVocabularyChange={(newVocab) => {
-                  console.log('Vocabulary changed:', newVocab);
-                  // Note: Would need to reinitialize network with new vocabulary
-                }}
-              />
-              
-              <LearningRuleSelector
-                currentRule={selectedRule}
-                onRuleChange={setSelectedRule}
-                forgettingEnabled={forgettingEnabled}
-                forgettingRate={forgettingRate}
-                onForgettingToggle={() => setForgettingEnabled(!forgettingEnabled)}
-                onForgettingRateChange={setForgettingRate}
-              />
-              
-              <AchievementPanel
-                achievements={[]}
-                level={1}
-                xp={0}
-                xpForNextLevel={100}
-                totalXP={0}
-              />
-            </div>
+            <Suspense fallback={<LoadingFallback message="Loading advanced tools..." />}>
+              <div className="advanced-grid">
+                <VocabularyBuilder
+                  currentVocabulary={VOCABULARY}
+                  onVocabularyChange={(newVocab) => {
+                    console.log('Vocabulary changed:', newVocab);
+                    // Note: Would need to reinitialize network with new vocabulary
+                  }}
+                />
+                
+                <LearningRuleSelector
+                  currentRule={selectedRule}
+                  onRuleChange={setSelectedRule}
+                  forgettingEnabled={forgettingEnabled}
+                  forgettingRate={forgettingRate}
+                  onForgettingToggle={() => setForgettingEnabled(!forgettingEnabled)}
+                  onForgettingRateChange={setForgettingRate}
+                />
+                
+                <AchievementPanel
+                  achievements={[]}
+                  level={1}
+                  xp={0}
+                  xpForNextLevel={100}
+                  totalXP={0}
+                />
+              </div>
+            </Suspense>
           </div>
         )}
 
@@ -740,11 +781,13 @@ function App() {
               </button>
             </div>
 
-            <div className="account-content">
-              {accountTab === 'profile' && <UserProfile />}
-              {accountTab === 'admin' && <AdminDashboard />}
-              {accountTab === 'analytics' && <AnalyticsSettings />}
-            </div>
+            <Suspense fallback={<LoadingFallback message="Loading account settings..." />}>
+              <div className="account-content">
+                {accountTab === 'profile' && <UserProfile />}
+                {accountTab === 'admin' && <AdminDashboard />}
+                {accountTab === 'analytics' && <AnalyticsSettings />}
+              </div>
+            </Suspense>
           </div>
         )}
       </main>
