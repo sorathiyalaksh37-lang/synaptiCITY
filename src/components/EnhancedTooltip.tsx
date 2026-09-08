@@ -17,7 +17,7 @@ export const EnhancedTooltip: React.FC<TooltipProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [coords, setCoords] = useState({ x: 0, y: 0 });
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
 
   const showTooltip = () => {
