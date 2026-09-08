@@ -24,6 +24,9 @@
   },
   "include": ["src"],
   "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/__tests__/**",
     "src/utils/__tests__",
     "src/utils/cache.ts",
     "src/utils/debug.ts",
