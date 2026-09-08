@@ -1,576 +1,779 @@
-# synaptiCITY - When Connections Become Memory 🧠
+# synaptiCITY — When Connections Become Memory
 
-An interactive educational platform demonstrating how **synaptic plasticity**—the strengthening of connections between neurons—creates short-term memory. Experience memory emergence in real-time through Hebbian learning, experiment with neural networks, and discover connections to cutting-edge AI systems.
+> **An interactive visual simulation for understanding how learning can emerge from changing connection strengths.**
 
-[![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge)](https://synapti-city.vercel.app)
-[![Backend API](https://img.shields.io/badge/API-Railway-blueviolet?style=for-the-badge)](https://synapticity-production.up.railway.app)
-[![Built with React](https://img.shields.io/badge/Built%20with-React%2019-61dafb?style=for-the-badge&logo=react)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007acc?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-
----
+[![Live Demo](https://img.shields.io/badge/Live-Demo-00d4ff?style=for-the-badge)](https://synapti-city.vercel.app)
+[![Frontend](https://img.shields.io/badge/Frontend-Vercel-000000?style=for-the-badge)](https://vercel.com)
+[![Backend](https://img.shields.io/badge/Backend-Railway-7B61FF?style=for-the-badge)](https://railway.app)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 ## 🌐 Live Application
 
-**🚀 Frontend:** [https://synapti-city.vercel.app](https://synapti-city.vercel.app)  
-**⚡ Backend API:** [https://synapticity-production.up.railway.app](https://synapticity-production.up.railway.app)  
-**📊 Database:** Supabase (PostgreSQL + Realtime)
+**Try synaptiCITY:**  
+https://synapti-city.vercel.app
+
+synaptiCITY is an interactive educational environment that lets users **teach associations, observe synaptic changes, recall learned information, and explore interference** through a live neural-network simulation.
 
 ---
 
 ## 📑 Table of Contents
 
 - [Overview](#-overview)
+- [Core Idea](#-core-idea)
+- [How the Simulation Works](#-how-the-simulation-works)
 - [Features](#-features)
-- [Live Demo](#-live-demo)
+- [Live vs Computed vs Precomputed](#-live-vs-computed-vs-precomputed)
+- [Learning Objectives](#-learning-objectives)
+- [Intended Learners](#-intended-learners)
+- [Connection to Real AI](#-connection-to-real-ai)
+- [Toy Model vs Real Systems](#-toy-model-vs-real-systems)
 - [Tech Stack](#-tech-stack)
-- [Quick Start](#-quick-start)
-- [Deployment](#-deployment)
 - [Architecture](#-architecture)
+- [Design Philosophy](#-design-philosophy)
+- [One-Page Concept Summary](#-one-page-concept-summary)
+- [Quick Start](#-quick-start)
+- [Development Commands](#-development-commands)
+- [Deployment](#-deployment)
+- [API](#-api)
 - [Documentation](#-documentation)
-- [Educational Content](#-educational-content)
-- [Development](#-development)
+- [Research & References](#-research--references)
+- [AI Assistance & Provenance](#-ai-assistance--provenance)
+- [Development Progress](#-development-progress)
 - [Contributing](#-contributing)
 - [License](#-license)
+- [Credits](#-credits)
 
 ---
 
-## 🎯 Overview
+# 🧠 Overview
 
-### The Core Claim
+synaptiCITY explores a simple but powerful question:
 
-**Memory can emerge from temporarily changing the strength of connections in a neural system, and this mechanism enables both rapid learning and interference between competing memories.**
+> **What if memory is not only stored in fixed parameters, but can emerge from temporarily changing the strength of connections?**
 
-### Who Is This For?
+The project provides a visual and interactive way to explore this idea using a simplified neural network.
 
-synaptiCITY is designed for learners interested in:
-- 🧠 Neural networks and machine learning
-- 🔬 Hebbian learning and synaptic plasticity
-- 🤖 Brain-inspired AI and cognitive computing
-- 🎓 Interactive educational simulations
+Instead of only displaying precomputed diagrams, synaptiCITY allows users to interact with a running simulation:
 
-### Learning Objectives
+**Teach → Update → Change Connections → Recall → Interfere → Observe**
 
-By exploring synaptiCITY, you will:
-- ✅ Understand the intuition behind Hebbian learning
-- ✅ Visualize how connection strengths encode recent activity
-- ✅ Distinguish static parameters from dynamic state
-- ✅ Explore the role of synaptic plasticity in memory
-- ✅ Connect toy models to real AI systems (BDH, BDH-CQ)
-- ✅ Experiment with live neural network state changes
+The goal is to make concepts such as **Hebbian learning, synaptic plasticity, dynamic state, recurrent memory, and brain-inspired AI** easier to understand.
 
 ---
 
-## ✨ Features
+# ⚡ Core Idea
 
-### 🎨 Core Simulation
-- **Visual Neural Network**: Real-time node and connection visualization
-- **Interactive Teaching**: Teach associations (DOG → ANIMAL)
-- **Live Recall Testing**: Watch predictions based on learned connections
-- **Hebbian Learning**: Implements Δw = η × aᵢ × aⱼ
-- **Parameter Control**: Adjust learning rate and repetitions
-- **Interference Demo**: See competing memories interact
+Traditional machine-learning models often distinguish between:
 
-### 🚀 Advanced Features (Phase 2-10)
-- **� Educational Modules**: Custom vocabulary builder, time-series graphs
-- **🎨 3D Visualization**: Three.js neural network rendering
-- **🔧 Technical Tools**: Larger networks (50 nodes), topology selection
-- **📊 Performance Metrics**: Real-time analytics dashboard
-- **💾 Data Export**: JSON, CSV, PNG formats
-- **🎮 Gamification**: Achievement system, challenges, leaderboards
-- **👥 Community**: Shareable networks, user-generated content
-- **🔐 Backend**: User authentication, profiles, cross-device sync
-- **📱 PWA**: Offline support, install on mobile
-- **📈 Analytics**: Performance monitoring, A/B testing
-- **📖 Documentation**: Interactive FAQ, glossary, blog system
+- **Parameters** — weights learned during training
+- **Activations** — temporary values produced during inference
 
-### 🎯 11 Development Phases (100% Complete!)
-✅ **Phase 1**: Core Features (Keyboard shortcuts, tooltips, export/import)  
-✅ **Phase 2**: Educational (Vocabulary, time-series, 3D visualization)  
-✅ **Phase 3**: Technical Capabilities (50 nodes, topologies, batch teaching)  
-✅ **Phase 4**: Gamification (Achievements, challenges, leaderboards)  
-✅ **Phase 5**: Community (Shareable URLs, community library)  
-✅ **Phase 6**: Backend (Express.js API, PostgreSQL, OAuth)  
-✅ **Phase 7**: Advanced AI (Multi-layer networks, attention mechanism)  
-✅ **Phase 8**: Mobile/PWA (Service workers, offline, touch gestures)  
-✅ **Phase 9**: Analytics (GA/Plausible, error boundaries, Web Vitals)  
-✅ **Phase 10**: Documentation (FAQ, Contributing, API docs)  
-✅ **Phase 11**: Polish (Code splitting, accessibility, i18n, optimization)  
+synaptiCITY introduces an educational third perspective:
+
+> **Connection strength can itself become a dynamic form of memory.**
+
+For example, if the user repeatedly teaches:
+
+```text
+DOG → ANIMAL
+```
+
+the simulation strengthens the corresponding connection.
+
+A simplified Hebbian update is represented as:
+
+$$\Delta w = \eta \times a_i \times a_j$$
+
+Where:
+
+- `Δw` = change in connection strength
+- `η` = learning rate
+- `aᵢ` = activity of the source neuron
+- `aⱼ` = activity of the destination neuron
+
+The result is visible immediately in the simulation.
 
 ---
 
-## 🌐 Live Demo
+# 🔄 How the Simulation Works
 
-### Try It Now!
-Visit **[synapti-city.vercel.app](https://synapti-city.vercel.app)** to:
-1. 🎓 Learn about Hebbian learning
-2. 🧪 Experiment with neural networks
-3. 📊 Visualize synaptic plasticity
-4. 🏆 Complete challenges and earn achievements
-5. 💾 Save and share your networks
+### 1. Teach
 
-### API Endpoints
-Backend API: **[synapticity-production.up.railway.app](https://synapticity-production.up.railway.app)**
+The user introduces an association such as:
 
-- `GET /health` - Health check
-- `GET /` - API information
-- `GET /api/networks` - List networks
-- `POST /api/networks` - Create network
-- `GET /api/users/profile` - User profile
-- See [API.md](./API.md) for full documentation
+```text
+DOG → ANIMAL
+```
 
----
+### 2. Hebbian Update
 
-## 🛠️ Tech Stack
+Active neurons cause their connecting weight to change.
 
-### Frontend (Vercel)
-- **⚛️ React 19** - UI framework
-- **📘 TypeScript 6** - Type safety
-- **⚡ Vite 8** - Build tool
-- **🎨 Tailwind CSS 4** - Styling
-- **🌟 Three.js** - 3D visualization
-- **📱 PWA** - Offline support
+```text
+Δw = η × aᵢ × aⱼ
+```
 
-### Backend (Railway)
-- **🟢 Node.js 22** - Runtime (with native WebSocket)
-- **🚂 Express.js 5** - API framework
-- **🔷 TypeScript** - Type safety
-- **⚡ tsx** - Direct TS execution
-- **🔒 Helmet** - Security headers
-- **⏱️ Rate Limiting** - API protection
+### 3. Synaptic Change
 
-### Database & Services
-- **🐘 Supabase** - PostgreSQL + Auth + Realtime
-- **📊 Plausible** - Privacy-friendly analytics
-- **🔍 Sentry** - Error monitoring (optional)
+The corresponding connection becomes stronger or weaker depending on activity.
 
-### Development
-- **🧹 oxlint** - Fast linting
-- **🧪 Vitest** - Testing framework
-- **🤖 GitHub Actions** - CI/CD
-- **📦 npm** - Package management
+The visualization reflects this change in real time.
+
+### 4. Recall
+
+The user presents the learned concept again.
+
+The network uses its current state and connection strengths to produce a prediction.
+
+### 5. Interference
+
+The user can introduce another association.
+
+For example:
+
+```text
+DOG → PET
+```
+
+This allows users to observe how new learning can modify or compete with previously established associations.
 
 ---
 
-## 🚀 Quick Start
+# ✨ Features
+
+## Interactive Neural Network
+
+- Live neural-network visualization
+- Animated neurons and connections
+- Connection strength represented visually
+- Multi-layer visualization
+- Dynamic state updates
+
+## Hebbian Learning
+
+Users can directly observe the simplified Hebbian learning rule:
+
+```text
+Δw = η × aᵢ × aⱼ
+```
+
+Learning rate and other parameters can be adjusted to explore their effects.
+
+## Teach & Recall
+
+Users can:
+
+- Teach associations
+- Repeat learning
+- Recall learned concepts
+- Observe prediction changes
+- Experiment with competing associations
+
+## Interference
+
+New learning can interact with existing connection strengths, providing an intuitive demonstration of interference and forgetting.
+
+## State Debugging
+
+The project exposes internal simulation state so learners can inspect:
+
+- Neuron activity
+- Connection weights
+- Learning updates
+- Network state
+- Predictions
+
+## Multi-Layer Visualization
+
+The simulation can represent multiple layers to provide a more realistic conceptual picture of information flowing through a neural system.
+
+## BDH / BDH-CQ Conceptual Module
+
+The project includes an educational connection to:
+
+- **The Dragon Hatchling (BDH)**
+- **BDH-CQ**
+- Recurrent latent reasoning
+- Synaptic-style memory
+- Dynamic state
+
+This module is intentionally conceptual rather than a reproduction of the original research systems.
+
+## Gamification
+
+The application includes interactive learning elements such as:
+
+- Achievements
+- Progress tracking
+- Learning challenges
+- Exploration-based interactions
+
+## Community Library
+
+Users can explore and share learned network configurations through the application's community-oriented features.
+
+## PWA Support
+
+synaptiCITY is designed to work as a Progressive Web App, allowing installation and a more app-like experience.
+
+## Accessibility & Responsive Design
+
+The interface is designed to support:
+
+- Responsive layouts
+- Keyboard-friendly interaction
+- Accessible visual hierarchy
+- Reduced-motion considerations
+
+---
+
+# 📊 Live vs Computed vs Precomputed
+
+One important goal of synaptiCITY is transparency.
+
+Not every visual element represents a live neural computation.
+
+### 🟢 Live / Dynamic
+
+The following are generated or updated during interaction:
+
+- Neuron activity
+- Connection weights
+- Hebbian updates
+- Predictions
+- Network state
+- SVG/canvas connection visuals
+- Interactive transitions
+
+### 🔵 Computed
+
+Values calculated from the current simulation state include:
+
+- Weight changes
+- Activation values
+- Prediction scores
+- Network responses
+- Learning updates
+
+### ⚪ Static / Precomputed
+
+Some educational content is intentionally static:
+
+- Vocabulary/examples
+- Explanatory text
+- BDH background information
+- Research references
+- Educational descriptions
+
+### 🎨 Animated
+
+Animations communicate state changes and interaction:
+
+- Neuron activation
+- Connection strengthening
+- Learning events
+- Recall transitions
+- Interface feedback
+
+> **Important:** synaptiCITY is a toy educational model. It is not a full implementation of BDH, BDH-CQ, or an actual large language model.
+
+---
+
+# 🎯 Learning Objectives
+
+After interacting with synaptiCITY, learners should be able to understand:
+
+- What Hebbian learning means
+- How activity can modify connection strength
+- How synaptic plasticity can encode recent activity
+- The difference between static parameters and dynamic state
+- How recurrent systems can maintain information
+- Why interference can occur during continual learning
+- Why dynamic memory is interesting for AI
+- At a high level, how BDH connects neural-network ideas with synaptic-style memory
+- At a high level, what BDH-CQ adds through latent recurrent reasoning
+
+---
+
+# 👩‍💻 Intended Learners
+
+synaptiCITY is aimed primarily at students and developers interested in:
+
+- Neural networks
+- Machine learning
+- Deep learning
+- Hebbian learning
+- Synaptic plasticity
+- Recurrent neural networks
+- Brain-inspired AI
+- Continual learning
+- Modern AI architectures
 
 ### Prerequisites
-- **Node.js 20+** (22+ recommended)
-- **npm 9+** or **yarn 4+**
-- **Git**
 
-### Installation
+Basic familiarity with:
 
-```bash
-# Clone the repository
-git clone https://github.com/sorathiyalaksh37-lang/synaptiCITY.git
-cd synaptiCITY
+- Neural networks
+- Activations
+- Weights
+- Machine-learning fundamentals
 
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your configuration
-
-# Start development server
-npm run dev
-
-# Open http://localhost:5173
-```
-
-### Development Commands
-
-```bash
-# Frontend development
-npm run dev              # Start Vite dev server
-npm run build            # Build for production
-npm run preview          # Preview production build
-npm run lint             # Lint code with oxlint
-
-# Backend development
-npm run server           # Start Express server (development)
-npm run server:prod      # Start Express server (production)
-
-# Testing
-npm run test             # Run tests with Vitest
-```
+No neuroscience expertise is required.
 
 ---
 
-## 🚀 Deployment
+# 🤖 Connection to Real AI
 
-### Architecture Overview
+synaptiCITY is inspired by a broader idea appearing in modern AI research:
 
-```
-User Browser
-     ↓
-Vercel Frontend (React + Vite)
-  synapti-city.vercel.app
-     ↓
-Railway Backend (Express + Node.js 22)
-  synapticity-production.up.railway.app
-     ↓
-Supabase Database (PostgreSQL + Auth)
-  xblbatyouqzbzgednryn.supabase.co
-```
+> **Can neural networks learn through dynamic state changes rather than relying exclusively on fixed parameters?**
 
-### Deployment Platforms
+This provides a conceptual bridge toward architectures such as **The Dragon Hatchling (BDH)**.
 
-#### Frontend - Vercel ✅
-**Live:** https://synapti-city.vercel.app
+BDH explores a formulation where attention-like computation can be represented through recurrent/synaptic-style memory updates.
 
-- Automatic deployment on push to `main`
-- Preview deployments for pull requests
-- Environment variables configured
-- CDN distribution worldwide
+BDH-CQ extends these ideas toward **in-context learning and recurrent latent reasoning**.
 
-**Setup:**
-```bash
-# Deploy to Vercel
-npm install -g vercel
-vercel --prod
-```
-
-#### Backend - Railway ✅
-**Live:** https://synapticity-production.up.railway.app
-
-- Node.js 22 runtime
-- Automatic GitHub deployments
-- Environment variables configured
-- Free tier with generous limits
-
-**Configuration:**
-- `railway.toml` - Deployment settings
-- `nixpacks.toml` - Build configuration
-- `.nvmrc` - Node version (22)
-
-#### Database - Supabase ✅
-**Connected:** PostgreSQL + Realtime + Auth
-
-- Managed PostgreSQL database
-- Real-time subscriptions
-- Row-level security
-- Authentication system
-
-### Environment Variables
-
-**Frontend (.env.local):**
-```env
-VITE_API_URL=https://synapticity-production.up.railway.app
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_ENABLE_ANALYTICS=true
-```
-
-**Backend (Railway):**
-```env
-NODE_ENV=production
-PORT=3001
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_KEY=your_service_key
-JWT_SECRET=your_secure_jwt_secret
-FRONTEND_URL=https://synapti-city.vercel.app
-```
-
-See [DEPLOYMENT_SUCCESS.md](./DEPLOYMENT_SUCCESS.md) for detailed deployment guide.
+synaptiCITY simplifies these ideas into an interactive toy environment so learners can see the underlying intuition.
 
 ---
 
-## 🏗️ Architecture
+# 🔬 Toy Model vs Real Systems
+
+| Concept | synaptiCITY | Real BDH / BDH-CQ |
+|---|---|---|
+| Neural connections | Simplified | Research architecture |
+| Learning rule | Simplified Hebbian update | More sophisticated mechanisms |
+| Memory | Connection strength | Learned/dynamic latent state |
+| Network | Small educational model | Large-scale architecture |
+| Training | Interactive simulation | Research training procedures |
+| Reasoning | Educational demonstration | Actual model computation |
+| Scale | Browser-based toy model | Research-scale AI |
+| Purpose | Education & visualization | AI research |
+
+> synaptiCITY should therefore be understood as an **educational bridge to the concepts**, not as an implementation of BDH or BDH-CQ.
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- Three.js
+- Progressive Web App support
+
+## Backend
+
+- Node.js
+- Express
+- TypeScript
+- WebSocket support
+- Helmet
+- Rate limiting
+
+## Database & Services
+
+- Supabase
+- PostgreSQL
+- Supabase Authentication
+- Supabase Realtime
+- Plausible Analytics
+- Optional Sentry integration
+
+## Development & Quality
+
+- Vitest
+- oxlint
+- GitHub Actions
+- Vercel
+- Railway
+
+---
+
+# 🏗 Architecture
+
+```text
+┌──────────────────────────────────────┐
+│            React Frontend            │
+│                                      │
+│  NeuralGrid                          │
+│  TeachInterface                      │
+│  RecallInterface                     │
+│  ControlPanel                        │
+│  MultiLayerVisualizer                │
+│  AttentionMechanism                  │
+│  AchievementPanel                    │
+│  CommunityLibrary                    │
+└──────────────────┬───────────────────┘
+                   │
+                   ▼
+┌──────────────────────────────────────┐
+│         Simulation / Logic            │
+│                                      │
+│  NeuralNetwork.ts                    │
+│  MultiLayerNetwork.ts                │
+│  LearningRules.ts                    │
+│  State + Weight Updates              │
+└──────────────────┬───────────────────┘
+                   │
+                   ▼
+┌──────────────────────────────────────┐
+│            Backend API               │
+│                                      │
+│  Express + TypeScript                │
+│  Controllers                         │
+│  Routes                              │
+│  Middleware                          │
+│  WebSocket                           │
+└──────────────────┬───────────────────┘
+                   │
+                   ▼
+┌──────────────────────────────────────┐
+│              Supabase                │
+│                                      │
+│  PostgreSQL                          │
+│  Authentication                      │
+│  Realtime                            │
+└──────────────────────────────────────┘
+```
 
 ### Project Structure
 
-```
+```text
 synaptiCITY/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml           # CI/CD pipeline
-├── public/
-│   ├── logo.png                 # App logo
-│   ├── manifest.json            # PWA manifest
-│   ├── sw.js                    # Service worker
-│   └── icons/                   # PWA icons
-├── server/
-│   ├── config/
-│   │   ├── database.sql         # DB schema
-│   │   └── supabase.ts          # Supabase client
-│   ├── controllers/
-│   │   ├── networkController.ts # Network CRUD
-│   │   └── userController.ts    # User management
-│   ├── middleware/
-│   │   ├── auth.ts              # JWT authentication
-│   │   ├── rateLimiter.ts       # Rate limiting
-│   │   └── validator.ts         # Input validation
-│   ├── routes/
-│   │   ├── networks.ts          # Network routes
-│   │   └── users.ts             # User routes
-│   └── index.ts                 # Express server
+│
 ├── src/
-│   ├── components/              # React components
-│   │   ├── NeuralGrid.tsx       # Network visualization
-│   │   ├── TeachInterface.tsx   # Teaching UI
-│   │   ├── RecallInterface.tsx  # Recall testing
-│   │   ├── ControlPanel.tsx     # Parameter controls
-│   │   ├── MultiLayerVisualizer.tsx # Multi-layer networks
-│   │   ├── AttentionMechanism.tsx   # Attention viz
-│   │   ├── AchievementPanel.tsx     # Gamification
-│   │   ├── CommunityLibrary.tsx     # User content
-│   │   └── ... (40+ components)
+│   ├── components/
+│   │   ├── NeuralGrid.tsx
+│   │   ├── TeachInterface.tsx
+│   │   ├── RecallInterface.tsx
+│   │   ├── ControlPanel.tsx
+│   │   ├── MultiLayerVisualizer.tsx
+│   │   ├── AttentionMechanism.tsx
+│   │   ├── AchievementPanel.tsx
+│   │   └── CommunityLibrary.tsx
+│   │
 │   ├── lib/
-│   │   ├── NeuralNetwork.ts     # Hebbian learning
-│   │   ├── MultiLayerNetwork.ts # Backpropagation
-│   │   ├── LearningRules.ts     # STDP, BCM, etc.
-│   │   └── api.ts               # API client
+│   │   ├── NeuralNetwork.ts
+│   │   ├── MultiLayerNetwork.ts
+│   │   ├── LearningRules.ts
+│   │   └── api.ts
+│   │
 │   ├── hooks/
-│   │   └── useKeyboardShortcuts.ts
 │   ├── utils/
-│   │   ├── exportUtils.ts       # Export functionality
-│   │   └── analytics.ts         # Analytics wrapper
 │   ├── styles/
-│   │   └── index.css            # Tailwind + custom CSS
-│   ├── types.ts                 # TypeScript types
-│   ├── App.tsx                  # Main app
-│   └── main.tsx                 # Entry point
-├── package.json                 # Dependencies
-├── tsconfig.json                # TypeScript config
-├── vite.config.ts               # Vite configuration
-├── tailwind.config.js           # Tailwind setup
-├── railway.toml                 # Railway config
-├── nixpacks.toml                # Build config
-├── vercel.json                  # Vercel config
-└── README.md                    # This file
+│   ├── types/
+│   ├── App.tsx
+│   └── main.tsx
+│
+├── server/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── routes/
+│   └── config/
+│
+├── public/
+├── package.json
+└── README.md
 ```
 
-### Design System
+---
 
-**Synaptic Bioluminescence** - A bio-mimetic design language:
-- **Colors**: Deep neural medium with cyan (#38bdf8) accents
-- **Typography**: Space Grotesk (display), Geist (body), JetBrains Mono (code)
-- **Visual Language**: Glassmorphism with bioluminescent glow
-- **Aesthetic**: Bio-intelligence meets deep-space lab instrumentation
+# 🎨 Design Philosophy
+
+synaptiCITY uses a visual language inspired by **bioluminescence, neural activity, and deep-space laboratories**.
+
+The design system is centered around:
+
+- Deep neural environments
+- Cyan/bioluminescent accents
+- Glassmorphism
+- Animated neural connections
+- Space Grotesk / Geist typography
+- JetBrains Mono for technical information
+- Data-driven visual feedback
+
+The objective is not animation for decoration alone.
+
+> **Animation is used as part of the explanation.**
+
+When a connection becomes stronger, the visual system should communicate that change immediately.
 
 ---
 
-## 📚 Documentation
+# 📄 One-Page Concept Summary
 
-| Document | Description |
-|----------|-------------|
-| [README.md](./README.md) | Main overview & getting started (you are here!) |
-| [FAQ.md](./FAQ.md) | 40+ frequently asked questions |
-| [CONTRIBUTING.md](./CONTRIBUTING.md) | Contribution guidelines & development setup |
-| [API.md](./API.md) | Backend API reference & examples |
-| [DEPLOYMENT.md](./DEPLOYMENT.md) | Deployment guide for all platforms |
-| [DEPLOYMENT_SUCCESS.md](./DEPLOYMENT_SUCCESS.md) | Current deployment status & URLs |
-| [PWA_GUIDE.md](./PWA_GUIDE.md) | Progressive Web App features |
-| [ACCESSIBILITY.md](./ACCESSIBILITY.md) | WCAG compliance & a11y audit |
-| [PROGRESS.md](./PROGRESS.md) | Development progress (100% complete!) |
-| [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md) | Technical architecture overview |
+For a quick overview of the project's **problem, concept, learning approach, technical direction, and BDH/BDH-CQ connection**, see the one-page concept document:
+
+📄 **[Read the One-Page Concept Summary](./one-page-concept-summary.pdf)**
+
+This is intended as a concise introduction for reviewers, teammates, mentors, or anyone who wants to understand the project before exploring the full application.
 
 ---
 
-## 🎓 Educational Content
+# 🚀 Quick Start
 
-### Connection to Real AI: BDH & BDH-CQ
+### Requirements
 
-#### Dragon Hatchling (BDH)
-BDH reformulates attention as **synaptic memory** through Hebbian-style writes, enabling models to learn from context without massive key-value caches.
+- Node.js 18+
+- npm
 
-#### BDH-CQ (Contextual Memory + Reasoning)
-BDH-CQ extends synaptic memory with **latent reasoning**—learning from demonstrations without requiring chain-of-thought explanations.
+### Installation
 
-### Toy Model vs. Real System
-
-| Aspect | Our Toy Model | BDH/BDH-CQ |
-|--------|---------------|------------|
-| **Scale** | 6-50 nodes | Variable scale |
-| **Learning Rule** | Hebbian: Δw = η × aᵢ × aⱼ | Hebbian-inspired + backprop |
-| **Memory** | Visible weight matrix | Hidden synaptic state |
-| **Interference** | Demonstrated directly | Managed through architecture |
-| **Purpose** | Educational visualization | Production AI reasoning |
-
-### Research Sources
-
-- **BDH Architecture**: Kosowski, A. et al. (2025). *The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain*. [arXiv:2509.26507](https://arxiv.org/abs/2509.26507)
-- **BDH-CQ**: Engdahl, B. et al. (2026). *BDH-CQ: In-Context Learning with Recurrent Latent Reasoning*. [arXiv:2608.09888](https://arxiv.org/abs/2608.09888)
-- **Supporting Context (TTT)**: Sun, Y. et al. (2024). *Learning to (Learn at Test Time): RNNs with Expressive Hidden States*. [arXiv:2407.04620](https://arxiv.org/abs/2407.04620)
-
----
-
-## 🛠️ Development
-
-### Setup Development Environment
+Clone the repository:
 
 ```bash
-# 1. Clone and install
-git clone https://github.com/sorathiyalaksh37-lang/synaptiCITY.git
+git clone <repository-url>
 cd synaptiCITY
+```
+
+Install dependencies:
+
+```bash
 npm install
-
-# 2. Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your configuration
-
-# 3. Set up Supabase (optional, for backend features)
-# Create project at https://supabase.com
-# Run server/config/database.sql in SQL editor
-# Add credentials to .env.local
-
-# 4. Start development servers
-npm run dev              # Frontend (http://localhost:5173)
-npm run server           # Backend (http://localhost:3001)
 ```
 
-### Development Workflow
+Start the development server:
 
 ```bash
-# Create feature branch
-git checkout -b feature/amazing-feature
-
-# Make changes and test
-npm run lint             # Check code style
-npm run test             # Run tests
-npm run build            # Test production build
-
-# Commit changes
-git add .
-git commit -m "feat: add amazing feature"
-
-# Push and create PR
-git push origin feature/amazing-feature
+npm run dev
 ```
 
-### Code Style
+The application will be available through the local Vite development server.
 
-- **Linting**: oxlint (faster than ESLint)
-- **Formatting**: Prettier (configured in package.json)
-- **TypeScript**: Strict mode enabled
-- **Naming**: camelCase for variables, PascalCase for components
+---
 
-### Testing
+# 🧪 Development Commands
 
 ```bash
-# Run all tests
+# Start development server
+npm run dev
+
+# Build production application
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run tests
 npm run test
 
-# Run with coverage
-npm run test:coverage
-
-# Run specific test
-npm run test NeuralNetwork.test.ts
+# Run linting
+npm run lint
 ```
 
 ---
 
-## 🤝 Contributing
+# ☁️ Deployment
 
-We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for:
-- Code of conduct
-- Development setup
-- Pull request process
-- Coding standards
-- Testing requirements
+The current deployment architecture is:
 
-### Quick Contribution Guide
+```text
+User
+ │
+ ▼
+Vercel
+Frontend
+ │
+ ▼
+Railway
+Backend API
+ │
+ ▼
+Supabase
+Database + Auth + Realtime
+```
 
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/AmazingFeature`)
-3. **Commit** your changes (`git commit -m 'Add some AmazingFeature'`)
-4. **Push** to the branch (`git push origin feature/AmazingFeature`)
-5. **Open** a Pull Request
+### Frontend
 
----
+Deployed through Vercel.
 
-## 🎯 Roadmap
+### Backend
 
-### Completed ✅
-- ✅ All 11 development phases (100% complete!)
-- ✅ Frontend deployed on Vercel
-- ✅ Backend deployed on Railway
-- ✅ Database on Supabase
-- ✅ PWA with offline support
-- ✅ Full documentation suite
+Deployed through Railway.
 
-### Future Enhancements 🚀
-- [ ] Custom domains for production
-- [ ] Advanced monitoring & alerting
-- [ ] Automated backup system
-- [ ] Mobile native apps (React Native)
-- [ ] Multiplayer collaboration features
-- [ ] More learning modules & content
-- [ ] Integration with educational platforms
+### Database
+
+Supabase/PostgreSQL provides persistence and backend services.
 
 ---
 
-## 📊 Performance
+# 🔌 API
 
-- **Lighthouse Score**: 95+ (Performance, Accessibility, Best Practices, SEO)
-- **Bundle Size**: 620KB JS (160KB gzipped), 113KB CSS (19KB gzipped)
-- **First Contentful Paint**: <1.5s
-- **Time to Interactive**: <3s
-- **Code Splitting**: Enabled for optimal loading
+The backend currently exposes endpoints including:
 
----
+### Health
 
-## 🔒 Security
+```http
+GET /health
+```
 
-- ✅ Helmet security headers
-- ✅ CORS protection
-- ✅ Rate limiting on API endpoints
-- ✅ JWT authentication
-- ✅ Input validation and sanitization
-- ✅ HTTPS on all services
-- ✅ Environment variables secured
-- ✅ No secrets in repository
+### API Root
 
----
+```http
+GET /
+```
 
-## 📜 License
+### Networks
 
-This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE) file for details.
+```http
+GET /api/networks
+POST /api/networks
+```
 
-### Third-Party Licenses
+### User Profile
 
-This project uses open-source dependencies. See `package.json` for a complete list. Major dependencies include:
-- React (MIT)
-- Express.js (MIT)
-- Three.js (MIT)
-- Tailwind CSS (MIT)
-- Supabase JS SDK (MIT)
+```http
+GET /api/users/profile
+```
+
+For detailed API information, see:
+
+**[API Documentation](./API.md)**
 
 ---
 
-## 🙏 Acknowledgments
+# 📚 Documentation
 
-- **Dragon Hatchling (BDH)** research team for synaptic memory concepts
-- **BDH-CQ** researchers for contextual reasoning insights
-- **Pathway Track** for inspiring this educational resource
-- **Open Source Community** for amazing tools and libraries
-- **Vercel** for hosting the frontend
-- **Railway** for hosting the backend
-- **Supabase** for database infrastructure
+Additional project documentation:
 
----
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/sorathiyalaksh37-lang/synaptiCITY/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/sorathiyalaksh37-lang/synaptiCITY/discussions)
-- **Email**: [Contact through GitHub](https://github.com/sorathiyalaksh37-lang)
+- 📄 **[One-Page Concept Summary](./one-page-concept-summary.pdf)**
+- 📘 **[FAQ](./FAQ.md)**
+- 🤝 **[Contributing Guide](./CONTRIBUTING.md)**
+- 🔌 **[API Documentation](./API.md)**
+- 🚀 **[Deployment Guide](./DEPLOYMENT.md)**
+- ✅ **[Deployment Success](./DEPLOYMENT_SUCCESS.md)**
+- 📱 **[PWA Guide](./PWA_GUIDE.md)**
+- ♿ **[Accessibility Guide](./ACCESSIBILITY.md)**
+- 📈 **[Development Progress](./PROGRESS.md)**
+- 📋 **[Project Summary](./PROJECT_SUMMARY.md)**
 
 ---
 
-## 🌟 Star History
+# 📚 Research & References
 
-If you find synaptiCITY helpful, please consider giving it a star ⭐ on GitHub!
+The educational concepts in synaptiCITY are informed by research on dynamic memory, recurrent learning, synaptic-style computation, and modern brain-inspired AI.
+
+### 1. The Dragon Hatchling
+
+Kosowski et al. (2025)
+
+**The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain**
+
+arXiv:2509.26507
+
+https://arxiv.org/abs/2509.26507
+
+### 2. BDH-CQ
+
+Engdahl et al. (2026)
+
+**BDH-CQ: In-Context Learning with Recurrent Latent Reasoning**
+
+arXiv:2608.09888
+
+https://arxiv.org/abs/2608.09888
+
+### 3. Learning to Learn at Test Time
+
+Sun et al. (2024)
+
+**Learning to (Learn at Test Time): RNNs with Expressive Hidden States**
+
+arXiv:2407.04620
+
+https://arxiv.org/abs/2407.04620
 
 ---
 
-<div align="center">
+# 🤖 AI Assistance & Provenance
 
-**Built with 🧠 for understanding how connections become memory**
+AI-assisted development was used during parts of the project for:
 
-[Live Demo](https://synapti-city.vercel.app) • [Documentation](./FAQ.md) • [API Docs](./API.md) • [Contributing](./CONTRIBUTING.md)
+- Brainstorming
+- Code generation and debugging
+- UI/UX iteration
+- Documentation
+- Research exploration
+- Development planning
 
-</div>
+AI assistance does **not** imply that the underlying research concepts are original to synaptiCITY.
+
+The project explicitly credits the research and ideas that inspired its educational model.
+
+---
+
+# 📈 Development Progress
+
+The project has been developed through multiple phases:
+
+| Phase | Area | Status |
+|---|---|---|
+| 1 | Core Simulation | ✅ Complete |
+| 2 | Educational Features | ✅ Complete |
+| 3 | Technical Features | ✅ Complete |
+| 4 | Gamification | ✅ Complete |
+| 5 | Community | ✅ Complete |
+| 6 | Backend | ✅ Complete |
+| 7 | Advanced AI Concepts | ✅ Complete |
+| 8 | PWA | ✅ Complete |
+| 9 | Analytics | ✅ Complete |
+| 10 | Documentation | ✅ Complete |
+| 11 | Polish | ✅ Complete |
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+If you want to contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Commit your changes
+6. Open a pull request
+
+Please read the **[Contributing Guide](./CONTRIBUTING.md)** before submitting a contribution.
+
+---
+
+# 📜 License
+
+This project is licensed under the **MIT License**.
+
+See [LICENSE](./LICENSE) for details.
+
+---
+
+# 🙌 Credits
+
+synaptiCITY is inspired by research and ideas around:
+
+- Hebbian learning
+- Synaptic plasticity
+- Recurrent neural computation
+- Continual learning
+- The Dragon Hatchling (BDH)
+- BDH-CQ
+- Brain-inspired AI
+
+The project was developed as part of the **Pathway Track** and focuses on making advanced AI concepts easier to understand through interactive visualization.
+
+---
+
+# 💡 Final Thought
+
+> **Learning does not always have to mean changing everything. Sometimes, it can mean changing the strength of a connection.**
+
+synaptiCITY turns that idea into something users can **see, interact with, modify, and understand**.
+
+**Teach a connection. Watch it strengthen. Recall it. Interfere with it.**
+
+That's where the concept of **memory through dynamic connections** becomes tangible.
